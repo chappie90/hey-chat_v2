@@ -1,0 +1,6 @@
+module Pods_heyChatv2_heyChatv2Tests {
+  umbrella header "Pods-heyChatv2-heyChatv2Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
