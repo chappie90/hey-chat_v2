@@ -15,7 +15,7 @@ import ErrorMessage from './ErrorMessage';
 type AuthFormTypes = {
   heading: string;
   buttonText: string;
-  onSubmitCallback: (username: string, password: string) => void;
+  onSubmitCallback: (username: string, password: string) => any | undefined;
   toggleModals: () => void;
   toggleModalPrompt: string;
   toggleModalLink: string;
@@ -63,7 +63,7 @@ const AuthForm = ({
     setPassword(text);
   };
 
-  const onFormSubmit = (): void => {
+  const onFormSubmit = async (): Promise<void> => {
     usernameChanged(username);
     if (passwordIsValid === null) {
       setPasswordIsValid(false);
@@ -71,20 +71,18 @@ const AuthForm = ({
     if (!usernameIsValid || !passwordIsValid) {
       return;
     }
-    onSubmitCallback(username, password)
-      .then(response => {
-        if (response) {
-          let errorMsg;
-          if (response.data && response.data.message) {
-            errorMsg = response.data.message;
-          } else {
-            errorMsg = 'Something went wrong with your request!';
-          }
-          setShowErrorMsg(true);
-          setErrorMsg(errorMsg);
-        }
-      })
-      .catch(err => console.log(err));
+
+    const response = await onSubmitCallback(username, password);
+    if (response) {
+      let errorMsg;
+      if (response.data && response.data.message) {
+        errorMsg = response.data.message;
+      } else {
+        errorMsg = 'Something went wrong with your request!';
+      }
+      setShowErrorMsg(true);
+      setErrorMsg(errorMsg);
+    }
   };
 
   const onClearErrorMsg = (): void => {
