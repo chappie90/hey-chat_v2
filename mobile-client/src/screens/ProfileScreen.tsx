@@ -1,12 +1,16 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
+import { MainStackParams } from '../navigation/types';
 import { Colors, Headings } from '../variables/variables';
 import { Context as AuthContext } from '../context/AuthContext';
 import CustomButton from '../components/CustomButton';
 import CustomText from '../components/CustomText';
 
-const ProfileScreen = ({ navigation }) => {
+type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
+
+const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { state: { username, userId }, signout } = useContext(AuthContext);
 
   const onSignout = (): void => {

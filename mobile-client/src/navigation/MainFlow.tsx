@@ -3,15 +3,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { StackScreenProps } from '@react-navigation/stack';
 
+import { MainStackParams, ChatStackParams } from './types';
 import ChatsScreen from '../screens/ChatsScreen';
 import CurrentChatScreen from '../screens/CurrentChatScreen';
 import ContactsScreen from '../screens/ContactsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { Colors, Headings } from '../variables/variables';
-
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
 
 // Hide bottom tab navigator on current chat screen
 const hideTabBar = route => {
@@ -23,6 +22,9 @@ const hideTabBar = route => {
 
   return true;
 };
+
+const Tab = createBottomTabNavigator<MainStackParams>();
+const Stack = createStackNavigator<ChatStackParams>();
 
 const ChatsStackNavigator = () => {
   return (

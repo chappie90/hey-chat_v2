@@ -1,13 +1,30 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const ChatsScreen = (props) => {
+import { MainStackParams, ChatStackParams } from '../navigation/types';
+
+type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
+type ChatsScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainStackParams, 'Chats'>,
+  StackNavigationProp<ChatStackParams>
+>;
+
+type ChatsScreenProps = {
+  route: ChatsScreenRouteProp;
+  navigation: ChatsScreenNavigationProp;
+};
+
+const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   return (
     <View styles={styles.container}>
       <Text>ChatsScreen</Text>
       <Button 
         title="To Current Chat" 
-        onPress={() => props.navigation.navigate('CurrentChat')}
+        onPress={() => navigation.navigate('CurrentChat')}
       />
     </View>
   );

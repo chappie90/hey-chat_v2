@@ -1,7 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
-const ContactsScreen = () => {
+import { MainStackParams } from '../navigation/types';
+
+type ContactsScreenProps = BottomTabScreenProps<MainStackParams, 'Contacts'>;
+
+const ContactsScreen = ({ navigation }: ContactsScreenProps) => {
   return (
     <View styles={styles.container}>
       <Text>ContactsScreen</Text>
