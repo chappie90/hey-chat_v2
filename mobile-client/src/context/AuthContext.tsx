@@ -9,10 +9,14 @@ type User = {
   token: string;
 };
 
-type AuthState = {};
+type AuthState = {
+  userId: string | null;
+  username: string | null;
+  token: string | null;
+};
 
 type AuthAction = 
-  | { type: 'signin'; payload: {user: User } }
+  | { type: 'signin'; payload: User }
   | { type: 'signout'; };
 
 const authReducer = (state: AuthState, action: AuthAction) => {
@@ -34,7 +38,7 @@ const authReducer = (state: AuthState, action: AuthAction) => {
   }
 };
 
-const signup = dispatch => async (username: string, password: string) => {
+const signup = dispatch => async (username: string, password: string): Promise<void> => {
   try {
     const response = await api.post('/signup', { username, password });
 
@@ -54,7 +58,7 @@ const signup = dispatch => async (username: string, password: string) => {
   }
 };
 
-const signin = dispatch => async (username: string, password: string) => {
+const signin = dispatch => async (username: string, password: string): Promise<void | any> => {
   try {
     const response = await api.post('/signin', { username, password });
 
@@ -74,23 +78,20 @@ const signin = dispatch => async (username: string, password: string) => {
   }
 };
 
-const autoLogin = dispatch => async (navigation) => {
+const autoSignin = dispatch => async (): Promise<void> => {
   try {
     const jsonValue = await AsyncStorage.getItem('user')
     const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
 
     if (user && user.token) {
       dispatch({ type: 'signin', payload: user });
-      navigation.navigate('Chats');
-    } else {
-      navigation.navigate('Starter');
-    }
+    } 
   } catch(err) {
-    console.log('Could not fetch user data inside autoLogin method' +  err);
+    console.log('Could not fetch user data inside autoSignin method' +  err);
   }
 };
 
-const signout = dispatch => async (userId) => {
+const signout = dispatch => async (userId: string): Promise<void> => {
   try {
     await AsyncStorage.removeItem('user');
 
@@ -107,13 +108,12 @@ export const { Context, Provider } = createDataContext(
   { 
     signup,
     signin, 
-    autoLogin, 
+    autoSignin, 
     signout
   },
   { 
     userId: null, 
     username: null,
     token: null
-    
   }
 );
