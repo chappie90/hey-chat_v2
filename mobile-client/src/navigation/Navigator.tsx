@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { Context as AuthContext } from '../context/AuthContext';
@@ -7,8 +7,12 @@ import AuthenticationFlow from './AuthenticationFlow';
 import MainFlow from './MainFlow';
 
 const Navigator = () => {
-  const { state: { token } } = useContext(AuthContext);
+  const { state: { token }, autoSignin } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    autoSignin();
+  }, []);
 
   if (isLoading) return <SplashScreen />;
 
