@@ -54,7 +54,7 @@ const signup = dispatch => async (username: string, password: string) => {
   }
 };
 
-const signin = dispatch => async (username: string, password: string ) => {
+const signin = dispatch => async (username: string, password: string) => {
   try {
     const response = await api.post('/signin', { username, password });
 
@@ -75,20 +75,18 @@ const signin = dispatch => async (username: string, password: string ) => {
 };
 
 const autoLogin = dispatch => async (navigation) => {
-  const user = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('user')
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch(err) {
-      console.log('Could not fetch user data inside autoLogin method' +  err);
+  try {
+    const jsonValue = await AsyncStorage.getItem('user')
+    const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
+
+    if (user && user.token) {
+      dispatch({ type: 'signin', payload: user });
+      navigation.navigate('Chats');
+    } else {
+      navigation.navigate('Starter');
     }
-  };
-  
-  if (user && user.token) {
-    dispatch({ type: 'signin', payload: user });
-    navigation.navigate('Chats');
-  } else {
-    navigation.navigate('Starter');
+  } catch(err) {
+    console.log('Could not fetch user data inside autoLogin method' +  err);
   }
 };
 
