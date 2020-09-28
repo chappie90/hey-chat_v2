@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 require('./models/User');
+require('./models/Chat');
+require('./models/Message');
 import express, { Application, Request, Response, NextFunction } from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';

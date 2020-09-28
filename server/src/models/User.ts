@@ -6,7 +6,7 @@ const SALT_WORK_FACTOR = 10;
 export interface IUser extends mongoose.Document {
   username: string;
   password: string;
-};
+}
  
 const userSchema = new mongoose.Schema({
   username: {
@@ -17,7 +17,28 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  profile: {
+    image: {
+      name: String
+    }
+  },
+  contacts: [
+    { 
+      user: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User' 
+      }
+    }
+  ],
+  chats: [
+    {
+      chat: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Chat' 
+      }
+    }
+  ]
 });
 
 userSchema.pre<IUser>('save', function(next) {
