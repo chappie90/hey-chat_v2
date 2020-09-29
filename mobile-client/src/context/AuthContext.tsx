@@ -52,9 +52,12 @@ const signup = dispatch => async (username: string, password: string): Promise<v
     dispatch({ type: 'signin', payload: user });
 } catch (error) {
     console.log('Signup method error');
-    console.log(error.response.data.message);
-    console.log(error.response.status);
-    return error.response;
+    if (error.response) {
+      console.log(error.response.data.message);
+      console.log(error.response.status);
+    }
+    if (error.message) console.log(error.message);
+    return error.response ? error.response : error.message;
   }
 };
 
@@ -71,10 +74,12 @@ const signin = dispatch => async (username: string, password: string): Promise<v
 
     dispatch({ type: 'signin', payload: user });
   } catch (error) {
-    console.log('Signin method error');
-    console.log(error.response.data.message);
-    console.log(error.response.status);
-    return error.response;
+    if (error.response) {
+      console.log(error.response.data.message);
+      console.log(error.response.status);
+    }
+    if (error.message) console.log(error.message);
+    return error.response ? error.response : error.message;
   }
 };
 
