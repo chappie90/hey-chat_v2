@@ -7,14 +7,14 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-
-const authRoutes = require('./routes/authRoutes');
+const socket = require('socket.io');
 
 const app: Application = express();
 const server = http.createServer(app);
 
 app.use(bodyParser.json());
 
+// MongoDB connection
 const mongoUri = `mongodb+srv://stoyangarov:${
                   process.env.DB_PASSWORD}@emaily-w8ewa.mongodb.net/${
                   process.env.DB_NAME}?retryWrites=true&w=majority`;
@@ -31,11 +31,16 @@ mongoose.connection.on('error', (err) => {
   console.log('Error connecting to database: ' + err);
 });
 
-app.use(authRoutes);
+// API routes
+require('./routes/routes')(app);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello !');
 });
+
+// Socket connection
+const io = socket.listen(server);
+require('./socket/socket')(io);
 
 const port = process.env.SERVER_PORT || 3006;
 
