@@ -29,7 +29,11 @@ const Stack = createStackNavigator<ChatStackParams>();
 const ChatsStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Chats" component={ChatsScreen} />
+      <Stack.Screen 
+        name="Chats" 
+        component={ChatsScreen} 
+        options={{ title: '', headerTransparent: true }} 
+      />
       <Stack.Screen name="CurrentChat" component={CurrentChatScreen} />
     </Stack.Navigator>
   );
