@@ -133,7 +133,7 @@ const AuthForm = ({
       )}
       <CustomButton 
         color={Colors.primary}
-        buttonBig={true}
+        buttonSize="big"
         style={styles.button} 
         onPress={onFormSubmit}
       >

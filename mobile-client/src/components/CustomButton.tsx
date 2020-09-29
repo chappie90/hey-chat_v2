@@ -14,7 +14,7 @@ type CustomButtonProps = {
   colorText?: string;
   textFontSize?: number;
   textFontWeight?: string;
-  buttonBig?: boolean;
+  buttonSize?: string;
   onPress: (event: GestureResponderEvent) => void;
   style?: CSSProperties;
   children: ReactNode;
@@ -25,18 +25,28 @@ const CustomButton = ({
   colorText, 
   textFontWeight,
   textFontSize,
-  buttonBig, 
+  buttonSize, 
   onPress, 
   style, 
   children 
 }: CustomButtonProps) => {
+  let paddingHorizontal;
+
+  if (buttonSize === 'big') {
+    paddingHorizontal = 50;
+  } else if (buttonSize === 'small') {
+    paddingHorizontal = 10;
+  } else {
+    paddingHorizontal = 30;
+  }
+
   return (
     <TouchableOpacity style={{ ...style }} onPress={onPress}>
       <View style={[ 
         styles.button, 
         { 
           backgroundColor: color,
-          paddingHorizontal: buttonBig ? 50 : 30
+          paddingHorizontal: paddingHorizontal
         } 
       ]}>
         <Text style={{ 

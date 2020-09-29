@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 import { MainStackParams } from '../navigation/types';
-import { Colors, Headings } from '../variables/variables';
+import { Colors, Headings, Fonts } from '../variables/variables';
 import { Context as AuthContext } from '../context/AuthContext';
 import CustomButton from '../components/CustomButton';
 import CustomText from '../components/CustomText';
@@ -23,11 +23,18 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       <View style={styles.background} />
       <View style={styles.innerContainer}>
         <View style={styles.signout}>
-          <CustomButton textFontSize={Headings.headingBig} onPress={onSignout}>
+          <CustomButton 
+            textFontSize={Headings.headingBig} 
+            buttonSize="small" 
+            onPress={onSignout}
+            >
             Sign Out
           </CustomButton>
         </View>
-        <CustomText fontSize={Headings.headingExtraLarge} style={styles.username}>
+        <CustomText 
+          fontSize={Headings.headingExtraLarge}
+          fontWeight={Fonts.regular}
+          style={styles.username}>
           {username}
         </CustomText>
       </View>
@@ -38,7 +45,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 30,
+    paddingTop: 40,
     paddingBottom: 20,
     justifyContent: 'space-between',
     alignItems: 'center'
@@ -49,11 +56,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    height: 200
+    height: 250
   },
   innerContainer: {
     width: '100%',
-    paddingHorizontal: 20
+    paddingHorizontal: 10
   },
   signout: {
     flexDirection: 'row',
