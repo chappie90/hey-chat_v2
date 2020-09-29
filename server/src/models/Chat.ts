@@ -17,6 +17,14 @@ const chatSchema = new mongoose.Schema({
     type: Date, 
     default: Date.now() 
   },
+  requestAccepted: {
+    type: Boolean,
+    default: false
+  },
+  muted: {
+    type: Boolean,
+    default: false
+  },
   creator: String,
   image: {
     name: String
