@@ -9,8 +9,8 @@ import { Colors } from '../variables/variables';
 import ViewPager from '../components/ViewPager';
 import CustomButton from '../components/CustomButton';
 import ScaleViewAnim from '../components/animations/ScaleViewAnim';
-import SigninScreen from './SigninScreen';
-import SignupScreen from './SignupScreen';
+import SigninScreen from './modals/SigninScreen';
+import SignupScreen from './modals/SignupScreen';
 
 const StarterScreen = () => {
   const [showSignin, setShowSignin] = useState(false);

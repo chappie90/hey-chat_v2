@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 
 import Navigator from './navigation/Navigator';
 import { Provider as AuthProvider } from './context/AuthContext';
+import { Provider as ContactsProvider } from './context/ContactsContext';
 import SplashScreen from 'react-native-splash-screen'
 
 declare const global: {HermesInternal: null | {}};
@@ -20,9 +21,11 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <View style={styles.container}>
-        <Navigator />
-      </View>
+      <ContactsProvider>
+        <View style={styles.container}>
+          <Navigator />
+        </View>
+      </ContactsProvider>
     </AuthProvider>
   );
 };

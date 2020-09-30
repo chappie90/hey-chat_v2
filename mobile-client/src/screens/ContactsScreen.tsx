@@ -9,7 +9,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { MainStackParams } from '../navigation/types';
-import AddContactScreen from './AddContactScreen';
+import AddContactScreen from './modals/AddContactScreen';
 import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
 

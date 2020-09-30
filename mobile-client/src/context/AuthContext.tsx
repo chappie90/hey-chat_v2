@@ -61,7 +61,7 @@ const signup = dispatch => async (username: string, password: string): Promise<v
   }
 };
 
-const signin = dispatch => async (username: string, password: string): Promise<void | any> => {
+const signin = dispatch => async (username: string, password: string): Promise<void> => {
   try {
     const response = await api.post('/signin', { username, password });
 
