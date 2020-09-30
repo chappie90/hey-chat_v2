@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+import mongoose from 'mongoose';
 const User = mongoose.model('User');
 
 const searchContacts = async (req, res, next) => {
@@ -23,6 +22,6 @@ const searchContacts = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   searchContacts
 };

@@ -1,5 +1,5 @@
-const authRoutes = require('./authRoutes');
-const contactsRoutes = require('./contactsRoutes');
+import authRoutes from './authRoutes';
+import contactsRoutes from './contactsRoutes';
 
 module.exports = function(app) {
   app.use(authRoutes);

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 const User = mongoose.model('User');
 
 const signup = async (req, res, next) => {
@@ -50,7 +50,7 @@ const signin = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export default {
   signup,
   signin
 };

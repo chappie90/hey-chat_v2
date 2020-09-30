@@ -1,11 +1,10 @@
-import express, { Router } from 'express';
-import mongoose from 'mongoose';
+import { Router } from 'express';
 
-const AuthCtrl = require('../controllers/AuthController');
+import AuthCtrl from '../controllers/AuthController';
 
 const router = Router();
 
 router.post('/api/signup', AuthCtrl.signup);
 router.post('/api/signin', AuthCtrl.signin);
 
-module.exports = router;
+export default router;
