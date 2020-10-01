@@ -1,44 +1,24 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const SALT_WORK_FACTOR = 10;
 
-export interface IUser extends mongoose.Document {
+interface IUser extends Document {
   username: string;
   password: string;
 }
  
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
+const userSchema = new Schema({
+  username: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  test: String,
+  contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   profile: {
     image: {
       name: String
     }
   },
-  contacts: [
-    { 
-      user: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User' 
-      }
-    }
-  ],
-  chats: [
-    {
-      chat: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Chat' 
-      }
-    }
-  ]
+  chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }]
 });
 
 userSchema.pre<IUser>('save', function(next) {
@@ -76,4 +56,4 @@ userSchema.methods.comparePassword = function(candidatePassword) {
   });
 };
 
-mongoose.model('User', userSchema);
+mongoose.model<IUser>('User', userSchema);
