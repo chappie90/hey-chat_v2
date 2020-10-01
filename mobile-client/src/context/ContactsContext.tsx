@@ -1,12 +1,22 @@
 import createDataContext from './createDataContext';
 import api from '../api/api';
 
-const contactsReducer = (state, action) => {
+type Contact = {
+  _id: number;
+  username: string;
+};
+
+type ContactsState = {
+  contacts: Contact[] | [];
+};
+
+type ContactsAction =
+  | { type: 'new_contact'; payload: Contact };
+
+const contactsReducer = (state: ContactsState, action: ContactsAction) => {
   switch (action.type) {
-    // case 'clear_search_results':
-    //   return { ...state, searchResults: [] };
-    // case 'new_contact':
-    //   return { ...state, contacts: [ ...state.contacts, action.payload ] };
+    case 'new_contact':
+      return { ...state, contacts: [ ...state.contacts, action.payload ] };
     // case 'get_contacts':
     //   return { ...state, contacts: action.payload }; // change to contacts: action.payload
     // case 'get_active_status':
@@ -38,16 +48,15 @@ const contactsReducer = (state, action) => {
 //   dispatch({ type: 'get_active_status', payload: users });
 // };
 
-const searchContacts = dispatch => async (username: string, search: string): Promise<string[] | undefined> => {
-  console.log(username)
-  console.log(search)
+const searchContacts = dispatch => async (username: string, search: string): Promise<Contact[] | undefined> => {
+  const params = { username, search };
+
   try {
-    const response = await api.post('/contacts/search', { username, search });
-    if (response.data.contacts !== undefined || response.data.contacts.length != 0) {
-      const contacts = response.data.contacts.sort((a, b) => a.username.localeCompare(b.username));
-      console.log(contacts)
-      return contacts;
-    }
+    const response = await api.get('/contacts/search', { params });
+    
+    const contacts = response.data.contacts.sort((a, b) => a.username.localeCompare(b.username));
+
+    return contacts;
   } catch (error) {
     console.log('Search contacts method error');
     if (error.response) {
@@ -62,18 +71,20 @@ const searchContacts = dispatch => async (username: string, search: string): Pro
 //   dispatch({ type: 'clear_search_results' });
 // };
 
-// const addContact = dispatch => async ({ username, contact }) => {
-//   try {
-//     const response = await chatApi.post('/contacts/add', { username, contact });
+const addContact = dispatch => async (userId: number, contactId: number): Promise<void> => {
+  try {
+    const response = await api.post('/contacts/add', { userId, contactId });
     
-//     dispatch({ type: 'new_contact', payload: response.data.contact });
-
-//     navigate('ContactsList');
-//   } catch (err) {
-//     console.log(err);
-//     throw err;
-//   }
-// };
+    dispatch({ type: 'new_contact', payload: response.data.contact });
+  } catch (error) {
+    console.log('Add contact method error');
+    if (error.response) {
+      console.log(error.response.data.message);
+      console.log(error.response.status);
+    }
+    if (error.message) console.log(error.message);
+  }
+};
 
 // const getContacts = dispatch => async ({ username }) => {
 //   try {
@@ -95,15 +106,13 @@ export const { Context, Provider } = createDataContext(
   contactsReducer,
   { 
     searchContacts, 
-    // clearSearchResults, 
-    // addContact, 
+    addContact
     // getContacts,
     // getActiveStatus,
     // userIsOffline,
     // resetContactsState
   },
   { 
-    // searchResults: [], 
     contacts: [],
     onlineContacts: []
   }

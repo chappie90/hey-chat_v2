@@ -34,7 +34,7 @@ mongoose.connection.on('error', (err) => {
 // API routes
 require('./routes/routes')(app);
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello !');
 });
 

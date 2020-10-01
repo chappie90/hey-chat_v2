@@ -4,6 +4,7 @@ import ContactsCtrl from '../controllers/ContactsController';
 
 const router = Router();
 
-router.post('/api/contacts/search', ContactsCtrl.searchContacts);
+router.get('/api/contacts/search', ContactsCtrl.searchContacts);
+router.post('/api/contacts/add', ContactsCtrl.addContact);
 
 export default router;

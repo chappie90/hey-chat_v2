@@ -1,27 +1,51 @@
-import mongoose from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
+const mongoose = require('mongoose');
 const User = mongoose.model('User');
 
-const searchContacts = async (req, res, next) => {
-  const { username } = req.body;
-  let { search } = req.body;
-  search = search.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&");
+const searchContacts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { username } = req.query;
+
+  let search = req.query.search;
+  search = (search as string).replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&");
 
   try {
-    if (search) {
-      const contacts = await User.find({ username: { $regex: new RegExp(search, 'i'), $ne: username } }, { username: 1, profile: 1, _id: 0 }).limit(10);
-      if (contacts.length == 0) {
-        return res.send({ contacts: [] });
-      }
+    const contacts = await User.find({ 
+      username: { 
+        $regex: new RegExp(search, 'i'),
+        $ne: username 
+      } 
+    }, 
+    { username: 1, 'profile.image.name': 1 }).limit(10);
 
-      return res.send({ contacts });
-    }
-    res.send({ contacts: [] });  
+    res.status(200).send({ contacts });  
   } catch (err) {
     console.log(err);
     next(err);
   }
 };
 
+const addContact = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId, contactId } = req.body;
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { $addToSet: { contacts: contactId } },
+      { new: true }
+    ).populate('contacts');
+
+    // const contact = user.contacts.filter(c => c.)
+
+    // console.log(user)
+    // console.log(contact)
+
+    res.status(200).send({ contact: {} });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
-  searchContacts
+  searchContacts,
+  addContact
 };
