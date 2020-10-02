@@ -15,9 +15,10 @@ type Contact = {
 
 type SearchListProps = {
   searchResults: Contact[];
+  onAddContact: (contactId: number) => void;
 };
 
-const SearchList = ({ searchResults }: SearchListProps) => {
+const SearchList = ({ searchResults, onAddContact }: SearchListProps) => {
   return (
     <ScrollView style={styles.scrollContainer}>
       {searchResults.map((item, index) => (
@@ -25,7 +26,7 @@ const SearchList = ({ searchResults }: SearchListProps) => {
           key={item.username}
           style={{ marginTop: 10, borderRadius: 5, overflow: 'hidden', flex: 1 }} 
           onPress={() => {}}>
-          <SearchItem item={item} />
+          <SearchItem item={item} onAddContact={onAddContact} />
         </TouchableWithoutFeedback>
       ))}
     </ScrollView>

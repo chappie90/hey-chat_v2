@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Modal from "react-native-modal";
+import { useNavigation } from '@react-navigation/native';
 
 import { Context as AuthContext } from "../../context/AuthContext";
 import { Context as ContactsContext } from "../../context/ContactsContext";
@@ -29,6 +30,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation();
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();
@@ -50,7 +52,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     setIsLoading(false);
   };
 
-  const onAddContact = async (userId: number, contactId: number): Promise<void> => {
+  const onAddContact = async (contactId: number): Promise<void> => {
     setIsLoading(true);
 
     await addContact(userId, contactId);
@@ -58,11 +60,13 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     setIsLoading(false);
     setSearch('');
     closeModal();
+    navigation.navigate('CurrentChat');
   };
 
   const onCloseModal = (): void => {
     closeModal();
     setSearch('');
+    setSearchResults([]);
   };
 
   return (
@@ -81,7 +85,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
           <SearchForm search={search} onChangeText={onChangeText} onCloseModal={onCloseModal} />
-          <SearchList searchResults={searchResults} />
+          <SearchList searchResults={searchResults} onAddContact={onAddContact} />
         </View>
       </TouchableWithoutFeedback>
     </Modal>

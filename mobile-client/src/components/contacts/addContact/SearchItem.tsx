@@ -18,10 +18,11 @@ type Contact = {
 };
 
 type SearchItemProps = {
-  item: Contact
+  item: Contact,
+  onAddContact: (contactId: number) => void;
 };
 
-const SearchItem = ({ item }: SearchItemProps) => {
+const SearchItem = ({ item, onAddContact }: SearchItemProps) => {
   return (
     <View style={styles.item}>
       <View style={styles.userDetails}>
@@ -40,8 +41,10 @@ const SearchItem = ({ item }: SearchItemProps) => {
         color={Colors.secondary}
         buttonSize="small"
         textFontSize={Headings.headingSmall}
-        onPress={() => onAddContact(userId, item._id)}>
-          Add
+        onPress={() => onAddContact(item._id)}
+      >
+          <MaterialIcon name="message" size={25} color={Colors.white} /> 
+          Message
       </CustomButton>    
     </View>
   );
