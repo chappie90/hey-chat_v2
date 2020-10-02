@@ -7,10 +7,10 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import { Colors, Fonts, Headings } from '../variables/variables';
-import CustomText from './CustomText';
-import CustomButton from './CustomButton';
-import ErrorMessage from './ErrorMessage';
+import { Colors, Fonts, Headings } from '../../variables/variables';
+import CustomText from '../CustomText';
+import CustomButton from '../CustomButton';
+import ErrorMessage from '../ErrorMessage';
 
 type AuthFormTypes = {
   heading: string;

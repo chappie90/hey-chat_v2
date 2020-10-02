@@ -1,47 +1,66 @@
 import React, { useState, useContext } from 'react';
 import { 
   View, 
-  Text, 
   StyleSheet,
   TouchableWithoutFeedback,
-  TouchableOpacity,
   Keyboard,
-  TextInput
+  ActivityIndicator,
 } from 'react-native';
 import Modal from "react-native-modal";
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Colors, Headings } from '../../variables/variables';
 import { Context as AuthContext } from "../../context/AuthContext";
 import { Context as ContactsContext } from "../../context/ContactsContext";
+import SearchForm from '../../components/contacts/addContact/SearchForm';
+import SearchList from '../../components/contacts/addContact/SearchList';
 
 type AddContactScreenProps = {
   visible: boolean;
   closeModal: () => void;
 };
 
+type Contact = {
+  _id: number;
+  username: string;
+};
+
 const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
-  const { searchContacts } = useContext(ContactsContext);
-  const { state: { username } } = useContext(AuthContext);
+  const { searchContacts, addContact } = useContext(ContactsContext);
+  const { state: { userId, username } } = useContext(AuthContext);
   const [search, setSearch] = useState('');
+  const [searchResults, setSearchResults] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();
   };
 
-  const onChangeText = (text: string): void => {
+  const onChangeText = async (text: string): Promise<void> => {
+    setIsLoading(true);
     setSearch(text);
+
     if (!text) {
       setIsLoading(false);
-    } else {
-      setIsLoading(true);
-    }
-    const response = searchContacts(username, text);
+      setSearchResults([]);
+      return;
+    } 
+
+    const response: Contact[] = await searchContacts(username, text);
+
+    setSearchResults([ ...response ]);
     setIsLoading(false);
   };
 
-  const onPressCloseBtn = (): void => {
+  const onAddContact = async (userId: number, contactId: number): Promise<void> => {
+    setIsLoading(true);
+
+    await addContact(userId, contactId);
+
+    setIsLoading(false);
+    setSearch('');
+    closeModal();
+  };
+
+  const onCloseModal = (): void => {
     closeModal();
     setSearch('');
   };
@@ -61,22 +80,8 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <MaterialIcon name="search" size={40} color={Colors.white} />
-            <TextInput
-              style={styles.input} 
-              selectionColor={'grey'}
-              placeholder="Find people..."
-              placeholderTextColor="white"
-              autoFocus
-              value={search}
-              onChangeText={onChangeText}
-              autoCapitalize="none"
-              autoCorrect={false} />
-            <TouchableOpacity onPress={onPressCloseBtn}>
-              <MaterialIcon name="close" size={30} color="white" />
-            </TouchableOpacity>
-          </View>
+          <SearchForm search={search} onChangeText={onChangeText} onCloseModal={onCloseModal} />
+          <SearchList searchResults={searchResults} />
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -92,24 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.white,
-    marginTop: '15%',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30
-  },
-  header: {
-    paddingHorizontal: 10,
-    height: 80,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.secondary
-  },
-  input: {
-    fontSize: 24,
-    height: '100%',
-    flex: 1,
-    color: 'white',
-    paddingLeft: 10
+    marginTop: '25%'
   }
 });
 

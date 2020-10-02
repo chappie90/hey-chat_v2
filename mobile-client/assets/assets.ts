@@ -3,6 +3,7 @@ export const Images = {
   starterActive: require('./images/starter_active.png'),
   starterYoutube: require('./images/starter_youtube.png'),
   starterGroup: require('./images/starter_group.png'),
+  avatarSmall: require('./images/avatar-small.png')
 };
 
 export const Fonts = {
