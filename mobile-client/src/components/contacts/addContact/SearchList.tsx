@@ -35,8 +35,7 @@ const SearchList = ({ searchResults, onAddContact }: SearchListProps) => {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    width: '100%',
-    backgroundColor: Colors.white
+    width: '100%'
   }
 });
 

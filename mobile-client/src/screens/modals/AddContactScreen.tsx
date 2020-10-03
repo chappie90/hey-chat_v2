@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
-  ActivityIndicator,
+  ActivityIndicator
 } from 'react-native';
 import Modal from "react-native-modal";
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import { Context as AuthContext } from "../../context/AuthContext";
 import { Context as ContactsContext } from "../../context/ContactsContext";
 import SearchForm from '../../components/contacts/addContact/SearchForm';
 import SearchList from '../../components/contacts/addContact/SearchList';
+import SearchIcon from '../../components/contacts/addContact/SearchIcon';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 type AddContactScreenProps = {
   visible: boolean;
@@ -29,6 +31,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
   const { state: { userId, username } } = useContext(AuthContext);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<Contact[]>([]);
+  const [isFirstRender, setIsFirstRender] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
@@ -39,6 +42,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
   const onChangeText = async (text: string): Promise<void> => {
     setIsLoading(true);
     setSearch(text);
+    setIsFirstRender(false);
 
     if (!text) {
       setIsLoading(false);
@@ -58,6 +62,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     await addContact(userId, contactId);
 
     setIsLoading(false);
+    setIsFirstRender(true);
     setSearch('');
     closeModal();
     navigation.navigate('CurrentChat');
@@ -65,6 +70,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
 
   const onCloseModal = (): void => {
     closeModal();
+    setIsFirstRender(true);
     setSearch('');
     setSearchResults([]);
   };
@@ -85,7 +91,10 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
           <SearchForm search={search} onChangeText={onChangeText} onCloseModal={onCloseModal} />
-          <SearchList searchResults={searchResults} onAddContact={onAddContact} />
+          {searchResults.length > 0 ?
+            <SearchList searchResults={searchResults} onAddContact={onAddContact} /> :
+            <SearchIcon isFirstRender={isFirstRender} />
+          }
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -101,7 +110,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: '25%'
+    marginTop: '25%',
+    backgroundColor: Colors.white
   }
 });
 
