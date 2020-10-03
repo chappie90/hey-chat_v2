@@ -1,20 +1,22 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { 
   View, 
-  Text, 
   StyleSheet,
   TouchableOpacity
 } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 import { MainStackParams, ContactsStackParams } from '../navigation/types';
+import { Context as AuthContext } from '../context/AuthContext';
+import { Context as ContactsContext } from '../context/ContactsContext';
 import AddContactScreen from './modals/AddContactScreen';
 import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
+import ContactsHeader from '../components/contacts/contactsList/ContactsHeader';
+import ToggleListTabs from '../components/contacts/contactsList/toggleListTabs';
 
 type ContactsScreenRouteProp = RouteProp<MainStackParams, 'Contacts'>;
 type ContactsScreenNavigationProp = CompositeNavigationProp<
@@ -28,21 +30,41 @@ type ContactsScreenProps = {
 };
 
 const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
-  const [showNewContact, setShowNewContact] = useState(false);
+  const { state: { userId } } = useContext(AuthContext);
+  const { state: { contacts }, getContacts } = useContext(ContactsContext);
+  const [showAddContact, setShowAddContact] = useState(false);
+  const [showActiveUsers, setShowActiveUsers] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const openModal = (): void => {
+    setShowAddContact(true);
+  };
 
   const closeModal = (): void => {
-    setShowNewContact(false);
+    setShowAddContact(false);
   };
+
+  const toggleList = (value: boolean): void => {
+    setShowActiveUsers(value);
+  };
+
+  useEffect(() => {
+    async () => {
+      const response = await getContacts(userId);
+      if (response) setIsLoading(false);
+    };
+  }, []);
 
   return (
     <View styles={styles.container}>
-      <AddContactScreen visible={showNewContact} closeModal={closeModal} />
-      <View style={styles.headerContainer}>
-        <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Contacts</CustomText>
-        <TouchableOpacity style={styles.addButton} onPress={() => setShowNewContact(true)}>
-          <FontAwesome5 name="user-plus" size={Headings.headingBig} color={Colors.white} />
-        </TouchableOpacity>
-      </View>
+      <AddContactScreen visible={showAddContact} closeModal={closeModal} />
+      <ContactsHeader openModal={openModal} />
+      <ToggleListTabs 
+        allUsersCount={contacts.length}
+        activeUsersCount={contacts.length}
+        showActiveUsers={showActiveUsers} 
+        toggleList={toggleList} 
+      />
     </View>
   );
 };
@@ -50,19 +72,6 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.primary,
-    paddingRight: 15,
-    paddingLeft: 20,
-    paddingTop: 65,
-    paddingBottom: 10,
-    height: 110
-  },
-  addButton: {
-    marginTop: 10
   }
 });
 
