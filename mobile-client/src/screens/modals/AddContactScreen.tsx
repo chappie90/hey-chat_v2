@@ -14,7 +14,7 @@ import { Context as ContactsContext } from "../../context/ContactsContext";
 import SearchForm from '../../components/contacts/addContact/SearchForm';
 import SearchList from '../../components/contacts/addContact/SearchList';
 import SearchIcon from '../../components/contacts/addContact/SearchIcon';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Colors } from '../../variables/variables';
 
 type AddContactScreenProps = {
   visible: boolean;
@@ -64,6 +64,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     setIsLoading(false);
     setIsFirstRender(true);
     setSearch('');
+    setSearchResults([]);
     closeModal();
     navigation.navigate('CurrentChat');
   };
@@ -91,9 +92,17 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
           <SearchForm search={search} onChangeText={onChangeText} onCloseModal={onCloseModal} />
-          {searchResults.length > 0 ?
-            <SearchList searchResults={searchResults} onAddContact={onAddContact} /> :
-            <SearchIcon isFirstRender={isFirstRender} />
+          {isLoading ? 
+            (
+              <View style={styles.spinnerContainer}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+              </View> 
+            ) :
+            ( 
+              searchResults.length > 0 ?
+                <SearchList searchResults={searchResults} onAddContact={onAddContact} /> :
+                <SearchIcon isFirstRender={isFirstRender} />
+            )
           }
         </View>
       </TouchableWithoutFeedback>
@@ -112,7 +121,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: '25%',
     backgroundColor: Colors.white
-  }
+  },
+  spinnerContainer: {
+    flex: 1,
+    padding: 5
+  },
 });
 
 export default AddContactScreen;
