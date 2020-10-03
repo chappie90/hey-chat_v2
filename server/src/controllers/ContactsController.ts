@@ -24,7 +24,7 @@ const searchContacts = async (req: Request, res: Response, next: NextFunction): 
   }
 };
 
-const addContact = async (req: Request, res: Response, next: NextFunction) => {
+const addContact = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId, contactId } = req.body;
 
   try {
@@ -45,7 +45,25 @@ const addContact = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getContacts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId } = req.query;
+
+  try {
+    const user = await User.find(
+      { _id: userId }
+    ).populate('contacts', { 'username': 1 });
+
+    const contacts = user[0].contacts;
+
+    res.status(200).send({ contacts });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 export default {
   searchContacts,
-  addContact
+  addContact,
+  getContacts
 };

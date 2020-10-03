@@ -49,10 +49,10 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   };
 
   useEffect(() => {
-    async () => {
+    (async () => {
       const response = await getContacts(userId);
       if (response) setIsLoading(false);
-    };
+    })();
   }, []);
 
   return (
