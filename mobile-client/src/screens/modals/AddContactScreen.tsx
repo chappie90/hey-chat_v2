@@ -14,6 +14,7 @@ import { Context as ContactsContext } from "../../context/ContactsContext";
 import SearchForm from '../../components/contacts/addContact/SearchForm';
 import SearchList from '../../components/contacts/addContact/SearchList';
 import SearchIcon from '../../components/contacts/addContact/SearchIcon';
+import CustomText from '../../components/CustomText';
 import { Colors } from '../../variables/variables';
 
 type AddContactScreenProps = {
@@ -99,9 +100,11 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
               </View> 
             ) :
             ( 
-              searchResults.length > 0 ?
+              searchResults.length > 0 ? 
                 <SearchList searchResults={searchResults} onAddContact={onAddContact} /> :
-                <SearchIcon isFirstRender={isFirstRender} />
+                search ?
+                  <CustomText style={styles.noResults}>No users found</CustomText> :
+                  <SearchIcon isFirstRender={isFirstRender} />
             )
           }
         </View>
@@ -126,6 +129,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5
   },
+  noResults: {
+    flex: 1,
+    marginTop: 20
+  }
 });
 
 export default AddContactScreen;

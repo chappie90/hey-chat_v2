@@ -2,8 +2,7 @@ import React from 'react';
 import { 
   View, 
   StyleSheet,
-  Image,
-  TouchableOpacity
+  Image
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
