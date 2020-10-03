@@ -1,9 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { 
-  View, 
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -13,10 +9,12 @@ import { MainStackParams, ContactsStackParams } from '../navigation/types';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as ContactsContext } from '../context/ContactsContext';
 import AddContactScreen from './modals/AddContactScreen';
-import { Colors, Headings } from '../variables/variables';
-import CustomText from '../components/CustomText';
+import { Colors } from '../variables/variables';
 import ContactsHeader from '../components/contacts/contactsList/ContactsHeader';
 import ToggleListTabs from '../components/contacts/contactsList/toggleListTabs';
+import AllContacts from '../components/contacts/contactsList/AllContacts';
+import ActiveContacts from '../components/contacts/contactsList/ActiveContacts';
+import ContactsIcon from '../components/contacts/contactsList/ContactsIcon';
 
 type ContactsScreenRouteProp = RouteProp<MainStackParams, 'Contacts'>;
 type ContactsScreenNavigationProp = CompositeNavigationProp<
@@ -56,22 +54,47 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   }, []);
 
   return (
-    <View styles={styles.container}>
+    <View style={styles.container}>
       <AddContactScreen visible={showAddContact} closeModal={closeModal} />
       <ContactsHeader openModal={openModal} />
-      <ToggleListTabs 
-        allUsersCount={contacts.length}
-        activeUsersCount={contacts.length}
-        showActiveUsers={showActiveUsers} 
-        toggleList={toggleList} 
-      />
+      {isLoading ? 
+        (
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color={Colors.primary} />
+          </View>
+        ) :
+        (
+          contacts.length > 0 ? 
+            (
+              <>
+                <ToggleListTabs 
+                  allUsersCount={contacts.length}
+                  activeUsersCount={contacts.length}
+                  showActiveUsers={showActiveUsers} 
+                  toggleList={toggleList} 
+                />
+                {showActiveUsers ?
+                  <ActiveContacts contacts={contacts} activeUsersCount={contacts.length} /> :
+                  <AllContacts contacts={contacts} />
+                }
+              </>
+            ) :
+            (
+              <ContactsIcon />
+            )
+        )
+      }
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: Colors.white
+  },
+  spinnerContainer: {
+    padding: 20
   }
 });
 

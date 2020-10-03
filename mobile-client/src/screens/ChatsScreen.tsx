@@ -31,7 +31,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   const [showNewGroup, setShowNewGroup] = useState(false);
 
   return (
-    <View styles={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Chats</CustomText>
         <TouchableOpacity style={styles.addButton} onPress={() => setShowNewGroup(true)}>
@@ -48,7 +48,8 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: Colors.white
   },
   headerContainer: {
     flexDirection: 'row',

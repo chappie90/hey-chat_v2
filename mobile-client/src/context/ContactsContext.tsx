@@ -64,10 +64,6 @@ const searchContacts = dispatch => async (username: string, search: string): Pro
   }
 };
 
-// const clearSearchResults = dispatch => () => {
-//   dispatch({ type: 'clear_search_results' });
-// };
-
 const addContact = dispatch => async (userId: number, contactId: number): Promise<void> => {
   try {
     const response = await api.post('/contacts/add', { userId, contactId });

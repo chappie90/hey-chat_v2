@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 20,
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: Colors.white
   },
   background: {
     width: '100%',
