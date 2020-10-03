@@ -5,17 +5,29 @@ import {
   StyleSheet,
   TouchableOpacity
 } from 'react-native';
-import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { RouteProp } from '@react-navigation/native';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-import { MainStackParams } from '../navigation/types';
+import { MainStackParams, ContactsStackParams } from '../navigation/types';
 import AddContactScreen from './modals/AddContactScreen';
 import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
 
-type ContactsScreenProps = BottomTabScreenProps<MainStackParams, 'Contacts'>;
+type ContactsScreenRouteProp = RouteProp<MainStackParams, 'Contacts'>;
+type ContactsScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainStackParams, 'Contacts'>,
+  StackNavigationProp<ContactsStackParams>
+>;
 
-const ContactsScreen = ({ navigation }: ContactsScreenProps) => {
+type ContactsScreenProps = {
+  route: ContactsScreenRouteProp;
+  navigation: ContactsScreenNavigationProp;
+};
+
+const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   const [showNewContact, setShowNewContact] = useState(false);
 
   const closeModal = (): void => {

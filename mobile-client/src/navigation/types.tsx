@@ -8,8 +8,12 @@ export type MainStackParams = {
   Profile: undefined;
 };
 
-export type ChatStackParams = {
+export type ChatsStackParams = {
   Chats: undefined;
   CurrentChat: undefined;
 };
 
+export type ContactsStackParams = {
+  Contacts: undefined;
+  CurrentChat: undefined;
+};

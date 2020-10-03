@@ -12,14 +12,14 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { MainStackParams, ChatStackParams } from '../navigation/types';
+import { MainStackParams, ChatsStackParams } from '../navigation/types';
 import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainStackParams, 'Chats'>,
-  StackNavigationProp<ChatStackParams>
+  StackNavigationProp<ChatsStackParams>
 >;
 
 type ChatsScreenProps = {

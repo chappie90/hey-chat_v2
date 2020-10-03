@@ -3,17 +3,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { StackScreenProps } from '@react-navigation/stack';
 
-import { MainStackParams, ChatStackParams } from './types';
+import { MainStackParams, ChatsStackParams, ContactsStackParams } from './types';
 import ChatsScreen from '../screens/ChatsScreen';
 import CurrentChatScreen from '../screens/CurrentChatScreen';
 import ContactsScreen from '../screens/ContactsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import { Colors, Headings } from '../variables/variables';
+import { Colors } from '../variables/variables';
 
 // Hide bottom tab navigator on current chat screen
-const hideTabBar = route => {
+const hideTabBar = (route: any) => {
   const routeName = route.state
     ? route.state.routes[route.state.index].name
     : route.params?.screen;
@@ -24,18 +23,32 @@ const hideTabBar = route => {
 };
 
 const Tab = createBottomTabNavigator<MainStackParams>();
-const Stack = createStackNavigator<ChatStackParams>();
+const ChatsStack = createStackNavigator<ChatsStackParams>();
+const ContactsStack = createStackNavigator<ContactsStackParams>();
 
 const ChatsStackNavigator = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen 
+    <ChatsStack.Navigator>
+      <ChatsStack.Screen 
         name="Chats" 
         component={ChatsScreen} 
         options={{ title: '', headerTransparent: true }} 
       />
-      <Stack.Screen name="CurrentChat" component={CurrentChatScreen} />
-    </Stack.Navigator>
+      <ChatsStack.Screen name="CurrentChat" component={CurrentChatScreen} />
+    </ChatsStack.Navigator>
+  );
+};
+
+const ContactsStackNavigator = () => {
+  return (
+    <ContactsStack.Navigator>
+      <ContactsStack.Screen 
+        name="Contacts" 
+        component={ContactsScreen} 
+        options={{ title: '', headerTransparent: true }} 
+      />
+      <ContactsStack.Screen name="CurrentChat" component={CurrentChatScreen} />
+    </ContactsStack.Navigator>
   );
 };
 
@@ -67,7 +80,7 @@ const MainFlow = () => {
       />
       <Tab.Screen 
         name="Contacts" 
-        component={ContactsScreen}
+        component={ContactsStackNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <FontAwesome5 name="user-friends" size={22} color={focused ? Colors.primary : Colors.white} />
