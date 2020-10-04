@@ -13,28 +13,32 @@ type AuthState = {
   userId: string | null;
   username: string | null;
   token: string | null;
+  socketState: any | null;
 };
 
 type AuthAction = 
   | { type: 'signin'; payload: User }
-  | { type: 'signout'; };
+  | { type: 'signout'; }
+  | { type: 'set_socket'; payload: any };
 
 const authReducer = (state: AuthState, action: AuthAction) => {
   switch (action.type) {
     case 'signin':
-    return { 
-      userId: action.payload.userId,
-      username: action.payload.username, 
-      token: action.payload.token
-    };
+      return { 
+        userId: action.payload.userId,
+        username: action.payload.username, 
+        token: action.payload.token
+      };
     case 'signout':
-    return {
-      userId: null,  
-      username: null, 
-      token: null
-    };
+      return {
+        userId: null,  
+        username: null, 
+        token: null
+      };
+    case 'set_socket':
+      return { ...state, socketState: action.payload };
     default: 
-    return state;
+      return state;
   }
 };
 
@@ -108,17 +112,23 @@ const signout = dispatch => async (userId: string): Promise<void> => {
   } 
 };
 
+const setSocketState = dispatch => (socketState: any) => {
+  dispatch({ type: 'set', payload: socketState });
+};
+
 export const { Context, Provider } = createDataContext(
   authReducer,
   { 
     signup,
     signin, 
     autoSignin, 
-    signout
+    signout,
+    setSocketState
   },
   { 
     userId: null, 
     username: null,
-    token: null
+    token: null,
+    socketState: null
   }
 );
