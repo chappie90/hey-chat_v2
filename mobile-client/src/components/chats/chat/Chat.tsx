@@ -56,13 +56,33 @@ const Chat = () => {
         avatar: 'https://placeimg.com/140/140/any',
       },
     },
+    {
+      _id: 5,
+      text: 'What\'s up?!!!',
+      createDate: new Date(),
+      sender: {
+        _id: 2,
+        name: 'Designer',
+        avatar: 'https://placeimg.com/140/140/any',
+      },
+    },
+    {
+      _id: 6,
+      text: 'What\'s up?!!!',
+      createDate: new Date(),
+      sender: {
+        _id: 2,
+        name: 'Designer',
+        avatar: 'https://placeimg.com/140/140/any',
+      },
+    },
   ];
 
-  const isSameUser = (
+  const isSameSender = (
     currentMsg: TMessage, 
-    prevMsg: TMessage | undefined
+    compareMsg: TMessage | undefined
   ): boolean | undefined => {
-    return prevMsg && currentMsg.sender._id === prevMsg.sender._id;
+    return compareMsg && currentMsg.sender._id === compareMsg.sender._id;
   };
 
   const onChangeText = async (text: string): void => {
@@ -75,9 +95,14 @@ const Chat = () => {
         keyExtractor={item => item._id.toString()}
         data={messages}
         renderItem={({ item, index }) => {
-          const sameSender = isSameUser(item, messages[(index - 1)]);
+          const sameSenderPrevMsg = isSameSender(item, messages[(index - 1)]);
+          const sameSenderNextMsg = isSameSender(item, messages[(index + 1)]);
           return (
-            <Message content={item} sameSender={sameSender} />
+            <Message 
+              content={item} 
+              sameSenderPrevMsg={sameSenderPrevMsg} 
+              sameSenderNextMsg={sameSenderNextMsg}
+            />
           );
         }}
       />
