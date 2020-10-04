@@ -96,7 +96,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
           {isLoading ? 
             (
               <View style={styles.spinnerContainer}>
-                <ActivityIndicator size="large" color={Colors.primary} />
+                <ActivityIndicator size="large" color={Colors.primaryOrange} />
               </View> 
             ) :
             ( 

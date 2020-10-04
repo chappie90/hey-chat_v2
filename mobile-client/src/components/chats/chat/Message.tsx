@@ -1,32 +1,46 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Context } from '../../../context/AuthContext';
 
-import MessageBubble from './MessageBubble';
 import { TMessage } from './types';
+import MessageBubble from './MessageBubble';
+import MessageStatus from './MessageStatus';
+import Avatar from './Avatar';
+
 
 type MessageProps = {
   content: TMessage;
-  sameSender: boolean | undefined;
+  sameSenderPrevMsg: boolean | undefined;
+  sameSenderNextMsg: boolean | undefined;
 };
 
-const Message = ({ content, sameSender }: MessageProps) => {
+const Message = ({ 
+  content: { text, createDate, sender, delivered, read }, 
+  sameSenderPrevMsg, 
+  sameSenderNextMsg 
+}: MessageProps) => {
   return (
     <View style={[
       styles.container,
-      { marginTop: sameSender ? 3 : 12 }
+      {  marginTop: sameSenderPrevMsg ? 3 : 12 }
     ]}>
+      {sender._id === 2 && !sameSenderNextMsg && (
+        <Avatar avatar={sender.avatar} />
+      )}
       <MessageBubble 
-        text={content.text} 
-        createDate={content.createDate} 
-        userId={content.sender._id}
+        text={text} 
+        createDate={createDate} 
+        userId={sender._id}
+        sameSenderPrevMsg={sameSenderPrevMsg}
+        sameSenderNextMsg={sameSenderNextMsg}
       />
+      {sender._id === 1 && <MessageStatus delivered={delivered} read={true} />}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row'
   }
 });
 

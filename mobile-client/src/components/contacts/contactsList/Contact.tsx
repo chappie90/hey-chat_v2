@@ -36,7 +36,7 @@ const Contact = ({ item, onAddContact }: ContactProps) => {
         <CustomText>{item.username}</CustomText>  
       </View> 
       <CustomButton
-        color={Colors.secondary}
+        color={Colors.secondaryGreen}
         buttonSize="small"
         textFontSize={Headings.headingSmall}
         onPress={() => onAddContact(item._id)}

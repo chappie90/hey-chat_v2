@@ -28,16 +28,16 @@ const SearchItem = ({ item, onAddContact }: SearchItemProps) => {
         <View style={styles.imageContainer}>
           {item.profile ?
             <Image 
-              style={{ width: '100%', height: '100%' }} 
+              style={styles.image} 
               source={{ uri: item.profile.cloudinaryImgPath_150 }}
               /> : 
-            <Image style={{ width: '100%', height: '100%' }} source={ Images.avatarSmall } />
+            <Image style={styles.image} source={ Images.avatarSmall } />
           }
         </View>           
         <CustomText>{item.username}</CustomText>  
       </View> 
       <CustomButton
-        color={Colors.secondary}
+        color={Colors.secondaryGreen}
         buttonSize="small"
         textFontSize={Headings.headingSmall}
         onPress={() => onAddContact(item._id)}
@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
     borderRadius: 22, 
     marginRight: 10,
     backgroundColor: Colors.lightGrey
+  },
+  image: {
+    width: '100%', 
+    height: '100%'
   }
 });
 

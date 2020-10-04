@@ -46,7 +46,7 @@ const SigninScreen = ({ visible, toggleModals, closeModal }: SigninScreenProps) 
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
           <TouchableOpacity style={styles.closeModalButton} onPress={closeModal}>
-            <MaterialIcon name="close" size={35} color={Colors.tertiary} />
+            <MaterialIcon name="close" size={35} color={Colors.tertiaryRed} />
           </TouchableOpacity>
           <AuthForm
             heading="Welcome back"

@@ -93,7 +93,7 @@ const AuthForm = ({
   return (
     <View style={styles.container}>
       <CustomText 
-        color={Colors.primary}
+        color={Colors.primaryOrange}
         fontSize={Headings.headingExtraLarge}
         fontWeight={Fonts.semiBold} 
         style={styles.header}>
@@ -132,7 +132,7 @@ const AuthForm = ({
           </CustomText>
       )}
       <CustomButton 
-        color={Colors.primary}
+        color={Colors.primaryOrange}
         buttonSize="big"
         style={styles.button} 
         onPress={onFormSubmit}

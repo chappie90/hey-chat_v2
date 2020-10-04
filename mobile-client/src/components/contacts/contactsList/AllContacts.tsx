@@ -30,7 +30,7 @@ const AllContacts = ({ contacts }: AllContactsProps) => {
       //   <RefreshControl
       //     onRefresh={() => getContacts({ username })}
       //     refreshing={isLoading}
-      //     tintColor={Colors.primary} />
+      //     tintColor={Colors.primaryOrange} />
       // }
       disableRightSwipe
       data={contacts}
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   deleteIcon: {
-    backgroundColor: Colors.tertiary,
+    backgroundColor: Colors.tertiaryRed,
     width: 44,
     height: 44,
     borderRadius: 22,

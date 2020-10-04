@@ -46,7 +46,7 @@ const StarterScreen = () => {
       <SigninScreen visible={showSignin} toggleModals={toggleModals} closeModal={closeModal} />
       <ViewPager />
       <ScaleViewAnim style={{ alignItems: 'center' }}>
-        <CustomButton color={Colors.primary} onPress={onPressSignup}> 
+        <CustomButton color={Colors.primaryOrange} onPress={onPressSignup}> 
           Get Started
         </CustomButton>
         <CustomButton 

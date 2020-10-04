@@ -29,10 +29,10 @@ const InputToolbar = ({ message, onChangeText }: InputToolbarProps) => {
     <View style={styles.container}>
       <View style={styles.actions}>
         <TouchableOpacity style={{paddingHorizontal: 5}} onPress={takePhotoHandler}>
-          <MaterialIcon color={Colors.grey} name="camera-alt" size={29} />
+          <MaterialIcon color={Colors.grey} name="camera-alt" size={28} />
         </TouchableOpacity>
         <TouchableOpacity style={{paddingHorizontal: 5}} onPress={choosePhotoHandler}>
-          <Ionicon color={Colors.grey} name="md-images" size={29} />
+          <Ionicon color={Colors.grey} name="md-images" size={26} />
         </TouchableOpacity>
       </View>
       <TextInput
@@ -47,7 +47,7 @@ const InputToolbar = ({ message, onChangeText }: InputToolbarProps) => {
         autoCorrect={false} 
       />
       <TouchableOpacity style={styles.sendButton} onPress={() => {}}>
-        <MaterialIcon name="send" size={26} color={message ? Colors.primary : Colors.grey} />
+        <MaterialIcon name="send" size={26} color={message ? Colors.primaryOrange : Colors.grey} />
       </TouchableOpacity>
     </View>
   );
@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection:'row',
     alignItems: 'center',
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
+    paddingBottom: 2
   },
   input: {
     flex: 1,

@@ -1,29 +1,37 @@
 import React from 'react';
-import { 
-  View,
-  StyleSheet, 
-  TouchableWithoutFeedback
-} from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import dayjs from 'dayjs';
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
 
 import CustomText from '../../../components/CustomText';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
+import { Colors, Headings } from '../../../variables/variables';
 
 type MessageBubbleProps = {
   text: string;
   createDate: Date;
   userId: number;
+  sameSenderPrevMsg: boolean | undefined;
+  sameSenderNextMsg: boolean | undefined;
 };
 
-const MessageBubble = ({ text, createDate, userId }: MessageBubbleProps) => {
+const MessageBubble = ({ 
+  text, 
+  createDate, 
+  userId,
+  sameSenderPrevMsg,
+  sameSenderNextMsg
+}: MessageBubbleProps) => {
   return (
     <TouchableWithoutFeedback>
       <View 
         style={[
           styles.bubble,
-          userId === 1 ? styles.rightBubble : styles.leftBubble
+          userId === 1 ? styles.rightBubble : styles.leftBubble,
+          userId === 1 && sameSenderPrevMsg && styles.rightBubblePrevMsg,
+          userId === 1 && sameSenderNextMsg && styles.rightBubbleNextMsg,
+          userId === 2 && sameSenderPrevMsg && styles.leftBubblePrevMsg,
+          userId === 2 && sameSenderNextMsg && styles.leftBubbleNextMsg
         ]}
       >
         <CustomText 
@@ -46,26 +54,36 @@ const MessageBubble = ({ text, createDate, userId }: MessageBubbleProps) => {
 
 const styles = StyleSheet.create({
   bubble: {
-    alignSelf: 'flex-start',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 10
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 18
   },
   leftBubble: {
-    alignSelf: 'flex-start',
     backgroundColor: Colors.lightGrey,
-    marginLeft: 8,
-    marginRight: '10%'
+    marginRight: '15%',
+    marginLeft: 48
+  },
+  leftBubblePrevMsg: {
+    borderTopLeftRadius: 4
+  },
+  leftBubbleNextMsg: {
+    borderBottomLeftRadius: 4
   },
   rightBubble: {
-    alignSelf: 'flex-end',
-    backgroundColor: Colors.secondary,
-    marginRight: 8,
-    marginLeft: '10%'
+    backgroundColor: Colors.secondaryGreen,
+    marginRight: 34,
+    marginLeft: '20%',
+    alignSelf: 'flex-end'
+  },
+  rightBubblePrevMsg: {
+    borderTopRightRadius: 4
+  },
+  rightBubbleNextMsg: {
+    borderBottomRightRadius: 4
   },
   date: {
     alignSelf: 'flex-end',
-    marginTop: 5
+    marginTop: 2
   }
 });
 

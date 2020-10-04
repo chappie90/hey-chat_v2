@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primaryOrange,
     paddingRight: 15,
     paddingLeft: 20,
     paddingTop: 65,

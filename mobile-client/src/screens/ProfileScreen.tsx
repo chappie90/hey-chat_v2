@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   background: {
     width: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primaryOrange,
     position: 'absolute',
     top: 0,
     left: 0,

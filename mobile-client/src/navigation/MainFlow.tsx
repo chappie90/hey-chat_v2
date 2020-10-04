@@ -63,7 +63,7 @@ const MainFlow = () => {
         tabStyle: {
           paddingVertical: 4,
         },
-        activeTintColor: Colors.primary,
+        activeTintColor: Colors.primaryOrange,
         inactiveTintColor: Colors.white
       }}
     >
@@ -73,7 +73,7 @@ const MainFlow = () => {
         options={({ route }) => ({
           tabBarVisible: hideTabBar(route),
           tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcon name="chat" size={22} color={focused ? Colors.primary : Colors.white} />
+            <MaterialIcon name="chat" size={22} color={focused ? Colors.primaryOrange : Colors.white} />
           ),
           tabBarBadge: 3,
         })}
@@ -83,7 +83,7 @@ const MainFlow = () => {
         component={ContactsStackNavigator}
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <FontAwesome5 name="user-friends" size={22} color={focused ? Colors.primary : Colors.white} />
+            <FontAwesome5 name="user-friends" size={22} color={focused ? Colors.primaryOrange : Colors.white} />
           )
         }}
       />
@@ -92,7 +92,7 @@ const MainFlow = () => {
         component={ProfileScreen} 
         options={{
           tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcon name="account-balance" size={22} color={focused ? Colors.primary : Colors.white} />
+            <MaterialIcon name="account-balance" size={22} color={focused ? Colors.primaryOrange : Colors.white} />
           )
         }}
       />

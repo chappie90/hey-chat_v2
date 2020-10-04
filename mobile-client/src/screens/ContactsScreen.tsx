@@ -60,7 +60,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
       {isLoading ? 
         (
           <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color={Colors.primary} />
+            <ActivityIndicator size="large" color={Colors.primaryOrange} />
           </View>
         ) :
         (

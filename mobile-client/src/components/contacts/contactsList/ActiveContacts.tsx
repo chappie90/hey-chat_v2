@@ -35,7 +35,7 @@ const ActiveContacts = ({ contacts, activeUsersCount }: ActiveContactsProps) => 
       //   <RefreshControl
       //     onRefresh={() => getContacts({ username })}
       //     refreshing={isLoading}
-      //     tintColor={Colors.primary} />
+      //     tintColor={Colors.primaryOrange} />
       // }
       data={contacts}
       //   onEndReached={() => {
