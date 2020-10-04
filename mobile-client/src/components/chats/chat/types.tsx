@@ -11,7 +11,7 @@ export type Reply = {
 };
 
 export type TMessage = {
-  _id: number;
+  _id: string;
   text: string;
   createDate: Date;
   sender: Sender;

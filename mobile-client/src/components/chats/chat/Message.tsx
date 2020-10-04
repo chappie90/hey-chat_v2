@@ -33,7 +33,7 @@ const Message = ({
         sameSenderPrevMsg={sameSenderPrevMsg}
         sameSenderNextMsg={sameSenderNextMsg}
       />
-      {sender._id === 1 && <MessageStatus delivered={delivered} read={true} />}
+      {sender._id === 1 && <MessageStatus delivered={delivered} read={read} />}
     </View>
   );
 };
