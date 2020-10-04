@@ -10,7 +10,7 @@ const messageSchema = new mongoose.Schema({
     required: true
   },
   message: {
-    id: Number, 
+    id: String, 
     text: String,
     createDate: {
       type: Date,

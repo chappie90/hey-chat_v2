@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { 
   View, 
-  Text, 
   Button, 
   StyleSheet,
   TouchableOpacity
@@ -12,6 +11,8 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
+import AppStateTracker from '../components/AppStateTracker';
+import { Context as AuthContext } from '../context/AuthContext';
 import { MainStackParams, ChatsStackParams } from '../navigation/types';
 import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
@@ -28,10 +29,12 @@ type ChatsScreenProps = {
 };
 
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
+  const { state: { socketState } } = useContext(AuthContext);
   const [showNewGroup, setShowNewGroup] = useState(false);
 
   return (
     <View style={styles.container}>
+      <AppStateTracker />
       <View style={styles.headerContainer}>
         <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Chats</CustomText>
         <TouchableOpacity style={styles.addButton} onPress={() => setShowNewGroup(true)}>

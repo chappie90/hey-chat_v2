@@ -112,8 +112,8 @@ const signout = dispatch => async (userId: string): Promise<void> => {
   } 
 };
 
-const setSocketState = dispatch => (socketState: any) => {
-  dispatch({ type: 'set', payload: socketState });
+const setSocketState = dispatch => (socketState: any): void => {
+  dispatch({ type: 'set_socket', payload: socketState });
 };
 
 export const { Context, Provider } = createDataContext(
