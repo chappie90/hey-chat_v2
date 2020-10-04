@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+import Chat from '../components/chats/chat/Chat';
+
 const CurrentChatScreen = () => {
   return (
-    <View styles={styles.container}>
+    <View style={styles.container}>
+      <Chat />
     </View>
   );
 };
