@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useContext  } from 'react';
 import { 
   View, 
   Text, 
@@ -8,10 +8,13 @@ import {
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-import Message from './Message';
 import { TMessage } from './types';
+import Message from './Message';
+import InputToolbar from './InputToolbar';
 
 const Chat = () => {
+  const [message, setMessage] = useState('');
+
   const messages: any[]  = [
     {
       _id: 1,
@@ -62,6 +65,10 @@ const Chat = () => {
     return prevMsg && currentMsg.sender._id === prevMsg.sender._id;
   };
 
+  const onChangeText = async (text: string): void => {
+    setMessage(text);
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -74,6 +81,7 @@ const Chat = () => {
           );
         }}
       />
+      <InputToolbar message={message} onChangeText={onChangeText} />
     </View>
   );
 };
