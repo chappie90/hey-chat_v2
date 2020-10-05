@@ -5,17 +5,12 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 
-import { Colors, Headings } from '../../../variables/variables';
+import { Contact } from './types';
 import SearchItem from './SearchItem';
-
-type Contact = {
-  _id: number;
-  username: string;
-};
 
 type SearchListProps = {
   searchResults: Contact[];
-  onAddContact: (contactId: number) => void;
+  onAddContact: (contact: Contact) => void;
 };
 
 const SearchList = ({ searchResults, onAddContact }: SearchListProps) => {

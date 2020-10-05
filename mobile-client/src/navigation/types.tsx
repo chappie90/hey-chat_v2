@@ -10,10 +10,16 @@ export type MainStackParams = {
 
 export type ChatsStackParams = {
   Chats: undefined;
-  CurrentChat: undefined;
+  CurrentChat: {
+    chatType: string;
+    username: string;
+  };
 };
 
 export type ContactsStackParams = {
   Contacts: undefined;
-  CurrentChat: undefined;
+  CurrentChat: {
+    chatType: string;
+    username: string;
+  };
 };

@@ -34,7 +34,11 @@ const ChatsStackNavigator = () => {
         component={ChatsScreen} 
         options={{ title: '', headerTransparent: true }} 
       />
-      <ChatsStack.Screen name="CurrentChat" component={CurrentChatScreen} />
+      <ChatsStack.Screen 
+        name="CurrentChat" 
+        component={CurrentChatScreen} 
+        options={({ route }) => ({ title: route.params.username })}
+      />
     </ChatsStack.Navigator>
   );
 };
@@ -47,7 +51,11 @@ const ContactsStackNavigator = () => {
         component={ContactsScreen} 
         options={{ title: '', headerTransparent: true }} 
       />
-      <ContactsStack.Screen name="CurrentChat" component={CurrentChatScreen} />
+      <ContactsStack.Screen 
+        name="CurrentChat" 
+        component={CurrentChatScreen} 
+        options={({ route }) => ({ title: route.params.username })}
+      />
     </ContactsStack.Navigator>
   );
 };

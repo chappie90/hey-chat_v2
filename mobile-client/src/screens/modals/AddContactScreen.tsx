@@ -57,17 +57,23 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     setIsLoading(false);
   };
 
-  const onAddContact = async (contactId: number): Promise<void> => {
+  const onAddContact = async (contact: Contact): Promise<void> => {
     setIsLoading(true);
 
-    await addContact(userId, contactId);
+    await addContact(userId, contact._id);
 
     setIsLoading(false);
     setIsFirstRender(true);
     setSearch('');
     setSearchResults([]);
     closeModal();
-    navigation.navigate('CurrentChat');
+
+    console.log(contact.username)
+
+    navigation.navigate('CurrentChat', {
+      chatType: 'private',
+      username: contact.username,
+    });
   };
 
   const onCloseModal = (): void => {

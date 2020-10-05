@@ -6,19 +6,15 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
+import { Contact } from './types';
 import { Images } from '../../../../assets/assets';
 import CustomButton from '../../../components/CustomButton';
 import CustomText from '../../../components/CustomText';
 import { Colors, Headings } from '../../../variables/variables';
 
-type Contact = {
-  _id: number;
-  username: string;
-};
-
 type SearchItemProps = {
   item: Contact,
-  onAddContact: (contactId: number) => void;
+  onAddContact: (Contact: Contact) => void;
 };
 
 const SearchItem = ({ item, onAddContact }: SearchItemProps) => {
@@ -40,7 +36,7 @@ const SearchItem = ({ item, onAddContact }: SearchItemProps) => {
         color={Colors.secondaryGreen}
         buttonSize="small"
         textFontSize={Headings.headingSmall}
-        onPress={() => onAddContact(item._id)}
+        onPress={() => onAddContact(item)}
       >
           <MaterialIcon name="message" size={25} color={Colors.white} /> 
           Message
