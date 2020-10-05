@@ -51,6 +51,8 @@ const AppStateTracker = () => {
     if (token) {
       createSocketConnection();
       AppState.addEventListener('change', handleAppStateChange);
+    } else {
+      AppState.removeEventListener('change', handleAppStateChange);
     }
    
     return () => {

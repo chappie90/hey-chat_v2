@@ -33,7 +33,8 @@ const authReducer = (state: AuthState, action: AuthAction) => {
       return {
         userId: null,  
         username: null, 
-        token: null
+        token: null,
+        socketState: null
       };
     case 'set_socket':
       return { ...state, socketState: action.payload };
@@ -100,10 +101,11 @@ const autoSignin = dispatch => async (): Promise<void> => {
   }
 };
 
-const signout = dispatch => async (userId: string): Promise<void> => {
+const signout = dispatch => async (userId: string, socketInstance: any): Promise<void> => {
   try {
     await AsyncStorage.removeItem('user');
-
+    
+    socketInstance.disconnect();
     // const response = await api.patch('/signout', { userId });
 
     dispatch({ type: 'signout' });

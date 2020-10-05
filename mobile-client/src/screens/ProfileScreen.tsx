@@ -10,12 +10,11 @@ import CustomText from '../components/CustomText';
 
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
-const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  const { state: { username, userId }, signout } = useContext(AuthContext);
+const ProfileScreen = ({ }: ProfileScreenProps) => {
+  const { state: { username, userId, socketState }, signout } = useContext(AuthContext);
 
   const onSignout = (): void => {
-    signout(userId, navigation)
-      .then(response => console.log('Profile ' + response));   
+    signout(userId, socketState);  
   }; 
 
   return (
