@@ -5,12 +5,12 @@ import { connectToSocket } from '../socket/socketConnection';
 import { Context as AuthContext } from '../context/AuthContext';
 
 const AppStateTracker = () => {
-  const { state: { userId, socketState }, setSocketState } = useContext(AuthContext);
+  const { state: { userId, token, socketState }, setSocketState } = useContext(AuthContext);
   const appState = useRef<string>(AppState.currentState);
   const socket = useRef<any>(null);
 
-  const createSocketConnection = async () => {
-    if (userId) {
+  const createSocketConnection = (): void => {
+    if (token && userId) {
       socket.current = connectToSocket(userId);
       setSocketState(socket.current);
     //   // if (Platform.OS === 'ios') {
@@ -23,8 +23,12 @@ const AppStateTracker = () => {
     }   
   }; 
 
-  const handleAppStateChange = (nextAppState: string) => {
+  const destroySocketConnection = (): void => {
+    socket.current.disconnect();
+    setSocketState(null);
+  };
 
+  const handleAppStateChange = (nextAppState: string) => {
     // Connect to socket on app active
     if (
       appState.current.match(/inactive|background/) && 
@@ -36,8 +40,7 @@ const AppStateTracker = () => {
     // Destroy socket instance on app in background
     if (nextAppState === 'background') {
       if (socket.current) {
-        socket.current.disconnect();
-        setSocketState(null);
+        destroySocketConnection(); 
       }
     }
 
@@ -45,25 +48,26 @@ const AppStateTracker = () => {
   };
 
   useEffect(() => {
-    createSocketConnection();
-    AppState.addEventListener('change', handleAppStateChange);
-
+    if (token) {
+      createSocketConnection();
+      AppState.addEventListener('change', handleAppStateChange);
+    }
+   
     return () => {
       AppState.removeEventListener('change', handleAppStateChange);
     };
-  }, [])
+  }, [token]);
 
   useEffect(() => {
     // Check socket connection
     if (socketState) {
-
       socketState.on('connect', () => {
         console.log('socket connected');
       });
+
       socketState.on('disconnect', () => {
         console.log('socket disconnected');
       });
-
     }
   }, [socketState]);
 

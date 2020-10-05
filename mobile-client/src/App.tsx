@@ -6,9 +6,10 @@ import {
   AppState
 } from 'react-native';
 
-import Navigator from './navigation/Navigator';
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as ContactsProvider } from './context/ContactsContext';
+import Navigator from './navigation/Navigator';
+import AppStateTracker from './components/AppStateTracker';
 import SplashScreen from 'react-native-splash-screen'
 
 declare const global: {HermesInternal: null | {}};
@@ -22,6 +23,7 @@ const App = () => {
   return (
     <AuthProvider>
       <ContactsProvider>
+        <AppStateTracker />
         <View style={styles.container}>
           <Navigator />
         </View>

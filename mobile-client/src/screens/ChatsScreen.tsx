@@ -11,7 +11,6 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import AppStateTracker from '../components/AppStateTracker';
 import { Context as AuthContext } from '../context/AuthContext';
 import { MainStackParams, ChatsStackParams } from '../navigation/types';
 import { Colors, Headings } from '../variables/variables';
@@ -34,7 +33,6 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <AppStateTracker />
       <View style={styles.headerContainer}>
         <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Chats</CustomText>
         <TouchableOpacity style={styles.addButton} onPress={() => setShowNewGroup(true)}>
