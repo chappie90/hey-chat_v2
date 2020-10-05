@@ -41,7 +41,11 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
       </View>
       <Button 
         title="To Current Chat" 
-        onPress={() => navigation.navigate('CurrentChat')}
+        onPress={() => navigation.navigate('CurrentChat', {
+          chatType: 'string',
+          chatId: 6,
+          contactName: 'string'
+        })}
       />
     </View>
   );

@@ -1,23 +1,30 @@
 import React, { useState, useEffect, useContext  } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet,
-  FlatList,
-  TouchableNativeFeedback
-} from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { View, StyleSheet, FlatList } from 'react-native';
+import uuid from 'react-native-uuid';
 
+import { emitMessage } from '../../../socket/eventEmitters';
+import { Context as AuthContext } from "../../../context/AuthContext";
 import { TMessage } from './types';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
+import { Colors } from '../../../variables/variables';
+import ContactInvitation from './ContactInvitation';
 
-const Chat = () => {
+type ChatProps = {
+  chatType: string;
+  chatId: number;
+  contactName?: string;
+  contactProfile?: string;
+};
+
+const Chat = ({ chatType, chatId, contactName, contactProfile }: ChatProps) => {
+  const { state: { userId, username } } = useContext(AuthContext);
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<TMessage[]>([]);
 
-  const messages: any[]  = [
+  const myMessages: TMessage[]  = [
     {
-      _id: 1,
+      _id: '1',
       text: 'Hello developer!!! dsada sd asd sad as as da sdssdss  sdsdsssss sa sdda s da d',
       createDate: new Date(),
       sender: {
@@ -25,9 +32,11 @@ const Chat = () => {
         name: 'Designer',
         avatar: 'https://placeimg.com/140/140/any',
       },
+      delivered: true,
+      read: true
     },
     {
-      _id: 2,
+      _id: '2',
       text: 'Hello desig asd asd asd sa  as asdss sssss sss sss sss ss s sner! d  ssss ds!!',
       createDate: new Date(),
       sender: {
@@ -35,9 +44,11 @@ const Chat = () => {
         name: 'Developer',
         avatar: 'https://facebook.github.io/react/img/logo_og.png',
       },
+      delivered: true,
+      read: true
     },
     {
-      _id: 3,
+      _id: '3',
       text: 'Hello again!!!',
       createDate: new Date(),
       sender: {
@@ -45,9 +56,11 @@ const Chat = () => {
         name: 'Developer',
         avatar: 'https://facebook.github.io/react/img/logo_og.png',
       },
+      delivered: true,
+      read: true
     },
     {
-      _id: 4,
+      _id: '4',
       text: 'What\'s up?!!!',
       createDate: new Date(),
       sender: {
@@ -55,9 +68,11 @@ const Chat = () => {
         name: 'Designer',
         avatar: 'https://placeimg.com/140/140/any',
       },
+      delivered: true,
+      read: false
     },
     {
-      _id: 5,
+      _id: '5',
       text: 'What\'s up?!!!',
       createDate: new Date(),
       sender: {
@@ -65,9 +80,11 @@ const Chat = () => {
         name: 'Designer',
         avatar: 'https://placeimg.com/140/140/any',
       },
+      delivered: true,
+      read: false
     },
     {
-      _id: 6,
+      _id: '6',
       text: 'What\'s up?!!!',
       createDate: new Date(),
       sender: {
@@ -75,8 +92,14 @@ const Chat = () => {
         name: 'Designer',
         avatar: 'https://placeimg.com/140/140/any',
       },
+      delivered: false,
+      read: false
     },
   ];
+  
+  const onGreeting = () => {
+
+  };
 
   const isSameSender = (
     currentMsg: TMessage, 
@@ -89,24 +112,67 @@ const Chat = () => {
     setMessage(text);
   };
 
+  const onSendMessage = (): void => {
+    const newMessage: TMessage  = {
+      _id: uuid.v4(),
+      text: message,
+      createDate: new Date(),
+      sender: {
+        _id: 1,
+        name: username
+      },
+      delivered: false,
+      read: false
+    };
+
+    const data = {
+      chatType: 'private',
+      chatId: 'some-id',
+      recipientId: 'some-id',
+      message: newMessage
+    };
+
+    setMessages([ ...messages, newMessage ]);
+    emitMessage(JSON.stringify(data));
+  };
+
+  useEffect(() => {
+    setMessages(myMessages);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <FlatList
-        keyExtractor={item => item._id.toString()}
-        data={messages}
-        renderItem={({ item, index }) => {
-          const sameSenderPrevMsg = isSameSender(item, messages[(index - 1)]);
-          const sameSenderNextMsg = isSameSender(item, messages[(index + 1)]);
-          return (
-            <Message 
-              content={item} 
-              sameSenderPrevMsg={sameSenderPrevMsg} 
-              sameSenderNextMsg={sameSenderNextMsg}
-            />
-          );
-        }}
+      {chatId ?
+        (
+          <FlatList
+            keyExtractor={item => item._id.toString()}
+            data={messages}
+            renderItem={({ item, index }) => {
+              const sameSenderPrevMsg = isSameSender(item, messages[(index - 1)]);
+              const sameSenderNextMsg = isSameSender(item, messages[(index + 1)]);
+              return (
+                <Message 
+                  content={item} 
+                  sameSenderPrevMsg={sameSenderPrevMsg} 
+                  sameSenderNextMsg={sameSenderNextMsg}
+                />
+              );
+            }}
+          />
+        ) :
+        (
+          <ContactInvitation 
+            contactName={contactName} 
+            contactProfile={contactProfile} 
+            onGreeting={onGreeting} 
+          />
+        )
+      }
+      <InputToolbar 
+        message={message} 
+        onChangeText={onChangeText} 
+        onSendMessage={onSendMessage}
       />
-      <InputToolbar message={message} onChangeText={onChangeText} />
     </View>
   );
 };

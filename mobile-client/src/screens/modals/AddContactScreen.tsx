@@ -9,6 +9,7 @@ import {
 import Modal from "react-native-modal";
 import { useNavigation } from '@react-navigation/native';
 
+import { Contact } from '../../components/contacts/addContact/types';
 import { Context as AuthContext } from "../../context/AuthContext";
 import { Context as ContactsContext } from "../../context/ContactsContext";
 import SearchForm from '../../components/contacts/addContact/SearchForm';
@@ -20,11 +21,6 @@ import { Colors } from '../../variables/variables';
 type AddContactScreenProps = {
   visible: boolean;
   closeModal: () => void;
-};
-
-type Contact = {
-  _id: number;
-  username: string;
 };
 
 const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
@@ -68,11 +64,10 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     setSearchResults([]);
     closeModal();
 
-    console.log(contact.username)
-
     navigation.navigate('CurrentChat', {
       chatType: 'private',
-      username: contact.username,
+      chatId: null,
+      contactName: contact.username,
     });
   };
 
