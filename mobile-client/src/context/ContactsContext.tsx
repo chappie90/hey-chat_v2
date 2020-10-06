@@ -1,10 +1,6 @@
 import createDataContext from './createDataContext';
 import api from '../api/api';
-
-type Contact = {
-  _id: number;
-  username: string;
-};
+import { Contact } from './types';
 
 type ContactsState = {
   contacts: Contact[] | [];
