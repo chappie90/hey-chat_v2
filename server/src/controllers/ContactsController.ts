@@ -30,7 +30,7 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
   try {
     const user = await User.find(
       { _id: userId }
-    ).populate('contacts', { 'username': 1 });
+    ).populate('contacts');
 
     const contacts = user[0].contacts;
 

@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { 
   View, 
-  Button, 
   StyleSheet,
-  TouchableOpacity
+  ActivityIndicator
  } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-
 
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as ChatsContext } from '../context/ChatsContext';
@@ -18,6 +16,7 @@ import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
 import ChatsIcon from '../components/chats/chatsList/ChatsIcon';
 import ChatsHeader from '../components/chats/chatsList/ChatsHeader';
+import ChatsList from '../components/chats/chatsList/ChatsList';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -47,17 +46,25 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
     })();
   }, []);
 
+  useEffect(() => {
+    console.log(chats)
+  }, [chats]);
+
   return (
     <View style={styles.container}>
       <ChatsHeader openModal={openModal} />
-      <Button 
-        title="To Current Chat" 
-        onPress={() => navigation.navigate('CurrentChat', {
-          chatType: 'string',
-          chatId: 6,
-          contactName: 'string'
-        })}
-      />
+      {isLoading ? 
+        (
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color={Colors.primaryOrange} />
+          </View>
+        ) :
+        (
+          chats.length > 0 ? 
+            <ChatsList chats={chats} /> :
+            <ChatsIcon />
+        )
+      }
     </View>
   );
 };
@@ -66,6 +73,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white
+  },
+  spinnerContainer: {
+    padding: 20
   }
 });
 
