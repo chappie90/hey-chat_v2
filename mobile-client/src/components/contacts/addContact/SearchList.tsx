@@ -10,10 +10,10 @@ import SearchItem from './SearchItem';
 
 type SearchListProps = {
   searchResults: Contact[];
-  onAddContact: (contact: Contact) => void;
+  onSendMessage: (contact: Contact) => void;
 };
 
-const SearchList = ({ searchResults, onAddContact }: SearchListProps) => {
+const SearchList = ({ searchResults, onSendMessage }: SearchListProps) => {
   return (
     <ScrollView style={styles.scrollContainer}>
       {searchResults.map((item, index) => (
@@ -21,7 +21,7 @@ const SearchList = ({ searchResults, onAddContact }: SearchListProps) => {
           key={item.username}
           style={{ marginTop: 10, borderRadius: 5, overflow: 'hidden', flex: 1 }} 
           onPress={() => {}}>
-          <SearchItem item={item} onAddContact={onAddContact} />
+          <SearchItem item={item} onSendMessage={onSendMessage} />
         </TouchableWithoutFeedback>
       ))}
     </ScrollView>

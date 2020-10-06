@@ -64,18 +64,6 @@ const searchContacts = dispatch => async (username: string, search: string): Pro
   }
 };
 
-const addContact = dispatch => async (userId: number, contactId: number): Promise<void> => {
-  try {
-    const response = await api.post('/contacts/add', { userId, contactId });
-    
-    dispatch({ type: 'new_contact', payload: response.data.contact });
-  } catch (error) {
-    console.log('Add contact method error');
-    if (error.response) console.log(error.response.data.message);
-    if (error.message) console.log(error.message);
-  }
-};
-
 const getContacts = dispatch => async (userId: number): Promise<Contact[] | void> => {
   const params = { userId };
 
@@ -101,7 +89,6 @@ export const { Context, Provider } = createDataContext(
   contactsReducer,
   { 
     searchContacts, 
-    addContact,
     getContacts
     // getActiveStatus,
     // userIsOffline,

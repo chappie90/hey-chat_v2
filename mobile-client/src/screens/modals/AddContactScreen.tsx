@@ -24,7 +24,7 @@ type AddContactScreenProps = {
 };
 
 const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
-  const { searchContacts, addContact } = useContext(ContactsContext);
+  const { searchContacts } = useContext(ContactsContext);
   const { state: { userId, username } } = useContext(AuthContext);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<Contact[]>([]);
@@ -53,12 +53,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     setIsLoading(false);
   };
 
-  const onAddContact = async (contact: Contact): Promise<void> => {
-    setIsLoading(true);
-
-    await addContact(userId, contact._id);
-
-    setIsLoading(false);
+  const onSendMessage = (contact: Contact): void => {
     setIsFirstRender(true);
     setSearch('');
     setSearchResults([]);
@@ -67,6 +62,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
     navigation.navigate('CurrentChat', {
       chatType: 'private',
       chatId: null,
+      contactId: contact._id, 
       contactName: contact.username,
     });
   };
@@ -102,7 +98,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
             ) :
             ( 
               searchResults.length > 0 ? 
-                <SearchList searchResults={searchResults} onAddContact={onAddContact} /> :
+                <SearchList searchResults={searchResults} onSendMessage={onSendMessage} /> :
                 search ?
                   <CustomText style={styles.noResults}>No users found</CustomText> :
                   <SearchIcon isFirstRender={isFirstRender} />

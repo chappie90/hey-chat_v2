@@ -14,10 +14,10 @@ import { Colors, Headings } from '../../../variables/variables';
 
 type SearchItemProps = {
   item: Contact,
-  onAddContact: (Contact: Contact) => void;
+  onSendMessage: (Contact: Contact) => void;
 };
 
-const SearchItem = ({ item, onAddContact }: SearchItemProps) => {
+const SearchItem = ({ item, onSendMessage }: SearchItemProps) => {
   return (
     <View style={styles.item}>
       <View style={styles.userDetails}>
@@ -36,7 +36,7 @@ const SearchItem = ({ item, onAddContact }: SearchItemProps) => {
         color={Colors.secondaryGreen}
         buttonSize="small"
         textFontSize={Headings.headingSmall}
-        onPress={() => onAddContact(item)}
+        onPress={() => onSendMessage(item)}
       >
           <MaterialIcon name="message" size={25} color={Colors.white} /> 
           Message
