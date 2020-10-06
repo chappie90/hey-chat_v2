@@ -1,15 +1,15 @@
-export type User = {
+type User = {
   userId: string;
   username: string;
   token: string;
 };
 
-export type Contact = {
+type Contact = {
   _id: number;
   username: string;
 };
 
-export type Chat = {
+type Chat = {
   _id: number;
   type: string;
   participants: Contact[],

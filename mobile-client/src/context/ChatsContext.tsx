@@ -1,6 +1,5 @@
 import createDataContext from './createDataContext';
 import api from '../api/api';
-import { Contact, Chat } from './types';
 
 type ChatsState = {
   chats: Chat[] | [];

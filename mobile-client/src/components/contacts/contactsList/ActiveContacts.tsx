@@ -13,11 +13,6 @@ import { Images } from '../../../../assets/assets';
 import { Colors, Fonts, Headings } from '../../../variables/variables';
 import CustomText from '../../../components/CustomText';
 
-type Contact = {
-  _id: number;
-  username: string;
-};
-
 type ActiveContactsProps = {
   contacts: Contact[];
   activeUsersCount: number;

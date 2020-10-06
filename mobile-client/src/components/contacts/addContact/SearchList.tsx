@@ -5,7 +5,6 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 
-import { Contact } from './types';
 import SearchItem from './SearchItem';
 
 type SearchListProps = {

@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import createDataContext from './createDataContext';
 import api from '../api/api';
-import { User } from './types';
 
 type AuthState = {
   userId: string | null;

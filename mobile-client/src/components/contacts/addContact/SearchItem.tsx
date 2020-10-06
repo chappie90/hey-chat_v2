@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Contact } from './types';
 import { Images } from '../../../../assets/assets';
 import CustomButton from '../../../components/CustomButton';
 import CustomText from '../../../components/CustomText';

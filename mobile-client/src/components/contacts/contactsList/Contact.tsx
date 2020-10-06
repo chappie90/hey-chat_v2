@@ -11,11 +11,6 @@ import CustomButton from '../../../components/CustomButton';
 import CustomText from '../../../components/CustomText';
 import { Colors, Headings } from '../../../variables/variables';
 
-type IContact = {
-  _id: number;
-  username: string;
-};
-
 type ContactProps = {
 
 };
