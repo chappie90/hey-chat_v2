@@ -8,6 +8,7 @@ import {
 
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as ContactsProvider } from './context/ContactsContext';
+import { Provider as ChatsProvider } from './context/ChatsContext';
 import Navigator from './navigation/Navigator';
 import AppStateTracker from './components/AppStateTracker';
 import SplashScreen from 'react-native-splash-screen'
@@ -22,12 +23,14 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <ContactsProvider>
-        <AppStateTracker />
-        <View style={styles.container}>
-          <Navigator />
-        </View>
-      </ContactsProvider>
+      <ChatsProvider>
+        <ContactsProvider>
+          <AppStateTracker />
+            <View style={styles.container}>
+            <Navigator />
+          </View>
+        </ContactsProvider>
+      </ChatsProvider>
     </AuthProvider>
   );
 };
