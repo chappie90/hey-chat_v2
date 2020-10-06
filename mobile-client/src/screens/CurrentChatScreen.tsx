@@ -8,13 +8,14 @@ import { ContactsStackParams } from '../navigation/types';
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
 
 const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
-  const { chatType, chatId, contactName, contactProfile } = route.params;
+  const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
 
   return (
     <View style={styles.container}>
       <Chat 
         chatType={chatType} 
         chatId={chatId} 
+        contactId={contactId}
         contactName={contactName} 
         contactProfile={contactProfile} 
       />
