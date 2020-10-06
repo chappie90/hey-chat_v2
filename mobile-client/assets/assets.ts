@@ -4,6 +4,7 @@ export const Images = {
   starterYoutube: require('./images/starter_youtube.png'),
   starterGroup: require('./images/starter_group.png'),
   avatarSmall: require('./images/avatar-small.png'),
+  chatsBig: require('./images/icons_chats_orange_256.png'),
   contactsBig: require('./images/icons_contacts_orange_256.png'),
   searchGreenBig: require('./images/icons_search_green_256.png')
 };
