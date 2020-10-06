@@ -12,12 +12,13 @@ const userSchema = new Schema({
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   test: String,
-  contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   profile: {
     image: {
       name: String
     }
   },
+  pendingContacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }]
 });
 
