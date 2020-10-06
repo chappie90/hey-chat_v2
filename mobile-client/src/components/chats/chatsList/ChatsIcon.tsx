@@ -9,7 +9,7 @@ import { Images } from '../../../../assets/assets';
 const ChatsIcon = () => {
   return (
     <View style={styles.imageContainer}>
-      <ScaleImageAnim style={styles.image} source={ Images.contactsBig } />
+      <ScaleImageAnim style={styles.image} source={ Images.chatsBig } />
       <TranslateFadeViewAnim>
         <CustomText style={styles.imageCaption}>Stay in touch with your loved ones</CustomText>
       </TranslateFadeViewAnim>
