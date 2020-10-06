@@ -37,7 +37,7 @@ const ChatsStackNavigator = () => {
       <ChatsStack.Screen 
         name="CurrentChat" 
         component={CurrentChatScreen} 
-        options={({ route }) => ({ title: route.params.username })}
+        options={({ route }) => ({ title: route.params.contactName })}
       />
     </ChatsStack.Navigator>
   );
@@ -54,7 +54,7 @@ const ContactsStackNavigator = () => {
       <ContactsStack.Screen 
         name="CurrentChat" 
         component={CurrentChatScreen} 
-        options={({ route }) => ({ title: route.params.username })}
+        options={({ route }) => ({ title: route.params.contactName })}
       />
     </ContactsStack.Navigator>
   );

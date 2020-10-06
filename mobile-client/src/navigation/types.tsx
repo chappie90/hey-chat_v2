@@ -13,7 +13,8 @@ export type ChatsStackParams = {
   CurrentChat: {
     chatType: string;
     chatId: number;
-    contactName: string;
+    contactId?: number;
+    contactName?: string;
     contactProfile?: string;
   };
 };
@@ -23,6 +24,7 @@ export type ContactsStackParams = {
   CurrentChat: {
     chatType: string;
     chatId: number;
+    contactId: number;
     contactName: string;
     contactProfile?: string;
   };
