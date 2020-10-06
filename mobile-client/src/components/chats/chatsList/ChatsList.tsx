@@ -1,0 +1,121 @@
+import React from 'react';
+import { 
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  Image,
+  RefreshControl
+} from 'react-native';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+
+import { Images } from '../../../../assets/assets';
+import { Colors, Fonts } from '../../../variables/variables';
+import CustomText from '../../../components/CustomText';
+
+type ChatsListProps = {
+  chats: Chat[];
+};
+
+const ChatsList = ({ chats }: ChatsListProps) => {
+  return (
+    <SwipeListView
+      // refreshControl={
+      //   <RefreshControl
+      //     onRefresh={() => getContacts({ username })}
+      //     refreshing={isLoading}
+      //     tintColor={Colors.primaryOrange} />
+      // }
+      data={chats}
+      //   onEndReached={() => {
+      //   if (localContacts.length < contacts.length) {
+      //     loadMoreContacts();
+      //   }
+      // }}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={ (rowData, rowMap) => {
+        // const chat = previousChats.filter(c => c.contact === rowData.item.user.username);
+        return (
+          <TouchableWithoutFeedback 
+            onPress={() => {
+              navigation.navigate('CurrentChat', {
+                chatType: rowData.item.chatType,
+                chatId: rowData.item.chatId,
+                contactId: rowData.item._id,
+                contactName: rowData.item.username
+              })
+            }}>
+            <View 
+              style={styles.rowFront}
+            >
+              <View style={{ overflow: 'hidden', backgroundColor: '#F0F0F0', width: 44, height: 44, borderRadius: 22}}>
+                {rowData.item.profile ?
+                  <Image 
+                    style={{ width: '100%', height: '100%' }} 
+                    placeholderStyle={styles.placeholder}
+                    source={{ uri: rowData.item.profile.cloudinaryImgPath_150 }}
+                  /> : 
+                  <Image 
+                    style={{ width: '100%', height: '100%' }} 
+                    source={ Images.avatarSmall } 
+                  />
+                }
+              </View>                  
+              <View style={styles.itemContainer}>
+                <CustomText style={styles.name} fontWeight={Fonts.semiBold}>
+                  {rowData.item.username}
+                </CustomText>
+              </View>
+              {/* {onlineContacts.includes(rowData.item.username) && (
+                <Badge
+                  badgeStyle={styles.badge}
+                  containerStyle={styles.badgeContainer}
+                />
+              )}   */}
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      }}
+      renderHiddenItem={ (rowData, rowMap) => (
+        <View style={styles.rowBack}>
+          <TouchableOpacity style={{ }} onPress={() => {}}>
+            <View style={styles.deleteIcon}>
+              <EntypoIcon name="trash" size={24} color={Colors.white} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+      rightOpenValue={-65}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  rowFront: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    paddingVertical: 6, 
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightGrey,
+    backgroundColor: Colors.white
+  },
+  rowBack: {
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
+  },
+  deleteIcon: {
+    backgroundColor: Colors.tertiaryRed,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    marginHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center' 
+  }
+});
+
+export default ChatsList;
