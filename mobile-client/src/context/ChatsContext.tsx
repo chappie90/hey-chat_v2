@@ -11,19 +11,18 @@ type ChatsAction =
   const chatReducer = (state: ChatsState, action: ChatsAction) => {
     switch (action.type) {
       case 'get_chats':
-        return { ...state, previousChats: action.payload };
+        return { ...state, chats: action.payload };
       default:
         return state;
     }
   };
 
-  const getChats = dispatch => async (userId: number): Promise<void> => {
+  const getChats = dispatch => async (userId: number): Promise<Chat[] | void> => {
     const params = { userId };
 
     try {
       const response = await api.get('/chats', { params });
-  
-      const chats = response.data.chats.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const chats = response.data.chats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
   
       dispatch({ type: 'get_chats', payload: chats });
   

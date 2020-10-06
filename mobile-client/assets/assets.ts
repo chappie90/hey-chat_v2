@@ -6,7 +6,8 @@ export const Images = {
   avatarSmall: require('./images/avatar-small.png'),
   chatsBig: require('./images/icons_chats_orange_256.png'),
   contactsBig: require('./images/icons_contacts_orange_256.png'),
-  searchGreenBig: require('./images/icons_search_green_256.png')
+  searchGreenBig: require('./images/icons_search_green_256.png'),
+  avatarGroupSmall: require('./images/avatar_group_128.png')
 };
 
 export const Fonts = {
