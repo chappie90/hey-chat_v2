@@ -14,9 +14,10 @@ import { Colors, Fonts, Headings } from '../../../variables/variables';
 type InputToolbarProps = {
   message: string;
   onChangeText: (text: string) => void;
+  onSendMessage: () => void;
 };
 
-const InputToolbar = ({ message, onChangeText }: InputToolbarProps) => {
+const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProps) => {
   const takePhotoHandler = () => {
 
   };
@@ -46,7 +47,11 @@ const InputToolbar = ({ message, onChangeText }: InputToolbarProps) => {
         onChangeText={onChangeText}
         autoCorrect={false} 
       />
-      <TouchableOpacity style={styles.sendButton} onPress={() => {}}>
+      <TouchableOpacity 
+        style={styles.sendButton} 
+        onPress={onSendMessage}
+        disabled={!message}
+      >
         <MaterialIcon name="send" size={26} color={message ? Colors.primaryOrange : Colors.grey} />
       </TouchableOpacity>
     </View>
