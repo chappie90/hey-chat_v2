@@ -13,12 +13,19 @@ import ContactInvitation from './ContactInvitation';
 type ChatProps = {
   chatType: string;
   chatId: number;
+  contactId?: number;
   contactName?: string;
   contactProfile?: string;
 };
 
-const Chat = ({ chatType, chatId, contactName, contactProfile }: ChatProps) => {
-  const { state: { userId, username } } = useContext(AuthContext);
+const Chat = ({ 
+  chatType, 
+  chatId, 
+  contactId, 
+  contactName, 
+  contactProfile 
+}: ChatProps) => {
+  const { state: { userId, username, socketState } } = useContext(AuthContext);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<TMessage[]>([]);
 
@@ -98,7 +105,7 @@ const Chat = ({ chatType, chatId, contactName, contactProfile }: ChatProps) => {
   ];
   
   const onGreeting = () => {
-
+    onSendMessage('hi');
   };
 
   const isSameSender = (
@@ -108,14 +115,14 @@ const Chat = ({ chatType, chatId, contactName, contactProfile }: ChatProps) => {
     return compareMsg && currentMsg.sender._id === compareMsg.sender._id;
   };
 
-  const onChangeText = async (text: string): void => {
+  const onChangeText = (text: string): void => {
     setMessage(text);
   };
 
-  const onSendMessage = (): void => {
+  const onSendMessage = (initialGreeting?: string): void => {
     const newMessage: TMessage  = {
       _id: uuid.v4(),
-      text: message,
+      text: initialGreeting ? initialGreeting : message,
       createDate: new Date(),
       sender: {
         _id: 1,
@@ -126,23 +133,24 @@ const Chat = ({ chatType, chatId, contactName, contactProfile }: ChatProps) => {
     };
 
     const data = {
-      chatType: 'private',
-      chatId: 'some-id',
-      recipientId: 'some-id',
+      chatType,
+      chatId,
+      senderId: userId,
+      recipientId: contactId,
       message: newMessage
     };
 
     setMessages([ ...messages, newMessage ]);
-    emitMessage(JSON.stringify(data));
+    emitMessage(JSON.stringify(data), socketState);
   };
 
   useEffect(() => {
-    setMessages(myMessages);
+    // setMessages(myMessages);
   }, []);
 
   return (
     <View style={styles.container}>
-      {chatId ?
+      {messages.length > 0 ?
         (
           <FlatList
             keyExtractor={item => item._id.toString()}
