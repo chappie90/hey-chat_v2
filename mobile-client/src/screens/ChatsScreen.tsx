@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   View, 
   Button, 
@@ -9,12 +9,15 @@ import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+
 
 import { Context as AuthContext } from '../context/AuthContext';
+import { Context as ChatsContext } from '../context/ChatsContext';
 import { MainStackParams, ChatsStackParams } from '../navigation/types';
 import { Colors, Headings } from '../variables/variables';
 import CustomText from '../components/CustomText';
+import ChatsIcon from '../components/chats/chatsList/ChatsIcon';
+import ChatsHeader from '../components/chats/chatsList/ChatsHeader';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -28,17 +31,25 @@ type ChatsScreenProps = {
 };
 
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
-  const { state: { socketState } } = useContext(AuthContext);
+  const { state: { userId, socketState } } = useContext(AuthContext);
+  const { state: { chats }, getChats } = useContext(ChatsContext);
   const [showNewGroup, setShowNewGroup] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const openModal = (): void => {
+    setShowNewGroup(true);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const response = await getChats(userId);
+      if (response) setIsLoading(false);
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Chats</CustomText>
-        <TouchableOpacity style={styles.addButton} onPress={() => setShowNewGroup(true)}>
-          <MaterialIcon name="group-add" size={37} color={Colors.white} />
-        </TouchableOpacity>
-      </View>
+      <ChatsHeader openModal={openModal} />
       <Button 
         title="To Current Chat" 
         onPress={() => navigation.navigate('CurrentChat', {
@@ -55,19 +66,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.primaryOrange,
-    paddingRight: 15,
-    paddingLeft: 20,
-    paddingTop: 65,
-    paddingBottom: 10,
-    height: 110
-  },
-  addButton: {
-    marginTop: 2
   }
 });
 
