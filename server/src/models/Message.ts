@@ -3,30 +3,28 @@ import mongoose from 'mongoose';
 const messageSchema = new mongoose.Schema({
   chat: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Chat' 
-  },
-  sender: {
-    type: String,
+    ref: 'Chat',
     required: true
   },
+  sender: { type: String, required: true },
   message: {
-    id: String, 
+    id: { type: String, required: true }, 
     text: String,
-    createDate: {
-      type: Date,
-      default: Date.now()
-    }
+    createDate: { type: Date, required: true }
   },
   delivered: { 
     type: Boolean, 
+    required: true,
     default: false 
   },
   read: { 
-    type: Boolean, 
+    type: Boolean,
+    required: true, 
     default: false 
   },
   deleted: { 
     type: Boolean, 
+    required: true,
     default: false 
   },
   reply: { 

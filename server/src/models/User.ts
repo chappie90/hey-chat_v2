@@ -9,9 +9,16 @@ interface IUser extends Document {
 }
  
 const userSchema = new Schema({
-  username: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-  test: String,
+  username: { 
+    type: String, 
+    unique: true, 
+    required: true 
+  },
+  password: { 
+    type: String, 
+    required: true, 
+    select: false 
+  },
   profile: {
     image: {
       name: String
