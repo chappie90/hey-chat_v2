@@ -12,8 +12,8 @@ import CustomText from '../../../components/CustomText';
 import { Colors, Headings } from '../../../variables/variables';
 
 type SearchItemProps = {
-  item: Contact,
-  onSendMessage: (Contact: Contact) => void;
+  item: TContact,
+  onSendMessage: (Contact: TContact) => void;
 };
 
 const SearchItem = ({ item, onSendMessage }: SearchItemProps) => {

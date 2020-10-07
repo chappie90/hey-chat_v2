@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { 
-  View, 
-  StyleSheet,
-  ActivityIndicator
- } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -12,8 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as ChatsContext } from '../context/ChatsContext';
 import { MainStackParams, ChatsStackParams } from '../navigation/types';
-import { Colors, Headings } from '../variables/variables';
-import CustomText from '../components/CustomText';
+import { Colors } from '../variables/variables';
 import ChatsIcon from '../components/chats/chatsList/ChatsIcon';
 import ChatsHeader from '../components/chats/chatsList/ChatsHeader';
 import ChatsList from '../components/chats/chatsList/ChatsList';
@@ -45,10 +40,6 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
       if (response) setIsLoading(false);
     })();
   }, []);
-
-  useEffect(() => {
-    console.log(chats)
-  }, [chats]);
 
   return (
     <View style={styles.container}>

@@ -11,7 +11,7 @@ type AuthState = {
 };
 
 type AuthAction = 
-  | { type: 'signin'; payload: User }
+  | { type: 'signin'; payload: TUser }
   | { type: 'signout'; }
   | { type: 'set_socket'; payload: any };
 

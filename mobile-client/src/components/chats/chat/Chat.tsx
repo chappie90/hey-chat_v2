@@ -4,7 +4,6 @@ import uuid from 'react-native-uuid';
 
 import { emitMessage } from '../../../socket/eventEmitters';
 import { Context as AuthContext } from "../../../context/AuthContext";
-import { TMessage } from './types';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
 import { Colors } from '../../../variables/variables';

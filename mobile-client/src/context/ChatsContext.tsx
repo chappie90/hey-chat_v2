@@ -2,11 +2,11 @@ import createDataContext from './createDataContext';
 import api from '../api/api';
 
 type ChatsState = {
-  chats: Chat[] | [];
+  chats: TChat[] | [];
 };
 
 type ChatsAction =
-  | { type: 'get_chats'; payload: Chat[] };
+  | { type: 'get_chats'; payload: TChat[] };
 
   const chatReducer = (state: ChatsState, action: ChatsAction) => {
     switch (action.type) {

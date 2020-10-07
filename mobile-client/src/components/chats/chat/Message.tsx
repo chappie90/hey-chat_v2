@@ -1,11 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { TMessage } from './types';
 import MessageBubble from './MessageBubble';
 import MessageStatus from './MessageStatus';
 import Avatar from './Avatar';
-
 
 type MessageProps = {
   content: TMessage;
