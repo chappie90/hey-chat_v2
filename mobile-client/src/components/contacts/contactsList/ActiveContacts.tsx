@@ -1,24 +1,17 @@
 import React from 'react';
-import { 
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  Image,
-  RefreshControl,
-  FlatList
-} from 'react-native';
+import { StyleSheet, RefreshControl, FlatList } from 'react-native';
 
-import { Images } from '../../../../assets/assets';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
+import { Colors } from '../../../variables/variables';
 import CustomText from '../../../components/CustomText';
+import ContactsItem from './ContactsItem';
 
 type ActiveContactsProps = {
-  contacts: Contact[];
+  contacts: TContact[];
   activeUsersCount: number;
+  onContactSelect: (contact: TContact) => void;
 };
 
-const ActiveContacts = ({ contacts, activeUsersCount }: ActiveContactsProps) => {
+const ActiveContacts = ({ contacts, activeUsersCount, onContactSelect }: ActiveContactsProps) => {
 
   if (activeUsersCount === 0) {
     return <CustomText style={styles.noResults}>No active users</CustomText>;
@@ -42,45 +35,7 @@ const ActiveContacts = ({ contacts, activeUsersCount }: ActiveContactsProps) => 
       renderItem={({ item, index }) => {
         // const chat = previousChats.filter(c => c.contact === rowData.item.user.username);
         return (
-          <TouchableWithoutFeedback 
-            onPress={() => {
-              // navigation.navigate('ChatDetail', {
-              //   username: rowData.item.user.username,
-              //   image: rowData.item.user.profile ? rowData.item.user.profile.cloudinaryImgPath_150 : '',
-              //   type: 'private',
-              //   chatId: chat.length > 0 ? chat[0].chatId : null,
-              //   origin: 'ContactsList'
-              // })
-            }}>
-            <View 
-              style={styles.row}
-            >
-              <View style={{ overflow: 'hidden', backgroundColor: '#F0F0F0', width: 44, height: 44, borderRadius: 22}}>
-                {item.profile ?
-                  <Image 
-                    style={{ width: '100%', height: '100%' }} 
-                    placeholderStyle={styles.placeholder}
-                    source={{ uri: item.profile.cloudinaryImgPath_150 }}
-                  /> : 
-                  <Image 
-                    style={{ width: '100%', height: '100%' }} 
-                    source={ Images.avatarSmall } 
-                  />
-                }
-              </View>                  
-              <View style={styles.itemContainer}>
-                <CustomText style={styles.name} fontWeight={Fonts.semiBold}>
-                  {item.username}
-                </CustomText>
-              </View>
-              {/* {onlineContacts.includes(rowData.item.username) && (
-                <Badge
-                  badgeStyle={styles.badge}
-                  containerStyle={styles.badgeContainer}
-                />
-              )}   */}
-            </View>
-          </TouchableWithoutFeedback>
+          <ContactsItem item={item} onContactSelect={onContactSelect} />
         );
       }}
     />

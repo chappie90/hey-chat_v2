@@ -46,6 +46,17 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
     setShowActiveUsers(value);
   };
 
+  const onContactSelect = (contact: TContact): void => {
+    console.log(contact)
+
+    navigation.navigate('CurrentChat', {
+      chatType: 'private',
+      chatId: 'need to add chat id to contacts list',
+      contactId: contact._id,
+      contactName: contact.username
+    });
+  };
+
   useEffect(() => {
     (async () => {
       const response = await getContacts(userId);
@@ -74,8 +85,12 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
                   toggleList={toggleList} 
                 />
                 {showActiveUsers ?
-                  <ActiveContacts contacts={contacts} activeUsersCount={contacts.length} /> :
-                  <AllContacts contacts={contacts} />
+                  <ActiveContacts 
+                    contacts={contacts} 
+                    activeUsersCount={contacts.length} 
+                    onContactSelect={onContactSelect}
+                  /> :
+                  <AllContacts contacts={contacts} onContactSelect />
                 }
               </>
             ) :

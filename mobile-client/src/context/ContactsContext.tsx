@@ -2,12 +2,12 @@ import createDataContext from './createDataContext';
 import api from '../api/api';
 
 type ContactsState = {
-  contacts: Contact[] | [];
+  contacts: TContact[] | [];
 };
 
 type ContactsAction =
-  | { type: 'new_contact'; payload: Contact }
-  | { type: 'get_contacts'; payload: Contact[] };
+  | { type: 'new_contact'; payload: TContact }
+  | { type: 'get_contacts'; payload: TContact[] };
 
 const contactsReducer = (state: ContactsState, action: ContactsAction) => {
   switch (action.type) {
