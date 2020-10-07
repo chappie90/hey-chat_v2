@@ -25,7 +25,8 @@ const userSchema = new Schema({
   },
   pendingContacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }]
+  chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
+  archivedChats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }]
 });
 
 userSchema.pre<IUser>('save', function(next) {
