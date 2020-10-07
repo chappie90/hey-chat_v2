@@ -1,7 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { AuthenticationStackParams } from './types';
 import StarterScreen from '../screens/StarterScreen';
 
 const Stack = createStackNavigator<AuthenticationStackParams>();

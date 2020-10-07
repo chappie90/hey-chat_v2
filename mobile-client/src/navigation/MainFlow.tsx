@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import { MainStackParams, ChatsStackParams, ContactsStackParams } from './types';
 import ChatsScreen from '../screens/ChatsScreen';
 import CurrentChatScreen from '../screens/CurrentChatScreen';
 import ContactsScreen from '../screens/ContactsScreen';

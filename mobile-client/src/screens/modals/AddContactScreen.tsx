@@ -9,7 +9,6 @@ import {
 import Modal from "react-native-modal";
 import { useNavigation } from '@react-navigation/native';
 
-import { Contact } from '../../components/contacts/addContact/types';
 import { Context as AuthContext } from "../../context/AuthContext";
 import { Context as ContactsContext } from "../../context/ContactsContext";
 import SearchForm from '../../components/contacts/addContact/SearchForm';
@@ -27,7 +26,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
   const { searchContacts } = useContext(ContactsContext);
   const { state: { userId, username } } = useContext(AuthContext);
   const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState<Contact[]>([]);
+  const [searchResults, setSearchResults] = useState<TContact[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
@@ -47,13 +46,13 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
       return;
     } 
 
-    const response: Contact[] = await searchContacts(username, text);
+    const response: TContact[] = await searchContacts(username, text);
 
     setSearchResults([ ...response ]);
     setIsLoading(false);
   };
 
-  const onSendMessage = (contact: Contact): void => {
+  const onSendMessage = (contact: TContact): void => {
     setIsFirstRender(true);
     setSearch('');
     setSearchResults([]);

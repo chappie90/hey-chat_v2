@@ -1,8 +1,9 @@
+import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 import jwt from 'jsonwebtoken';
 const User = mongoose.model('User');
 
-const signup = async (req, res, next) => {
+const signup = async (req: Request, res: Response, next: NextFunction): Promise<any | void> => {
   const { username, password } = req.body;
 
   try {
@@ -26,7 +27,7 @@ const signup = async (req, res, next) => {
   }
 };
 
-const signin = async (req, res, next) => {
+const signin = async (req: Request, res: Response, next: NextFunction): Promise<any | void> => {
   const { username, password } = req.body;
 
   if (!username || !password) {

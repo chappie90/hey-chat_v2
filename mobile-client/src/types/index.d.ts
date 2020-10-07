@@ -1,3 +1,36 @@
+// Navigation
+type AuthenticationStackParams = {
+  Starter: undefined;
+};
+
+type MainStackParams = {
+  Chats: undefined;
+  Contacts: undefined;
+  Profile: undefined;
+};
+
+type ChatsStackParams = {
+  Chats: undefined;
+  CurrentChat: {
+    chatType: string;
+    chatId: number;
+    contactId?: number;
+    contactName?: string;
+    contactProfile?: string;
+  };
+};
+
+type ContactsStackParams = {
+  Contacts: undefined;
+  CurrentChat: {
+    chatType: string;
+    chatId: number;
+    contactId: number;
+    contactName: string;
+    contactProfile?: string;
+  };
+};
+
 type TUser = {
   userId: string;
   username: string;
@@ -20,6 +53,7 @@ type TChat = {
   unreadMessagesCount: number;
 };
 
+// Message
 type TSender = {
   _id: number;
   name: string;

@@ -7,7 +7,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as ChatsContext } from '../context/ChatsContext';
-import { MainStackParams, ChatsStackParams } from '../navigation/types';
 import { Colors } from '../variables/variables';
 import ChatsIcon from '../components/chats/chatsList/ChatsIcon';
 import ChatsHeader from '../components/chats/chatsList/ChatsHeader';

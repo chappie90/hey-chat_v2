@@ -5,7 +5,6 @@ import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-import { MainStackParams, ContactsStackParams } from '../navigation/types';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as ContactsContext } from '../context/ContactsContext';
 import AddContactScreen from './modals/AddContactScreen';

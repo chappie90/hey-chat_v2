@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import Chat from '../components/chats/chat/Chat';
-import { ContactsStackParams } from '../navigation/types';
 
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
 

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
-import { MainStackParams } from '../navigation/types';
 import { Colors, Headings, Fonts } from '../variables/variables';
 import { Context as AuthContext } from '../context/AuthContext';
 import CustomButton from '../components/CustomButton';
