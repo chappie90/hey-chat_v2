@@ -1,10 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { 
   View,
   StyleSheet,
-  TouchableWithoutFeedback,
   TouchableOpacity,
-  Image,
   RefreshControl,
   useWindowDimensions,
   Animated,
@@ -15,15 +13,17 @@ import Octicon from 'react-native-vector-icons/Octicons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
 
-import { Images } from '../../../../assets/assets';
+import { Context as AuthContext } from '../../../context/AuthContext';
 import { Colors, Fonts, Headings } from '../../../variables/variables';
 import CustomText from '../../../components/CustomText';
+import ChatsFrontItem from './ChatsFrontItem';
 
 type ChatsListProps = {
-  chats: Chat[];
+  chats: TChat[];
 };
 
 const ChatsList = ({ chats }: ChatsListProps) => {
+  const { state: { userId } } = useContext(AuthContext);
   const rowOpenValue = useRef(0);
   const isRowOpen = useRef(false);
   const rowTranslateAnimatedValues = useRef({}).current;
@@ -71,6 +71,31 @@ const ChatsList = ({ chats }: ChatsListProps) => {
     // }
   };
 
+  const onChatSelect = (chat: TChat, contact?: TContact): void => {
+    // markMessagesAsRead({ username, recipient: rowData.item.contact });
+      // if (rowData.item.type === 'group') {
+      //   getCurrentGroupId(rowData.item.chatId);
+      // }
+    let routeParams;
+
+    if (chat.type === 'private') {
+      if (contact) {
+        routeParams = {
+          chatType: chat.type,
+          chatId: chat._id,
+          contactName: contact.username,
+          contactId: contact._id
+        };
+      }
+    }
+    
+    if (chat.type === 'group') {
+
+    }
+
+    navigation.navigate('CurrentChat', routeParams);
+  };
+
   useEffect(() => {
     if (Object.keys(rowTranslateAnimatedValues).length !== chats.length) {
       chats.forEach((item, index) => {
@@ -95,74 +120,12 @@ const ChatsList = ({ chats }: ChatsListProps) => {
       // }}
       keyExtractor={(item, index) => index.toString()}
       renderItem={ (rowData, rowMap) => {
+        let contact: TContact | undefined;
+        if (rowData.item.type === 'private') {
+          contact = rowData.item.participants.filter(p => p._id !== userId)[0];
+        }
         return (
-          <TouchableWithoutFeedback
-            onPress={() => {
-              // markMessagesAsRead({ username, recipient: rowData.item.contact });
-              // if (rowData.item.type === 'group') {
-              //   getCurrentGroupId(rowData.item.chatId);
-              // }
-              navigation.navigate('CurrentChat', {    
-                chatType: rowData.item.type,
-                chatId: rowData.item._id,
-                contactName: rowData.item.contact,    
-              });
-          }}>
-          <View>
-            <View style={styles.container}>
-              <View style={styles.imageContainer}>
-                { rowData.item.profile && rowData.item.profile.imgPath ? (
-                  <Image source={{ uri: rowData.item.profile.imgPath }} style={styles.image} />
-                ) : (
-                  <Image
-                    source={rowData.item.type === 'private' ? Images.avatarSmall : Images.avatarGroupSmall } 
-                    style={styles.image} />
-                )}
-              </View>
-              <View style={styles.chatDetailsContainer}>
-                <View style={styles.itemContainer}>
-                  <CustomText 
-                    fontWeight={Fonts.semiBold} 
-                    numberOfLines={1} 
-                    style={rowData.item.groupOwner ? styles.groupName : styles.name}
-                  >
-                    {rowData.item.contact}
-                  </CustomText>
-                  <View style={{ flexDirection: 'row', alignItems: 'center'}}>  
-                    <CustomText style={styles.date}>{rowData.item.date}</CustomText>
-                    {rowData.item.muted && (
-                      <View>
-                        <Octicon style={{marginLeft: 5}} name="mute" size={20} color='lightgrey' />
-                      </View>
-                    )}
-                  </View>
-                </View>
-                <View style={styles.itemContainer}>
-                  {/* <CustomText
-                    numberOfLines={2}
-                    ellipsize="tail"
-                    style={rowData.item.unreadMessageCount > 0 ? styles.unreadMessage : styles.text}>
-                    {renderLastMessageText(rowData.item)}
-                  </CustomText> */}
-                  {/* {rowData.item.unreadMessageCount !== 0 && (
-                    <View style={styles.unreadBadge}>
-                      <CustomText fontWeight={Fonts.semiBold} style={styles.unreadBadgeText}>
-                        {rowData.item.unreadMessageCount > 99 ? '99+' : rowData.item.unreadMessageCount }
-                      </CustomText>
-                    </View>
-                  )} */}
-                </View>
-              </View>
-              <View style={styles.divider} />
-            </View>
-            {/* {onlineContacts.includes(rowData.item.contact) && (
-              <Badge
-                badgeStyle={styles.badge}
-                containerStyle={styles.badgeContainer}
-              />
-            )}   */}
-            </View>
-          </TouchableWithoutFeedback>
+          <ChatsFrontItem chat={rowData.item} contact={contact} onChatSelect={onChatSelect} />
       )}}
       renderHiddenItem={ (data, rowMap) => {
         return (
@@ -245,38 +208,6 @@ const ChatsList = ({ chats }: ChatsListProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    paddingHorizontal: 10, 
-    paddingVertical: 5,
-    backgroundColor: Colors.white
-  },
-  imageContainer: {
-    overflow: 'hidden', 
-    width: 56, 
-    height: 56, 
-    borderRadius: 4, 
-    backgroundColor: Colors.lightGrey
-  },
-  image: {
-    width: '100%', 
-    height: '100%'
-  },
-  chatDetailsContainer: {
-    flex: 1, 
-    marginLeft: 10, 
-    height: 70, 
-    justifyContent: 'center' 
-  },  
-  divider: {
-    position: 'absolute',
-    bottom: 0,
-    marginHorizontal: 10, 
-    width: '100%',
-    height: 1,
-    backgroundColor: Colors.lightGrey
-  },
   rowBack: {
     flex: 1,
     alignItems: 'center',

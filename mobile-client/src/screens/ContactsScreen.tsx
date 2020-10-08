@@ -50,7 +50,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
 
     navigation.navigate('CurrentChat', {
       chatType: 'private',
-      chatId: 'need to add chat id to contacts list',
+      chatId: contact.chatId,
       contactId: contact._id,
       contactName: contact.username
     });

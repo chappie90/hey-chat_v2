@@ -40,6 +40,7 @@ type TUser = {
 type TContact = {
   _id: number;
   username: string;
+  chatId?: number;
 };
 
 type TChat = {
