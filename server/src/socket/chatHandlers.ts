@@ -23,12 +23,13 @@ export const onMessage = async (data: string): Promise<void> => {
     if (chatId) {
       // Check if chat request accepted
       chat = await Chat.findOne({ _id: chatId });
+
       if (!chat.requestAccepted) {
         // Accept chat request if message sender is recipient of request
-        if (chat.requester === recipientId) {
+        if (chat.requester == recipientId) {
           await Chat.updateOne(
             { _id: chatId }, 
-            { requestAccepted: true }
+            { $set: { requestAccepted: true } }
           );
 
           // Add both users to each other's contact lists
@@ -40,7 +41,7 @@ export const onMessage = async (data: string): Promise<void> => {
           await User.updateOne(
             { _id: recipientId },
             { 
-              $pull: { 'pendingContacts': { _id: senderId } },
+              $pull: { pendingContacts: senderId },
               $addToSet: { contacts:  senderId }
             }
           );
