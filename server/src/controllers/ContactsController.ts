@@ -31,22 +31,17 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
     const user = await User.find(
       { _id: userId }
     ).lean()
+     .populate('pendingContacts', 'username')
      .populate('contacts', 'username')
      .populate('chats', 'participants')
      .populate('archivedChats', 'participants');
 
-    const chats = user[0].chats;
-    const archivedChats = user[0].archivedChats;
-    const contacts = user[0].contacts;
+    const chats = [ ...user[0].chats, ...user[0].archivedChats ];
+    const contacts = [ ...user[0].pendingContacts, ...user[0].contacts ];
 
     // Get id of chat between user and each contact
     for (const contact of contacts) {
-      let chatId: number;
-
-      chatId = chats.filter(chat => chat.participants.includes(contact._id))[0]._id;
-      if (!chatId) {
-        chatId = archivedChats.filter(chat => chat.participants.includes(contact._id))[0]._id;
-      }
+      const chatId: number = chats.filter(chat => chat.participants.filter((p: number) => p === contact._id))[0]._id;
       contact.chatId = chatId;
     }
 
