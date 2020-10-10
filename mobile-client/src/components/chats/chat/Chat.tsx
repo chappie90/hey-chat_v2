@@ -31,7 +31,7 @@ const Chat = ({
   contactProfile 
 }: ChatProps) => {
   const { state: { userId, username, socketState } } = useContext(AuthContext);
-  const { state: { messages }, getMessages } = useContext(ChatsContext);
+  const { state: { messages }, getMessages, addMessage } = useContext(ChatsContext);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
@@ -50,11 +50,11 @@ const Chat = ({
     setMessage(text);
   };
 
-  const onSendMessage = (initialGreeting?: string): void => {
+  const onSendMessage = (text: string): void => {
     const newMessage: TMessage  = {
       _id: uuid.v4(),
       chatId,
-      text: initialGreeting ? initialGreeting : message,
+      text,
       createDate: new Date(),
       sender: {
         _id: 1,
@@ -72,6 +72,7 @@ const Chat = ({
       message: newMessage
     };
 
+    addMessage(chatId, newMessage);
     emitMessage(JSON.stringify(data), socketState);
   };
 
@@ -85,7 +86,7 @@ const Chat = ({
       }
     })();
   }, []);
-
+  
   return (
     <View style={styles.container}>
       {isLoading ? 
