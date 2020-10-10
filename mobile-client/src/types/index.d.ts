@@ -32,7 +32,7 @@ type ContactsStackParams = {
 };
 
 type TUser = {
-  userId: string;
+  userId: number;
   username: string;
   token: string;
 };
