@@ -70,6 +70,7 @@ type TReply = {
 
 type TMessage = {
   _id: string;
+  chatId: number;
   text: string;
   createDate: Date;
   sender: TSender;

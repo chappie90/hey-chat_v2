@@ -89,7 +89,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
                     activeUsersCount={contacts.length} 
                     onContactSelect={onContactSelect}
                   /> :
-                  <AllContacts contacts={contacts} onContactSelect />
+                  <AllContacts contacts={contacts} onContactSelect={onContactSelect} />
                 }
               </>
             ) :

@@ -1,4 +1,4 @@
-type TUser = {
+export type TUser = {
   _id: number;
   username: string;
   pendingContacts: TContact[];
@@ -7,14 +7,14 @@ type TUser = {
   archivedChats: TChat[];
 };
 
-type TContact = {
+export type TContact = {
   _id: number;
   username: string;
   pending?: boolean;
   chatId?: number;
 };
 
-type TChat = {
+export type TChat = {
   _id: number;
   type: string;
   participants: TContact[],
@@ -25,5 +25,25 @@ type TChat = {
   unreadMessagesCount: number;
 };
 
+// Message
+type TReply = {
+  origMsgId: number;
+  origMsgText: string;
+  origMsgSender: string;
+};
+
+export type TMessage = {
+  _id: string;
+  chatId: number;
+  text: string;
+  createDate: Date;
+  sender: string;
+  image?: string;
+  admin?: boolean;
+  delivered: boolean;
+  read: boolean;
+  reply?: TReply;
+  deleted?: boolean;
+};
 
 

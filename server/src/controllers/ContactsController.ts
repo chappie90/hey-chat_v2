@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
+
 const User = mongoose.model('User');
+import { TUser, TContact } from '../types/index';
 
 const searchContacts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { username } = req.query;

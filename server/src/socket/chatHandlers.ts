@@ -81,7 +81,7 @@ export const onMessage = async (data: string): Promise<void> => {
 
   // Create new message
   const newMessage = new Message({
-    chat: chatId ? chatId : newChatId,
+    chatId: chatId ? chatId : newChatId,
     sender: message.sender.name,
     message: {
       id: message._id,

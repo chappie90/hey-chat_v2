@@ -1,14 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
+
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
+import { TMessage } from '../types/index';
 
 const getChats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { userId } = req.query;
 
   let chats,
       unreadMessagesCount: number;
+
+      console.log('get chats')
+      console.log(userId)
 
   try {
     const user = await User.find(
@@ -28,7 +33,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
 
     // Get last message to be displayed on each chat
     for (const chat of chats) {
-      const lastMessage = await Message.find({ chat: chat._id })
+      const lastMessage = await Message.find({ chatId: chat._id })
         .sort({ 'message.createDate': -1 })
         .limit(1);
       chat.lastMessage = lastMessage;
@@ -40,6 +45,21 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
   }
 };
 
+const getMessages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { chatId } = req.query;
+
+  try {
+    const messages = await Message.find({ chatId })
+                                  .sort({ 'message.createDate': -1 })
+                                  .limit(30);
+
+    res.status(200).send({ messages });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
-  getChats
+  getChats,
+  getMessages
 };
