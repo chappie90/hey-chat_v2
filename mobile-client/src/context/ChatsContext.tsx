@@ -8,15 +8,29 @@ type ChatsState = {
 
 type ChatsAction =
   | { type: 'get_chats'; payload: TChat[] }
-  | { type: 'get_messages'; payload: { chatId: number, messages: TMessage[] } };
+  | { type: 'get_messages'; payload: { chatId: number, messages: TMessage[] } }
+  | { type: 'add_message'; payload: { chatId: number, message: TMessage } };
 
 const chatReducer = (state: ChatsState, action: ChatsAction) => {
   switch (action.type) {
     case 'get_chats':
       return { ...state, chats: action.payload };
     case 'get_messages':
-      const { chatId, messages } = action.payload; 
-      return { ...state, messages: { ...state.messages, [chatId]: messages } };
+      return { ...state, messages: { 
+        ...state.messages, [action.payload.chatId]: action.payload.messages 
+      } };
+    case 'add_message': 
+      if (state.messages[action.payload.chatId]) {
+        return { ...state, messages: {
+          ...state.messages,
+          [action.payload.chatId]: [ ...state.messages[action.payload.chatId], action.payload.message ]
+        } };
+      } else {
+        return { ...state, messages: {
+          ...state.messages, 
+          [action.payload.chatId]: [ action.payload.message ]
+        } };
+      }
     default:
       return state;
   }
@@ -94,14 +108,19 @@ const getMessages = dispatch => async (
   } 
 };
 
-  export const { Context, Provider } = createDataContext(
-    chatReducer,
-    { 
-      getChats,
-      getMessages
-    },
-    {  
-      chats: [],
-      messages: {}
-    }
-  );
+const addMessage = dispatch => (chatId: number, message: TMessage): void => {
+  dispatch({ type: 'add_message', payload: { chatId, message } });
+};
+
+export const { Context, Provider } = createDataContext(
+  chatReducer,
+  { 
+    getChats,
+    getMessages,
+    addMessage
+  },
+  {  
+    chats: [],
+    messages: {}
+  }
+);

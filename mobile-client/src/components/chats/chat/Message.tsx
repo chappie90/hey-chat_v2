@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import MessageBubble from './MessageBubble';
@@ -16,6 +16,7 @@ const Message = ({
   sameSenderPrevMsg, 
   sameSenderNextMsg 
 }: MessageProps) => {
+
   return (
     <View style={[
       styles.container,
