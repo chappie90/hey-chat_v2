@@ -8,7 +8,7 @@ import {
 
 import { Images } from '../../../../assets/assets';
 import CustomText from '../../CustomText';
-import { Colors, Fonts } from '../../../variables/variables';
+import { Colors, Fonts, Headings } from '../../../variables/variables';
 
 type ContactsItemProps = {
   item: TContact;
@@ -35,6 +35,11 @@ const ContactsItem = ({ item, onContactSelect }: ContactsItemProps) => {
         >
           {item.username}
         </CustomText>
+        {item.pending && 
+          <CustomText style={styles.status} color={Colors.grey} fontSize={Headings.headingSmall}>
+            Pending...
+          </CustomText>
+        } 
         {/* {onlineContacts.includes(rowData.item.username) && (
           <Badge
             badgeStyle={styles.badge}
@@ -69,6 +74,9 @@ const styles = StyleSheet.create({
   },
   name: {
     marginLeft: 20
+  },
+  status: {
+    marginLeft: 'auto'
   }
 });
 

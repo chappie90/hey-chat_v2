@@ -37,7 +37,13 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
      .populate('archivedChats', 'participants');
 
     const chats = [ ...user[0].chats, ...user[0].archivedChats ];
-    const contacts = [ ...user[0].pendingContacts, ...user[0].contacts ];
+    const pendingContacts = user[0].pendingContacts.map(pC => {
+      return {
+        ...pC,
+        pending: true
+      };
+    });
+    const contacts = [ ...pendingContacts, ...user[0].contacts ];
 
     // Get id of chat between user and each contact
     for (const contact of contacts) {

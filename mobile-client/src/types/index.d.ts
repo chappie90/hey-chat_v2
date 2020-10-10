@@ -41,6 +41,7 @@ type TContact = {
   _id: number;
   username: string;
   chatId?: number;
+  pending?: boolean;
 };
 
 type TChat = {
