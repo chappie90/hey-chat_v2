@@ -101,6 +101,7 @@ const Chat = ({
               <FlatList
                 keyExtractor={item => item._id.toString()}
                 data={messages[chatId]}
+                inverted
                 renderItem={({ item, index }) => {
                   const sameSenderPrevMsg = isSameSender(item, messages[(index - 1)]);
                   const sameSenderNextMsg = isSameSender(item, messages[(index + 1)]);

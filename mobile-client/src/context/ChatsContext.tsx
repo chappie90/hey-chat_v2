@@ -23,7 +23,7 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
       if (state.messages[action.payload.chatId]) {
         return { ...state, messages: {
           ...state.messages,
-          [action.payload.chatId]: [ ...state.messages[action.payload.chatId], action.payload.message ]
+          [action.payload.chatId]: [ action.payload.message, ...state.messages[action.payload.chatId] ]
         } };
       } else {
         return { ...state, messages: {
