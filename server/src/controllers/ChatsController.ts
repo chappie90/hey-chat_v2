@@ -12,11 +12,8 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
   let chats,
       unreadMessagesCount: number;
 
-      console.log('get chats')
-      console.log(userId)
-
   try {
-    const user = await User.find(
+    const user = await User.findOne(
       { _id: userId }
     ).lean()
      .populate('chats')
@@ -29,7 +26,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
        }
      });
 
-    chats = user[0].chats;
+    chats = user.chats;
 
     // Get last message to be displayed on each chat
     for (const chat of chats) {

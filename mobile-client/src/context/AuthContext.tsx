@@ -4,7 +4,7 @@ import createDataContext from './createDataContext';
 import api from '../api/api';
 
 type AuthState = {
-  userId: string | null;
+  userId: number | null;
   username: string | null;
   token: string | null;
   socketState: any | null;

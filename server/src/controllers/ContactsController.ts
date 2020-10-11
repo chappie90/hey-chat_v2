@@ -30,7 +30,7 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
   const { userId } = req.query;
 
   try {
-    const user: TUser = await User.find(
+    const user: TUser = await User.findOne(
       { _id: userId }
     ).lean()
      .populate('pendingContacts', 'username')
@@ -38,13 +38,13 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
      .populate('chats', 'participants')
      .populate('archivedChats', 'participants');
 
-    const chats = [ ...user[0].chats, ...user[0].archivedChats ];
-    const pendingContacts: TContact[] = user[0].pendingContacts.map((pC: TContact) => ({ ...pC, pending: true }));
-    const contacts: TContact[] = [ ...pendingContacts, ...user[0].contacts ];
+    const chats = [ ...user.chats, ...user.archivedChats ];
+    const pendingContacts: TContact[] = user.pendingContacts.map((pC: TContact) => ({ ...pC, pending: true }));
+    const contacts: TContact[] = [ ...pendingContacts, ...user.contacts ];
 
     // Get id of chat between user and each contact
     for (const contact of contacts) {
-      const chatId: number = chats.filter(chat => chat.participants.filter((p: number) => p === contact._id))[0]._id;
+      const chatId: number = chats.filter(chat => chat.participants.filter((p: any) => p === contact._id))[0]._id;
       contact.chatId = chatId;
     }
 
