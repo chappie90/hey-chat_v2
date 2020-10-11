@@ -44,7 +44,7 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
 
     // Get id of chat between user and each contact
     for (const contact of contacts) {
-      const chatId: number = chats.filter(chat => chat.participants.filter((p: any) => p === contact._id))[0]._id;
+      const chatId: string = chats.filter(chat => chat.participants.filter((p: any) => p === contact._id))[0].chatId;
       contact.chatId = chatId;
     }
 

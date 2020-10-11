@@ -82,7 +82,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
       if (contact) {
         routeParams = {
           chatType: chat.type,
-          chatId: chat._id,
+          chatId: chat.chatId,
           contactName: contact.username,
           contactId: contact._id
         };

@@ -8,8 +8,8 @@ import {
 import SearchItem from './SearchItem';
 
 type SearchListProps = {
-  searchResults: Contact[];
-  onSendMessage: (contact: Contact) => void;
+  searchResults: TContact[];
+  onSendMessage: (contact: TContact) => void;
 };
 
 const SearchList = ({ searchResults, onSendMessage }: SearchListProps) => {

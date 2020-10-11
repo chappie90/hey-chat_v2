@@ -30,7 +30,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
 
     // Get last message to be displayed on each chat
     for (const chat of chats) {
-      const lastMessage = await Message.find({ chatId: chat._id })
+      const lastMessage = await Message.find({ chatId: chat.chatId })
         .sort({ 'message.createDate': -1 })
         .limit(1);
       chat.lastMessage = lastMessage;
@@ -48,9 +48,30 @@ const getMessages = async (req: Request, res: Response, next: NextFunction): Pro
   try {
     const messages = await Message.find({ chatId })
                                   .sort({ 'message.createDate': -1 })
-                                  .limit(30);
+                                  .limit(20);
+    
+    const allMessagesLoaded = messages.length < 20 ? true : false;
 
-    res.status(200).send({ messages });
+    res.status(200).send({ messages, allMessagesLoaded });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getMoreMessages = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { chatId, page } = req.query;
+
+  const offset = 20 * (+page - 1);
+
+  try {
+    const messages = await Message.find({ chatId })
+                                  .skip(offset)
+                                  .sort({ 'message.createDate': -1 })
+                                  .limit(20);
+    
+    const allMessagesLoaded = messages.length < 20 ? true : false;
+
+    res.status(200).send({ messages, allMessagesLoaded });
   } catch (err) {
     next(err);
   }
@@ -58,5 +79,6 @@ const getMessages = async (req: Request, res: Response, next: NextFunction): Pro
 
 export default {
   getChats,
-  getMessages
+  getMessages,
+  getMoreMessages
 };

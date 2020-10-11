@@ -1,35 +1,112 @@
 import createDataContext from './createDataContext';
 import api from '../api/api';
 
+const transformMessagesArray = (
+  messages: any[], 
+  username: string, 
+  contactProfile: string, 
+  chatId: string
+): TMessage[] => {
+  return messages.map((message: any) => {
+    const { 
+      message: { id, text, createDate }, 
+      sender, 
+      image, 
+      admin, 
+      delivered, 
+      read,  
+      reply,
+      deleted
+    } = message;
+
+    return {
+      _id: id,
+      chatId,
+      text,
+      createDate,
+      sender: {
+        _id: sender === username ? 1 : 2,
+        name: sender,
+        avatar: sender === username ? undefined : contactProfile
+      },
+      image: image?.name,
+      admin,
+      delivered,
+      read,
+      reply: {
+        origMsgId: reply?.origMsgId,
+        origMsgText: reply?.origMsgText,
+        origMsgSender: reply?.origMsgSender
+      },
+      deleted
+    };
+  });
+};
+
 type ChatsState = {
   chats: TChat[] | [];
-  messages: { [key: number]: TMessage[] } | {};
+  chatHistory: { 
+    [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
+  } | {};
 };
 
 type ChatsAction =
   | { type: 'get_chats'; payload: TChat[] }
-  | { type: 'get_messages'; payload: { chatId: number, messages: TMessage[] } }
-  | { type: 'add_message'; payload: { chatId: number, message: TMessage } };
+  | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
+  | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
+  | { type: 'add_message'; payload: { chatId: string, message: TMessage } };
 
 const chatReducer = (state: ChatsState, action: ChatsAction) => {
   switch (action.type) {
     case 'get_chats':
       return { ...state, chats: action.payload };
     case 'get_messages':
-      return { ...state, messages: { 
-        ...state.messages, [action.payload.chatId]: action.payload.messages 
-      } };
+      return { 
+        ...state, 
+        chatHistory: { 
+          ...state.chatHistory, 
+          [action.payload.chatId]: {
+            messages: action.payload.messages,
+            allMessagesLoaded: action.payload.allMessagesLoaded
+          }
+        } 
+    };
+    case 'get_more_messages':
+      return { 
+        ...state, 
+        chatHistory: { 
+          ...state.chatHistory, 
+          [action.payload.chatId]: {
+            messages: [ ...state.chatHistory[action.payload.chatId].messages, ...action.payload.messages ],
+            allMessagesLoaded: action.payload.allMessagesLoaded
+          }
+        } 
+      };
     case 'add_message': 
-      if (state.messages[action.payload.chatId]) {
-        return { ...state, messages: {
-          ...state.messages,
-          [action.payload.chatId]: [ action.payload.message, ...state.messages[action.payload.chatId] ]
-        } };
+      // If there are previous messages in the chat
+      if (state.chatHistory[action.payload.chatId]) {
+        return { 
+          ...state, 
+          chatHistory: {
+            ...state.chatHistory,
+            [action.payload.chatId]: {
+              ...state.chatHistory[action.payload.chatId],
+              messages: [ action.payload.message, ...state.chatHistory[action.payload.chatId].messages ]
+            } 
+          }
+        };
       } else {
-        return { ...state, messages: {
-          ...state.messages, 
-          [action.payload.chatId]: [ action.payload.message ]
-        } };
+        // If this is the first message in the chat
+        return { 
+          ...state, 
+          chatHistory: {
+            ...state.chatHistory, 
+            [action.payload.chatId]: {
+              messages: [ action.payload.message ],
+              allMessagesLoaded: true
+            }
+          } 
+        };
       }
     default:
       return state;
@@ -56,49 +133,20 @@ const getChats = dispatch => async (userId: number): Promise<TChat[] | void> => 
 const getMessages = dispatch => async (
   username: string, 
   contactProfile: string, 
-  chatId: number
+  chatId: string
 ): Promise<any[] | void> => {
   const params = { chatId };
 
   try {
     const response = await api.get('/messages', { params });
 
-    const messages: TMessage[] = response.data.messages.map((message: any) => {
-      const { 
-        message: { id, text, createDate }, 
-        sender, 
-        image, 
-        admin, 
-        delivered, 
-        read,  
-        reply,
-        deleted
-      } = message;
+    const messages: TMessage[] = transformMessagesArray(response.data.messages, username, contactProfile, chatId);
 
-      return {
-        _id: id,
-        chatId,
-        text,
-        createDate,
-        sender: {
-          _id: sender === username ? 1 : 2,
-          name: sender,
-          avatar: sender === username ? undefined : contactProfile
-        },
-        image: image?.name,
-        admin,
-        delivered,
-        read,
-        reply: {
-          origMsgId: reply?.origMsgId,
-          origMsgText: reply?.origMsgText,
-          origMsgSender: reply?.origMsgSender
-        },
-        deleted
-      };
-    });
-
-    dispatch({ type: 'get_messages', payload: { chatId, messages } });
+    dispatch({ type: 'get_messages', payload: { 
+      chatId, 
+      messages, 
+      allMessagesLoaded: response.data.allMessagesLoaded
+    } });
 
     return messages;
   } catch (error) {
@@ -108,7 +156,34 @@ const getMessages = dispatch => async (
   } 
 };
 
-const addMessage = dispatch => (chatId: number, message: TMessage): void => {
+const getMoreMessages = dispatch => async (
+  username: string, 
+  contactProfile: string, 
+  chatId: string,
+  page: number
+): Promise<any[] | void> => {
+  const params = { chatId, page };
+
+  try {
+    const response = await api.get('/messages/more', { params });
+
+    const messages: TMessage[] = transformMessagesArray(response.data.messages, username, contactProfile, chatId);
+
+    dispatch({ type: 'get_more_messages', payload: { 
+      chatId, 
+      messages, 
+      allMessagesLoaded: response.data.allMessagesLoaded
+    } });
+
+    return messages;
+  } catch (error) {
+    console.log('Get messages method error');
+    if (error.response) console.log(error.response.data.message);
+    if (error.message) console.log(error.message);
+  } 
+};
+
+const addMessage = dispatch => (chatId: string, message: TMessage): void => {
   dispatch({ type: 'add_message', payload: { chatId, message } });
 };
 
@@ -117,10 +192,11 @@ export const { Context, Provider } = createDataContext(
   { 
     getChats,
     getMessages,
+    getMoreMessages,
     addMessage
   },
   {  
     chats: [],
-    messages: {}
+    chatHistory: {}
   }
 );

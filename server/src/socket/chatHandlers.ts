@@ -1,34 +1,69 @@
-import { Mongoose } from "mongoose";
-
+import { Socket } from 'socket.io';
 const mongoose = require('mongoose');
+
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
+import { TChat } from '../types/index';
 
-export const onMessage = async (data: string): Promise<void> => {
+export const onMessage = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
   const {
     chatType,
     chatId,
     senderId,
     recipientId,
-    message
+    message,
+    isFirstMessage
   } = JSON.parse(data);
 
-  let chat,
-      newChatId: number;
+  let chat: TChat,
+      recipientSocketId: string;
 
+  // Update database
   // Private chat
   if (chatType === 'private') {
 
-    if (chatId) {
+    if (isFirstMessage) { 
+      // Create chat if first message
+      const newChat = new Chat({
+        chatId,
+        type: chatType,
+        participants: [senderId, recipientId],
+        requester: senderId
+      });
+      await newChat.save();
+
+      // Add chat to both users chat lists
+      await User.updateOne(
+        { _id: recipientId },
+        { $addToSet: { chats: newChat._id } }
+      );
+
+      // Add contact to user's pending contacts
+      const addContactToPending = await User.updateOne(
+        { _id: senderId }, 
+        { 
+          $addToSet: {
+            pendingContacts:  recipientId,
+            chats: newChat._id
+          }
+        },
+        { new: true }
+      );
+    } else {
       // Check if chat request accepted
-      chat = await Chat.findOne({ _id: chatId });
+      chat = await Chat.findOne({ chatId });
 
       if (!chat.requestAccepted) {
         // Accept chat request if message sender is recipient of request
         if (chat.requester == recipientId) {
           await Chat.updateOne(
-            { _id: chatId }, 
+            { chatId }, 
             { $set: { requestAccepted: true } }
           );
 
@@ -47,41 +82,13 @@ export const onMessage = async (data: string): Promise<void> => {
           );
         }
       }
-    } else {
-      // Create chat if first message
-      const newChat = new Chat({
-        type: chatType,
-        participants: [senderId, recipientId],
-        requester: senderId
-      });
-      await newChat.save();
-
-      newChatId = newChat._id;
-
-      // Add chat to both users chat lists
-      await User.updateOne(
-        { _id: recipientId },
-        { $addToSet: { chats: newChatId } }
-      );
-
-      // Add contact to user's pending contacts
-      const addContactToPending = await User.updateOne(
-        { _id: senderId }, 
-        { 
-          $addToSet: {
-            pendingContacts:  recipientId,
-            chats: newChatId
-          }
-        },
-        { new: true }
-      );
     }
 
   }
 
   // Create new message
   const newMessage = new Message({
-    chatId: chatId ? chatId : newChatId,
+    chatId,
     sender: message.sender.name,
     message: {
       id: message._id,
@@ -91,4 +98,38 @@ export const onMessage = async (data: string): Promise<void> => {
   });
   await newMessage.save();
 
+  // If new message created successfully
+  if (newMessage) {
+
+    // Emit events
+    if (chatType === 'private') {
+      // Check if message recipient is online and get socket id
+      if (users[recipientId]) {
+        recipientSocketId = users[recipientId].id;
+      }
+
+      if (chatId) {
+        // Send new message to recipient and update chat
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('message_received', {
+
+          });
+        }
+        // Send confirmation of message delivered to sender and update chat list
+        socket.emit('message_sent');
+      } else {
+        // Add new chat and send new message to recipient
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('first_message_received', {
+
+          });
+        }
+        // Add new chat, register chat id and send confirmation of message delivered to sender
+        socket.emit('first_message_sent', {
+
+        });
+      }
+    }
+
+  }
 };

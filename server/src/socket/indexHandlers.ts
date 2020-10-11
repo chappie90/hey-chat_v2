@@ -44,7 +44,7 @@ export const onConnect = async (
     socket.broadcast.to(userId).emit('new_online_user', userId);
 
     // Send yourself a list of your online contacts
-    io.to(socketId).emit('my_online_contacts', onlineContacts);
+    socket.emit('my_online_contacts', onlineContacts);
   } catch (err) {
     console.log(err);
   }

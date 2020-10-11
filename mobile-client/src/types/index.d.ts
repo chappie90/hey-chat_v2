@@ -13,7 +13,7 @@ type ChatsStackParams = {
   Chats: undefined;
   CurrentChat: {
     chatType: string;
-    chatId: number;
+    chatId: string;
     contactId?: number;
     contactName?: string;
     contactProfile?: string;
@@ -24,7 +24,7 @@ type ContactsStackParams = {
   Contacts: undefined;
   CurrentChat: {
     chatType: string;
-    chatId: number;
+    chatId: string;
     contactId: number;
     contactName: string;
     contactProfile?: string;
@@ -46,6 +46,7 @@ type TContact = {
 
 type TChat = {
   _id: number;
+  chatId: string;
   type: string;
   participants: TContact[],
   createDate: Date; 
@@ -70,7 +71,7 @@ type TReply = {
 
 type TMessage = {
   _id: string;
-  chatId: number;
+  chatId?: string;
   text: string;
   createDate: Date;
   sender: TSender;

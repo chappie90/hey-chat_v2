@@ -11,15 +11,17 @@ export type TContact = {
   _id: number;
   username: string;
   pending?: boolean;
-  chatId?: number;
+  chatId?: string;
 };
 
 export type TChat = {
   _id: number;
+  chatId: string;
   type: string;
   participants: TContact[],
   createDate: Date; 
   requestAccepted?: boolean;
+  requester?: number;
   muted: false;
   lastMessage: string;
   unreadMessagesCount: number;

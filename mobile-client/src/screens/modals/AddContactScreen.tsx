@@ -60,7 +60,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
 
     navigation.navigate('CurrentChat', {
       chatType: 'private',
-      chatId: null,
+      chatId: undefined,
       contactId: contact._id, 
       contactName: contact.username,
     });

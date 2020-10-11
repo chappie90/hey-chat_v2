@@ -1,11 +1,7 @@
 import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema({
-  chatId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Chat',
-    required: true
-  },
+  chatId: { type: String, required: true },
   sender: { type: String, required: true },
   message: {
     id: { type: String, required: true }, 
@@ -15,7 +11,7 @@ const messageSchema = new mongoose.Schema({
   delivered: { 
     type: Boolean, 
     required: true,
-    default: false 
+    default: true 
   },
   read: { 
     type: Boolean,

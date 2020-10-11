@@ -5,7 +5,7 @@ import { Socket } from 'socket.io';
 const users: { [key: string]: Socket } = {};
 const onlineContacts: string[] = [];
 
-module.exports = function(io) {
+const initSocket = (io: Socket) => {
   // Connect to socket
   io.on('connection', async (socket: Socket) => {
     const { userId, socketId } = await onConnect(io, socket, users, onlineContacts);
@@ -24,7 +24,9 @@ module.exports = function(io) {
     });
   
     // User sends new message
-    socket.on('message', onMessage);
+    socket.on('message', (data: string) => {
+      onMessage(io, socket, users, data);
+    });
 
     // Disconnect from socket
     socket.on('disconnect', () => {
@@ -33,3 +35,6 @@ module.exports = function(io) {
   });
 };
 
+module.exports = {
+  initSocket
+};

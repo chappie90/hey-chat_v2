@@ -44,7 +44,7 @@ const contactsReducer = (state: ContactsState, action: ContactsAction) => {
 //   dispatch({ type: 'get_active_status', payload: users });
 // };
 
-const searchContacts = dispatch => async (username: string, search: string): Promise<Contact[] | void> => {
+const searchContacts = dispatch => async (username: string, search: string): Promise<TContact[] | void> => {
   const params = { username, search };
 
   try {
@@ -59,7 +59,7 @@ const searchContacts = dispatch => async (username: string, search: string): Pro
   }
 };
 
-const getContacts = dispatch => async (userId: number): Promise<Contact[] | void> => {
+const getContacts = dispatch => async (userId: number): Promise<TContact[] | void> => {
   const params = { userId };
 
   try {
