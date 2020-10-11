@@ -18,7 +18,7 @@ const SocketEventListeners = () => {
       // Add new chat, replace temporary contact id with new chat id in chatHistory global state
       // and send confirmation of message delivered to sender
       socketState.on('first_message_sent', (message: TMessage) => {
-
+        console.log('first message sent listener');
       });
     }
   }, [socketState]);

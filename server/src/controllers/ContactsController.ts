@@ -35,7 +35,7 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
     ).lean()
      .populate('pendingContacts', 'username')
      .populate('contacts', 'username')
-     .populate('chats', 'participants')
+     .populate('chats', 'chatId participants')
      .populate('archivedChats', 'participants');
 
     const chats = [ ...user.chats, ...user.archivedChats ];

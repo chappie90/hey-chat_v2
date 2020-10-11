@@ -108,16 +108,7 @@ export const onMessage = async (
         recipientSocketId = users[recipientId].id;
       }
 
-      if (chatId) {
-        // Send new message to recipient and update chat
-        if (recipientSocketId) {
-          io.to(recipientSocketId).emit('message_received', {
-
-          });
-        }
-        // Send confirmation of message delivered to sender and update chat list
-        socket.emit('message_sent');
-      } else {
+      if (isFirstMessage) {
         // Add new chat and send new message to recipient
         if (recipientSocketId) {
           io.to(recipientSocketId).emit('first_message_received', {
@@ -128,6 +119,15 @@ export const onMessage = async (
         socket.emit('first_message_sent', {
 
         });
+      } else {
+        // Send new message to recipient and update chat
+        if (recipientSocketId) {
+          io.to(recipientSocketId).emit('message_received', {
+
+          });
+        }
+        // Send confirmation of message delivered to sender and update chat list
+        socket.emit('message_sent');
       }
     }
 

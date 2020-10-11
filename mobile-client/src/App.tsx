@@ -1,16 +1,13 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  StyleSheet, 
-  View, 
-  AppState
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as ContactsProvider } from './context/ContactsContext';
 import { Provider as ChatsProvider } from './context/ChatsContext';
 import Navigator from './navigation/Navigator';
 import AppStateTracker from './components/AppStateTracker';
+import SocketEventListeners from './socket/SocketEventListeners';
 import SplashScreen from 'react-native-splash-screen'
 
 declare const global: {HermesInternal: null | {}};
@@ -26,7 +23,8 @@ const App = () => {
       <ChatsProvider>
         <ContactsProvider>
           <AppStateTracker />
-            <View style={styles.container}>
+          <SocketEventListeners />
+          <View style={styles.container}>
             <Navigator />
           </View>
         </ContactsProvider>
