@@ -26,6 +26,10 @@ mongoose.connect(mongoUri, {
 });
 mongoose.connection.on('connected', () => {
   console.log('Connected to database');
+
+  // Socket connection
+  const io = socket.listen(server);
+  require('./socket/socket')(io);
 });
 mongoose.connection.on('error', (err) => {
   console.log('Error connecting to database: ' + err);
@@ -37,10 +41,6 @@ require('./routes/routes')(app);
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello !');
 });
-
-// Socket connection
-const io = socket.listen(server);
-require('./socket/socket')(io);
 
 const port = process.env.SERVER_PORT || 3006;
 
