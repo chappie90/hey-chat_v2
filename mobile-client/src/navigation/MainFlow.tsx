@@ -8,6 +8,7 @@ import ChatsScreen from '../screens/ChatsScreen';
 import CurrentChatScreen from '../screens/CurrentChatScreen';
 import ContactsScreen from '../screens/ContactsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import CustomTabBar from './CustomTabBar';
 import { Colors } from '../variables/variables';
 
 // Hide bottom tab navigator on current chat screen
@@ -62,6 +63,7 @@ const ContactsStackNavigator = () => {
 const MainFlow = () => {
   return (
     <Tab.Navigator 
+      tabBar={props => <CustomTabBar { ...props } />}
       initialRouteName="Chats"
       tabBarOptions={{
         style: {
@@ -79,27 +81,28 @@ const MainFlow = () => {
         component={ChatsStackNavigator} 
         options={({ route }) => ({
           tabBarVisible: hideTabBar(route),
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcon name="chat" size={22} color={focused ? Colors.primaryOrange : Colors.white} />
-          ),
-          tabBarBadge: 3,
+          tabBarIcon: ({ size, focused }) => (
+            <MaterialIcon name="chat" size={size} color={focused ? Colors.white : Colors.darkGrey} />
+          )
+          // tabBarBadge: 3,
         })}
       />
       <Tab.Screen 
         name="Contacts" 
         component={ContactsStackNavigator}
-        options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <FontAwesome5 name="user-friends" size={22} color={focused ? Colors.primaryOrange : Colors.white} />
+        options={({ route }) => ({
+          tabBarVisible: hideTabBar(route),
+          tabBarIcon: ({ size, focused }) => (
+            <FontAwesome5 name="user-friends" size={size} color={focused ? Colors.white : Colors.darkGrey} />
           )
-        }}
+        })}
       />
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen} 
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcon name="account-balance" size={22} color={focused ? Colors.primaryOrange : Colors.white} />
+          tabBarIcon: ({ size, focused }) => (
+            <MaterialIcon name="account-balance" size={size} color={focused ? Colors.white : Colors.darkGrey} />
           )
         }}
       />
