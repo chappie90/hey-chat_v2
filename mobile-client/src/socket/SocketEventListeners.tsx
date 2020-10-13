@@ -7,9 +7,10 @@ const SocketEventListeners = () => {
   const { state: { userId, token, socketState } } = useContext(AuthContext);
   const { 
     state: { chatHistory }, 
+    addChat,
     getMessages, 
     getMoreMessages,
-    addMessage 
+    addMessage
   } = useContext(ChatsContext);
 
   useEffect(() => {
@@ -17,8 +18,11 @@ const SocketEventListeners = () => {
     if (socketState) {
       // Add new chat, replace temporary contact id with new chat id in chatHistory global state
       // and send confirmation of message delivered to sender
-      socketState.on('first_message_sent', (message: TMessage) => {
-        console.log('first message sent listener');
+      socketState.on('first_message_sent', (data: string) => {
+        const { newChat, lastMessage } = JSON.parse(data);
+
+        const chat = { ...newChat, lastMessage };
+        addChat(chat);
       });
     }
   }, [socketState]);

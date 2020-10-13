@@ -1,48 +1,6 @@
 import createDataContext from './createDataContext';
 import api from '../api/api';
 
-const transformMessagesArray = (
-  messages: any[], 
-  username: string, 
-  contactProfile: string, 
-  chatId: string
-): TMessage[] => {
-  return messages.map((message: any) => {
-    const { 
-      message: { id, text, createDate }, 
-      sender, 
-      image, 
-      admin, 
-      delivered, 
-      read,  
-      reply,
-      deleted
-    } = message;
-
-    return {
-      _id: id,
-      chatId,
-      text,
-      createDate,
-      sender: {
-        _id: sender === username ? 1 : 2,
-        name: sender,
-        avatar: sender === username ? undefined : contactProfile
-      },
-      image: image?.name,
-      admin,
-      delivered,
-      read,
-      reply: {
-        origMsgId: reply?.origMsgId,
-        origMsgText: reply?.origMsgText,
-        origMsgSender: reply?.origMsgSender
-      },
-      deleted
-    };
-  });
-};
-
 type ChatsState = {
   chats: TChat[] | [];
   chatHistory: { 
@@ -52,6 +10,7 @@ type ChatsState = {
 
 type ChatsAction =
   | { type: 'get_chats'; payload: TChat[] }
+  | { type: 'add_chat'; payload: TChat }
   | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'add_message'; payload: { chatId: string, message: TMessage } };
@@ -60,6 +19,8 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
   switch (action.type) {
     case 'get_chats':
       return { ...state, chats: action.payload };
+    case 'add_chat':
+      return { ...state, chats: [ action.payload, ...state.chats ] };
     case 'get_messages':
       return { 
         ...state, 
@@ -130,6 +91,10 @@ const getChats = dispatch => async (userId: number): Promise<TChat[] | void> => 
   }
 };
 
+const addChat = dispatch => (chat: TChat): void => {
+  dispatch({ type: 'add_chat', payload: { chat } });
+};
+
 const getMessages = dispatch => async (
   username: string, 
   contactProfile: string, 
@@ -191,6 +156,7 @@ export const { Context, Provider } = createDataContext(
   chatReducer,
   { 
     getChats,
+    addChat,
     getMessages,
     getMoreMessages,
     addMessage
@@ -200,3 +166,45 @@ export const { Context, Provider } = createDataContext(
     chatHistory: {}
   }
 );
+
+const transformMessagesArray = (
+  messages: any[], 
+  username: string, 
+  contactProfile: string, 
+  chatId: string
+): TMessage[] => {
+  return messages.map((message: any) => {
+    const { 
+      message: { id, text, createDate }, 
+      sender, 
+      image, 
+      admin, 
+      delivered, 
+      read,  
+      reply,
+      deleted
+    } = message;
+
+    return {
+      _id: id,
+      chatId,
+      text,
+      createDate,
+      sender: {
+        _id: sender === username ? 1 : 2,
+        name: sender,
+        avatar: sender === username ? undefined : contactProfile
+      },
+      image: image?.name,
+      admin,
+      delivered,
+      read,
+      reply: {
+        origMsgId: reply?.origMsgId,
+        origMsgText: reply?.origMsgText,
+        origMsgSender: reply?.origMsgSender
+      },
+      deleted
+    };
+  });
+};

@@ -22,6 +22,7 @@ export const onMessage = async (
   } = JSON.parse(data);
 
   let chat: TChat,
+      newChat,
       recipientSocketId: string;
 
   // Update database
@@ -30,7 +31,7 @@ export const onMessage = async (
 
     if (isFirstMessage) { 
       // Create chat if first message
-      const newChat = new Chat({
+      newChat = new Chat({
         chatId,
         type: chatType,
         participants: [senderId, recipientId],
@@ -109,6 +110,8 @@ export const onMessage = async (
       }
 
       if (isFirstMessage) {
+        const data = { newChat, lastMessage: newMessage };
+
         // Add new chat and send new message to recipient
         if (recipientSocketId) {
           io.to(recipientSocketId).emit('first_message_received', {
@@ -116,9 +119,7 @@ export const onMessage = async (
           });
         }
         // Add new chat, register chat id and send confirmation of message delivered to sender
-        socket.emit('first_message_sent', {
-
-        });
+        socket.emit('first_message_sent', JSON.stringify(data));
       } else {
         // Send new message to recipient and update chat
         if (recipientSocketId) {
