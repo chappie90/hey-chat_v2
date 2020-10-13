@@ -1,10 +1,10 @@
 export const Colors = {
-  lightYellow: 'fde2ae',
-  darkYellow: '#f5b041',
-  lightPurple: '#dfd9ef',
-  darkPurple: '#776ebf',
-  lightGrey: '#eaeaea',
-  darkGrey: '#343434',
+  yellowLight: 'fde2ae',
+  yellowDark: '#f5b041',
+  purpleLight: '#dfd9ef',
+  purpleDark: '#776ebf',
+  greyLight: '#eaeaea',
+  greyDark: '#343434',
   white: '#fff',
   black: '#000',
   red: '#e50000'

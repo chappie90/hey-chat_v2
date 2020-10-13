@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     height: 52,
-    backgroundColor: Colors.lightGrey,
+    backgroundColor: Colors.greyLight,
     paddingHorizontal: 7,
     paddingVertical: 6,
     borderRadius: 26,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   animatedTab: {
     height: 40,
-    backgroundColor: Colors.darkGrey,
+    backgroundColor: Colors.greyDark,
     borderRadius: 26,
     position: 'absolute',
     top: 6

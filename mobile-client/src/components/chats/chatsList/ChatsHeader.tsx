@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: Colors.darkYellow,
+    backgroundColor: Colors.yellowDark,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     paddingRight: 20,
