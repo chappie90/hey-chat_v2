@@ -43,20 +43,18 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   return (
     <View style={styles.container}>
       <ChatsHeader openModal={openModal} />
-      <View style={styles.body}>
-        {isLoading ? 
-          (
-            <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="large" color={Colors.primaryOrange} />
-            </View>
-          ) :
-          (
-            chats.length > 0 ? 
-              <ChatsList chats={chats} /> :
-              <ChatsIcon />
-          )
-        }
-      </View>
+      {isLoading ? 
+        (
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color={Colors.yellowDark} />
+          </View>
+        ) :
+        (
+          chats.length > 0 ? 
+            <ChatsList chats={chats} /> :
+            <ChatsIcon />
+        )
+      }
     </View>
   );
 };

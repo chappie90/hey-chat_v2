@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.purpleLight,
     width: 300,
     borderRadius: 35,
-    marginTop: 15
+    marginTop: 20
   },
   tab: {
     paddingVertical: 6, 

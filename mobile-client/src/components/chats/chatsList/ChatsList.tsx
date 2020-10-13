@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   deleteBtnContainer: {
-    backgroundColor: Colors.tertiaryRed, 
+    backgroundColor: Colors.red, 
     width: '50%', 
     height: '100%',
     justifyContent: 'center',

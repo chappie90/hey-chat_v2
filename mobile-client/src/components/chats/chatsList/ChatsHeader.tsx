@@ -16,21 +16,27 @@ type ChatsHeaderProps = {
 const ChatsHeader = ({ openModal }: ChatsHeaderProps) => {
   return (
     <View style={styles.header}>
-      <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Chats</CustomText>
-      <TouchableOpacity style={styles.addButton} onPress={openModal}>
-        <MaterialIcon name="group-add" size={37} color={Colors.white} />
-      </TouchableOpacity>
+      <View style={styles.top}>
+        <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Chats</CustomText>
+        <TouchableOpacity style={styles.addButton} onPress={openModal}>
+          <MaterialIcon name="group-add" size={37} color={Colors.white} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.bottom}></View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     backgroundColor: Colors.yellowDark,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
+    marginBottom: -40
+  },
+  top: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingRight: 20,
     paddingLeft: 30,
     paddingTop: 20,
@@ -38,6 +44,12 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginTop: 2
+  },
+  bottom: {
+    height: 70,
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35
   }
 });
 
