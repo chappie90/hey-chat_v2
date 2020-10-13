@@ -22,11 +22,11 @@ const ToggleListTabs = ({
       <TouchableWithoutFeedback onPress={() => toggleList(false)}>
         <View style={[
           styles.tab, 
-          { backgroundColor: showActiveUsers ? Colors.white : Colors.lightGrey }
+          { backgroundColor: showActiveUsers ? Colors.purpleLight : Colors.purpleDark }
         ]}>
           <CustomText 
             style={styles.tabText}
-            color={showActiveUsers ? Colors.grey : Colors.darkGrey}
+            color={showActiveUsers ? Colors.purpleDark : Colors.white}
             fontSize={Headings.headingSmall}
             fontWeight={Fonts.semiBold}
           >
@@ -37,11 +37,11 @@ const ToggleListTabs = ({
       <TouchableWithoutFeedback onPress={() => toggleList(true)}>
       <View style={[
           styles.tab,
-          { backgroundColor: showActiveUsers ? Colors.lightGrey : Colors.white }
+          { backgroundColor: showActiveUsers ? Colors.purpleDark : Colors.purpleLight }
       ]}>
         <CustomText 
           style={styles.tabText}
-          color={showActiveUsers ? Colors.darkGrey : Colors.grey}
+          color={showActiveUsers ? Colors.white : Colors.purpleDark}
           fontSize={Headings.headingSmall}
           fontWeight={Fonts.semiBold} 
         >
@@ -55,15 +55,21 @@ const ToggleListTabs = ({
 
 const styles = StyleSheet.create({
   tabsContainer: {
-    flexDirection: 'row', 
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: '15%', 
-    paddingVertical: 10
+    paddingVertical: 5,
+    paddingHorizontal: 6,
+    backgroundColor: Colors.purpleLight,
+    width: 300,
+    borderRadius: 35,
+    marginTop: 15
   },
   tab: {
-    paddingVertical: 4, 
-    width: 96, 
-    borderRadius: 20
+    paddingVertical: 6, 
+    width: '50%', 
+    borderRadius: 35
   },
   tabText: {
     textAlign: 'center'
