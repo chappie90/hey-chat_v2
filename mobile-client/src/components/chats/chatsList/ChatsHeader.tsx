@@ -28,12 +28,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: Colors.primaryOrange,
-    paddingRight: 15,
-    paddingLeft: 20,
-    paddingTop: 65,
-    paddingBottom: 10,
-    height: 110
+    backgroundColor: Colors.darkYellow,
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    paddingRight: 20,
+    paddingLeft: 30,
+    paddingTop: 20,
+    paddingBottom: 5
   },
   addButton: {
     marginTop: 2

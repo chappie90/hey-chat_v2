@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, SafeAreaView } from 'react-native';
 
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as ContactsProvider } from './context/ContactsContext';
@@ -24,9 +24,9 @@ const App = () => {
         <ContactsProvider>
           <AppStateTracker />
           <SocketEventListeners />
-          <View style={styles.container}>
+          <SafeAreaView style={styles.container}>
             <Navigator />
-          </View>
+          </SafeAreaView>
         </ContactsProvider>
       </ChatsProvider>
     </AuthProvider>
