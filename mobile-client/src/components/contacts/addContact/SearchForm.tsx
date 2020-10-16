@@ -18,6 +18,7 @@ type SearchFormProps = {
 const SearchForm = ({ search, onChangeText, onCloseModal }: SearchFormProps) => {
   return (
     <View style={styles.header}>
+      <View style={styles.triangle} />
       <MaterialIcon name="search" size={40} color={Colors.white} />
       <TextInput
         style={styles.input} 
@@ -45,6 +46,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.purpleLight,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30
+  },
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 20,
+    borderRightWidth: 20,
+    borderBottomWidth: 40,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: Colors.purpleLight,
+    position: 'absolute',
+    right: 0,
+    top: -40,
+    transform: [
+       { rotate: '25deg' }
+    ]
   },
   input: {
     fontSize: Headings.headingLarge,
