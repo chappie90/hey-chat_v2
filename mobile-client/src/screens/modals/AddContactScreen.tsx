@@ -76,14 +76,15 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
   return (
     <Modal
       isVisible={visible}
-      animationIn="slideInUp"
-      animationOut="slideOutDown"
+      animationIn="zoomIn"
+      animationOut="zoomOut"
       onSwipeComplete={closeModal}
       swipeThreshold={60}
       swipeDirection="down"
       backdropOpacity={0}
       onBackdropPress={dismissKeyboard}
       propagateSwipe={true}
+      coverScreen={false}
       style={styles.modal}
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -92,7 +93,7 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
           {isLoading ? 
             (
               <View style={styles.spinnerContainer}>
-                <ActivityIndicator size="large" color={Colors.primaryOrange} />
+                <ActivityIndicator size="large" color={Colors.yellowDark} />
               </View> 
             ) :
             ( 
@@ -111,15 +112,16 @@ const AddContactScreen = ({ visible, closeModal }: AddContactScreenProps) => {
 
 const styles = StyleSheet.create({
   modal: {
-    marginHorizontal: 0, 
-    marginBottom: 0
+    marginHorizontal: 14, 
+    backgroundColor: Colors.purpleLight,
+    padding: 14,
+    marginTop: 80,
+    borderRadius: 35
   },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '25%',
-    backgroundColor: Colors.white
+    alignItems: 'center'
   },
   spinnerContainer: {
     flex: 1,

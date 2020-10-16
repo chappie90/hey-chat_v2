@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     height: 80,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.secondaryGreen,
+    backgroundColor: Colors.purpleLight,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30
   },
