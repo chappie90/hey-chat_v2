@@ -12,10 +12,9 @@ import { Colors, Headings } from '../../../variables/variables';
 type SearchFormProps = {
   search: string;
   onChangeText: (text: string) => void;
-  onCloseModal: () => void;
 };
 
-const SearchForm = ({ search, onChangeText, onCloseModal }: SearchFormProps) => {
+const SearchForm = ({ search, onChangeText, }: SearchFormProps) => {
   return (
     <View style={styles.header}>
       <MaterialIcon name="search" size={28} color={Colors.purpleDark} />
@@ -29,8 +28,6 @@ const SearchForm = ({ search, onChangeText, onCloseModal }: SearchFormProps) => 
         onChangeText={onChangeText}
         autoCapitalize="none"
         autoCorrect={false} />
-      <TouchableOpacity onPress={onCloseModal}>
-      </TouchableOpacity>
     </View>
   );
 };

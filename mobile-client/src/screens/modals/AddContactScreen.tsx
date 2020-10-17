@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { 
   View, 
   StyleSheet,
@@ -62,20 +62,24 @@ const AddContactScreen = ({ visible }: AddContactScreenProps) => {
     });
   };
 
-  const onCloseModal = (): void => {
-    setIsFirstRender(true);
-    setSearch('');
-    setSearchResults([]);
-  };
+  useEffect(() => {
+    if (!visible) {
+      setIsFirstRender(true);
+      setSearch('');
+      setSearchResults([]);
+    }
+  }, [visible]);
 
   return (
-    <CustomModal
-      isVisible={visible}
-      // onBackdropPress={dismissKeyboard}
-    >
+    <CustomModal isVisible={visible}>
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
           <View style={styles.triangle} />
+          {isLoading &&
+            <View style={styles.spinnerContainer}>
+              <ActivityIndicator size="large" color={Colors.yellowDark} />
+            </View> 
+          }
           <CustomText 
             style={styles.subHeading}
             color={Colors.purpleDark}
@@ -85,27 +89,18 @@ const AddContactScreen = ({ visible }: AddContactScreenProps) => {
             Search
           </CustomText>
           <View style={styles.searchContainer}>
-            {isLoading ? 
+            <SearchForm search={search} onChangeText={onChangeText} />
+            {searchResults.length > 0 ?
+              <SearchList searchResults={searchResults} onSendMessage={onSendMessage} /> :
               (
-                <View style={styles.spinnerContainer}>
-                  <ActivityIndicator size="large" color={Colors.yellowDark} />
-                </View> 
-              ) :
-              ( 
-                <>
-                  <SearchForm search={search} onChangeText={onChangeText} onCloseModal={onCloseModal} />
-                  {searchResults.length > 0 ? 
-                    <SearchList searchResults={searchResults} onSendMessage={onSendMessage} /> :
-                    search ?
-                      <CustomText
-                        fontSize={Headings.headingSmall}
-                        style={styles.noResults}
-                      >
-                          No users found
-                      </CustomText> :
-                      <SearchIcon isFirstRender={isFirstRender} />
-                  }
-                </>
+                search ?
+                (
+                  !isLoading && 
+                    <CustomText fontSize={Headings.headingSmall} style={styles.noResults}>
+                      No users found
+                    </CustomText>
+                ) :
+                visible && <SearchIcon isFirstRender={isFirstRender} />
               )
             }
           </View>
@@ -149,8 +144,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   spinnerContainer: {
-    flex: 1,
-    padding: 5
+    position: 'absolute',
+    top: -5,
+    alignSelf: 'center'
   },
   noResults: {
     flex: 1,
