@@ -122,7 +122,7 @@ const Chat = ({
       {isLoading ? 
         (
           <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color={Colors.primaryOrange} />
+            <ActivityIndicator size="large" color={Colors.yellowDark} />
           </View>
         ) :
         (

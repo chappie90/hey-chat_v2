@@ -1,15 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import dayjs from 'dayjs';
-var localizedFormat = require('dayjs/plugin/localizedFormat')
-dayjs.extend(localizedFormat);
 
 import CustomText from '../../../components/CustomText';
 import { Colors, Headings } from '../../../variables/variables';
 
 type MessageBubbleProps = {
   text: string;
-  createDate: Date;
   userId: number;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
@@ -17,7 +13,6 @@ type MessageBubbleProps = {
 
 const MessageBubble = ({ 
   text, 
-  createDate, 
   userId,
   sameSenderPrevMsg,
   sameSenderNextMsg
@@ -35,17 +30,10 @@ const MessageBubble = ({
         ]}
       >
         <CustomText 
-          color={userId === 1 ? Colors.white : Colors.darkGrey}
+          color={userId === 1 ? Colors.white : Colors.greyDark}
           fontSize={Headings.headingSmall}
         >
           {text}
-        </CustomText>
-        <CustomText 
-          style={styles.date}
-          fontSize={10}
-          color={userId === 1 ? Colors.white : Colors.grey}
-        >
-          {dayjs(createDate).format('LT')}
         </CustomText>
       </View>
     </TouchableWithoutFeedback>
@@ -59,9 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 18
   },
   leftBubble: {
-    backgroundColor: Colors.lightGrey,
-    marginRight: '15%',
-    marginLeft: 48
+    backgroundColor: Colors.yellowLight
   },
   leftBubblePrevMsg: {
     borderTopLeftRadius: 4
@@ -70,20 +56,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4
   },
   rightBubble: {
-    backgroundColor: Colors.secondaryGreen,
-    marginRight: 34,
-    marginLeft: '20%',
-    alignSelf: 'flex-end'
+    backgroundColor: Colors.yellowDark
   },
   rightBubblePrevMsg: {
     borderTopRightRadius: 4
   },
   rightBubbleNextMsg: {
     borderBottomRightRadius: 4
-  },
-  date: {
-    alignSelf: 'flex-end',
-    marginTop: 2
   }
 });
 

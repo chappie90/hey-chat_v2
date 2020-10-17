@@ -26,14 +26,13 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
+    left: -45,
     zIndex: 5,
     overflow: 'hidden', 
-    width: 32, 
-    height: 32, 
-    borderRadius: 16, 
-    marginHorizontal: 8,
-    backgroundColor: Colors.lightGrey
+    width: 38, 
+    height: 38, 
+    borderRadius: 19, 
+    backgroundColor: Colors.greyLight
   },
   image: {
     width: '100%', 

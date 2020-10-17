@@ -15,15 +15,15 @@ const MessageStatus = ({ delivered, read }: MessageStatusProps) => {
       <Ionicon
         style={styles.leftCheckmark}
         name="ios-checkmark"
-        size={18} 
-        color={read ? Colors.blue : Colors.grey} 
+        size={15} 
+        color={read ? Colors.yellowDark : Colors.greyDark} 
       />
       {(delivered || read) && (
         <Ionicon
           style={styles.rightCheckmark}
           name="ios-checkmark"
-          size={18} 
-          color={read ? Colors.blue : Colors.grey}
+          size={15} 
+          color={read ? Colors.yellowDark : Colors.greyDark}
         />
       )}
     </View>
@@ -32,11 +32,7 @@ const MessageStatus = ({ delivered, read }: MessageStatusProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    marginHorizontal: 4
+    flexDirection: 'row'
   },
   leftCheckmark: {
   },

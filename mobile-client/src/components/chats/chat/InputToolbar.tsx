@@ -6,6 +6,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
 import CustomText from '../../../components/CustomText';
@@ -40,7 +41,7 @@ const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProp
         style={styles.input} 
         selectionColor={'grey'}
         placeholder="Type a message..."
-        placeholderTextColor={Colors.darkGrey}
+        placeholderTextColor={Colors.yellowDark}
         autoFocus
         multiline
         value={message}
@@ -52,7 +53,7 @@ const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProp
         onPress={() => onSendMessage(message)}
         disabled={!message}
       >
-        <MaterialIcon name="send" size={26} color={message ? Colors.primaryOrange : Colors.grey} />
+        <MaterialCommunityIcon name="send-circle" size={35} color={message ? Colors.yellowDark : Colors.greyDark} />
       </TouchableOpacity>
     </View>
   );
@@ -63,9 +64,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingHorizontal: 10,
     borderTopWidth: 1, 
-    borderTopColor: Colors.lightGrey
+    borderTopColor: Colors.greyLight
   },
   actions: {
     flexDirection:'row',
@@ -75,16 +76,21 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    minHeight: 32,
-    borderRadius: 18,
-    backgroundColor: Colors.lightGrey,
-    paddingHorizontal: 10,
-    paddingTop: 7,
+    minHeight: 38,
+    borderRadius: 35,
+    backgroundColor: Colors.yellowLight,
+    paddingLeft: 10,
+    paddingRight: 40,
+    paddingTop: 10,
     paddingBottom: 7
   },
   sendButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 3
+    position: 'absolute',
+    right: 13,
+    top: 9,
+    transform: [
+      { rotate: '-45deg' }
+    ]
   }
 });
 
