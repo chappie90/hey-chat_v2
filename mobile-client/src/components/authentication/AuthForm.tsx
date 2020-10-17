@@ -93,7 +93,7 @@ const AuthForm = ({
   return (
     <View style={styles.container}>
       <CustomText 
-        color={Colors.primaryOrange}
+        color={Colors.yellowDark}
         fontSize={Headings.headingExtraLarge}
         fontWeight={Fonts.semiBold} 
         style={styles.header}>
@@ -107,7 +107,7 @@ const AuthForm = ({
         returnKeyType="next"
         onSubmitEditing={focusInput} 
         autoCapitalize="none"
-        placeholderTextColor={Colors.grey}
+        placeholderTextColor={Colors.greyDark}
         // blurOnSubmit={false}
         autoCorrect={false} />
       {usernameIsValid !== null && !usernameIsValid && (
@@ -123,7 +123,7 @@ const AuthForm = ({
         autoCorrect={false}
         autoCapitalize="none"
         secureTextEntry
-        placeholderTextColor={Colors.grey}
+        placeholderTextColor={Colors.greyDark}
         ref={inputEl}
       />
       {passwordIsValid !== null && !passwordIsValid && (
@@ -132,7 +132,7 @@ const AuthForm = ({
           </CustomText>
       )}
       <CustomButton 
-        color={Colors.primaryOrange}
+        color={Colors.yellowDark}
         buttonSize="big"
         style={styles.button} 
         onPress={onFormSubmit}
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     height: 60,
     fontSize: 20,
     borderBottomWidth: 2,
-    borderBottomColor: Colors.lightGrey
+    borderBottomColor: Colors.greyLight
   },
   button: {
     alignSelf: 'center',
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: Headings.headingSmall,
     textAlign: 'center',
-    color: Colors.darkGrey
+    color: Colors.greyDark
   }
 });
 

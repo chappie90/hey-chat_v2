@@ -46,12 +46,12 @@ const StarterScreen = () => {
       <SigninScreen visible={showSignin} toggleModals={toggleModals} closeModal={closeModal} />
       <ViewPager />
       <ScaleViewAnim style={{ alignItems: 'center' }}>
-        <CustomButton color={Colors.primaryOrange} onPress={onPressSignup}> 
+        <CustomButton color={Colors.yellowDark} onPress={onPressSignup}> 
           Get Started
         </CustomButton>
         <CustomButton 
           style={styles.signinButton} 
-          colorText={Colors.darkGrey}
+          colorText={Colors.greyDark}
           onPress={onPressSignin}
         > 
           Sign In
@@ -64,7 +64,7 @@ const StarterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.lightGrey,
+    backgroundColor: Colors.greyLight,
   },
   signinButton: {
     marginBottom: 20,
