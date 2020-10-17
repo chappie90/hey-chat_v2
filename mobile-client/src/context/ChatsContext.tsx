@@ -92,7 +92,7 @@ const getChats = dispatch => async (userId: number): Promise<TChat[] | void> => 
 };
 
 const addChat = dispatch => (chat: TChat): void => {
-  dispatch({ type: 'add_chat', payload: { chat } });
+  dispatch({ type: 'add_chat', payload: chat });
 };
 
 const getMessages = dispatch => async (
