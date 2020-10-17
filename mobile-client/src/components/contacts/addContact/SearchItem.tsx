@@ -9,7 +9,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { Images } from '../../../../assets/assets';
 import CustomButton from '../../../components/CustomButton';
 import CustomText from '../../../components/CustomText';
-import { Colors, Headings } from '../../../variables/variables';
+import { Colors, Fonts, Headings } from '../../../variables/variables';
 
 type SearchItemProps = {
   item: TContact,
@@ -29,16 +29,15 @@ const SearchItem = ({ item, onSendMessage }: SearchItemProps) => {
             <Image style={styles.image} source={ Images.avatarSmall } />
           }
         </View>           
-        <CustomText>{item.username}</CustomText>  
+        <CustomText fontWeight={Fonts.semiBold}>{item.username}</CustomText>  
       </View> 
       <CustomButton
-        color={Colors.secondaryGreen}
+        color={Colors.purpleDark}
         buttonSize="small"
-        textFontSize={Headings.headingSmall}
+        textFontSize={Headings.headingExtraSmall}
         onPress={() => onSendMessage(item)}
       >
-          <MaterialIcon name="message" size={25} color={Colors.white} /> 
-          Message
+        Send
       </CustomButton>    
     </View>
   );
@@ -50,7 +49,9 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'space-between',
     paddingVertical: 6, 
-    paddingHorizontal: 15,
+    marginHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.purpleLight
   },
   userDetails: {
     flexDirection: 'row',
@@ -60,9 +61,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden', 
     width: 44, 
     height: 44, 
-    borderRadius: 22, 
-    marginRight: 10,
-    backgroundColor: Colors.lightGrey
+    borderRadius: 12, 
+    marginRight: 20,
+    backgroundColor: Colors.greyLight
   },
   image: {
     width: '100%', 

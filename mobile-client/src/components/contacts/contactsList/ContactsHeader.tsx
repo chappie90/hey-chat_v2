@@ -10,15 +10,15 @@ import { Colors, Headings } from '../../../variables/variables';
 import CustomText from '../../../components/CustomText';
 
 type ContactsHeaderProps = {
-  openModal: () => void;
+  toggleModal: () => void;
 };
 
-const ContactsHeader = ({ openModal }: ContactsHeaderProps) => {
+const ContactsHeader = ({ toggleModal }: ContactsHeaderProps) => {
   return (
     <View style={styles.header}>
       <View style={styles.top}>
         <CustomText color={Colors.white} fontSize={Headings.headingLarge}>My Contacts</CustomText>
-        <TouchableOpacity style={styles.addButton} onPress={openModal}>
+        <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
           <FontAwesome5 name="user-plus" size={Headings.headingBig} color={Colors.white} />
         </TouchableOpacity>
       </View>

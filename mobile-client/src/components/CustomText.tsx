@@ -21,7 +21,7 @@ const CustomText = ({
   return (
     <Text style={{ 
       ...style,  
-      color: color ? color: Colors.darkGrey,
+      color: color ? color: Colors.greyDark,
       fontSize: fontSize ? fontSize : Headings.headingMedium,
       fontFamily: fontWeight ? fontWeight : Fonts.regular
     }}>

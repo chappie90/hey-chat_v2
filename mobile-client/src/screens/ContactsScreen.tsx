@@ -1,5 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  StyleSheet, 
+  ActivityIndicator
+} from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -33,8 +37,8 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   const [showActiveUsers, setShowActiveUsers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const openModal = (): void => {
-    setShowAddContact(true);
+  const toggleModal = (): void => {
+    setShowAddContact(!showAddContact);
   };
 
   const closeModal = (): void => {
@@ -65,8 +69,8 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <AddContactScreen visible={showAddContact} closeModal={closeModal} />
-      <ContactsHeader openModal={openModal} />
+      <AddContactScreen visible={showAddContact} />
+      <ContactsHeader toggleModal={toggleModal} />
       {isLoading ? 
         (
           <View style={styles.spinnerContainer}>

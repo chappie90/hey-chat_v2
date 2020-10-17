@@ -18,20 +18,18 @@ type SearchFormProps = {
 const SearchForm = ({ search, onChangeText, onCloseModal }: SearchFormProps) => {
   return (
     <View style={styles.header}>
-      <View style={styles.triangle} />
-      <MaterialIcon name="search" size={40} color={Colors.white} />
+      <MaterialIcon name="search" size={28} color={Colors.purpleDark} />
       <TextInput
         style={styles.input} 
         selectionColor={'grey'}
-        placeholder="Find people..."
-        placeholderTextColor="white"
+        placeholder="Find people"
+        placeholderTextColor={Colors.purpleDark}
         autoFocus
         value={search}
         onChangeText={onChangeText}
         autoCapitalize="none"
         autoCorrect={false} />
       <TouchableOpacity onPress={onCloseModal}>
-        <MaterialIcon name="close" size={32} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -40,36 +38,18 @@ const SearchForm = ({ search, onChangeText, onCloseModal }: SearchFormProps) => 
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 10,
-    height: 80,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.purpleLight,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30
-  },
-  triangle: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 20,
-    borderRightWidth: 20,
-    borderBottomWidth: 40,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: Colors.purpleLight,
-    position: 'absolute',
-    right: 0,
-    top: -40,
-    transform: [
-       { rotate: '25deg' }
-    ]
+    backgroundColor: Colors.purpleLighter,
+    borderRadius: 35,
+    marginHorizontal: 12,
+    paddingVertical: 8
   },
   input: {
-    fontSize: Headings.headingLarge,
+    fontSize: Headings.headingSmall,
     flex: 1,
-    color: Colors.white,
-    paddingLeft: 10
+    color: Colors.purpleDark,
+    paddingLeft: 5
   }
 });
 
