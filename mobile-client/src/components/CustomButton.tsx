@@ -64,7 +64,7 @@ const CustomButton = ({
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 7,
-    borderRadius: 3
+    borderRadius: 35
   }
 });
 

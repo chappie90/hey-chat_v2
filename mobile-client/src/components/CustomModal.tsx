@@ -1,21 +1,11 @@
-import React, { useEffect, useRef, ReactNode, CSSProperties } from 'react';
-import { 
-  StyleSheet, 
-  Animated,
-  useWindowDimensions
-} from 'react-native';
+import React, { useEffect, useRef, ReactNode } from 'react';
+import { StyleSheet, Animated, useWindowDimensions } from 'react-native';
 
 import { Colors } from '../variables/variables';
 
-type CustomModalProps = {
-  style?: CSSProperties;
-  children: ReactNode;
-};
+type CustomModalProps = { isVisible: boolean; children: ReactNode };
 
-const CustomModal = ({ 
-  style,
-  children
-}: CustomModalProps) => {
+const CustomModal = ({ isVisible, children }: CustomModalProps) => {
   const window = useWindowDimensions();
 
   const topToBottomAnim = useRef(new Animated.Value(window.height - 70)).current;
@@ -23,30 +13,30 @@ const CustomModal = ({
   const opactiyAnim = useRef(new Animated.Value(0)).current; 
 
   useEffect(() => {
-    Animated.spring(
+    Animated.timing(
      topToBottomAnim, { 
-        toValue: 0
-        // duration: 800,
-       //  easing: Easing.cubic
+        toValue: isVisible ? 0 : window.height - 70,
+        duration: 200,
+        useNativeDriver: false
       }
     ).start();
  
-    Animated.spring(
-     rightToLeftAnim, { 
-       toValue: 15
-    //    duration: 800,
-       // easing: Easing.cubic
-     }
-   ).start();
- 
-   Animated.timing(
-     opactiyAnim, { 
-        toValue: 1
-        duration: 600,
-       //  easing: Easing.cubic
+    Animated.timing(
+      rightToLeftAnim, { 
+       toValue: isVisible ? 15 : window.width - 30,
+       duration: 200,
+       useNativeDriver: false
       }
     ).start();
-  }, []);
+ 
+    Animated.timing(
+      opactiyAnim, { 
+        toValue: isVisible ? 1 : 0,
+        duration: 100,
+        useNativeDriver: false
+      }
+      ).start();
+    }, [isVisible]);
   
   return (
     <Animated.View
@@ -71,7 +61,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 15,
     top: 80,
-    zIndex: 2
+    zIndex: 2,
+    padding: 14
   }
 });
 
