@@ -14,19 +14,24 @@ type MessageProps = {
   content: TMessage;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
+  isLastMessage: boolean;
 };
 
 const Message = ({ 
   content: { text, createDate, sender, delivered, read }, 
   sameSenderPrevMsg, 
-  sameSenderNextMsg 
+  sameSenderNextMsg,
+  isLastMessage
 }: MessageProps) => {
 
   return (
     <View style={[
       styles.container,
       sender._id === 1 ? styles.rightMessage : styles.leftMessage,
-      {  marginTop: sameSenderNextMsg ? 3 : 12 }
+      {  
+        marginTop: sameSenderPrevMsg ? 3 : 12,
+        marginBottom: isLastMessage ? 8 : 0
+      }
     ]}>
       {sender._id === 2 && !sameSenderNextMsg && (
         <Avatar avatar={sender.avatar} />
@@ -38,7 +43,7 @@ const Message = ({
           sameSenderPrevMsg={sameSenderPrevMsg}
           sameSenderNextMsg={sameSenderNextMsg}
         />
-        {!sameSenderPrevMsg && 
+        {!sameSenderNextMsg && 
           <View 
             style={[
               styles.messageMeta,

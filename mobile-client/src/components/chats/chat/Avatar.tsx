@@ -25,7 +25,7 @@ const Avatar = ({ avatar }: AvatarProps) => {
 const styles = StyleSheet.create({
   imageContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 16,
     left: -45,
     zIndex: 5,
     overflow: 'hidden', 

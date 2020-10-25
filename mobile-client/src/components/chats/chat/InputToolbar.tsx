@@ -6,7 +6,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
 import CustomText from '../../../components/CustomText';
@@ -53,7 +53,9 @@ const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProp
         onPress={() => onSendMessage(message)}
         disabled={!message}
       >
-        <MaterialCommunityIcon name="send-circle" size={35} color={message ? Colors.yellowDark : Colors.greyDark} />
+        <View style={styles.sendIcon}>
+          <FontAwesomeIcon name="send" size={17} color={message ? Colors.white : Colors.yellowLight} />
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -86,11 +88,17 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     position: 'absolute',
-    right: 13,
-    top: 9,
-    transform: [
-      { rotate: '-45deg' }
-    ]
+    right: 16,
+    top: 12
+  },
+  sendIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingRight: 1,
+    backgroundColor: Colors.yellowDark,
+    borderRadius: 15,
+    width: 30,
+    height: 30
   }
 });
 

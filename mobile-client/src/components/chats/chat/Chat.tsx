@@ -135,13 +135,15 @@ const Chat = ({
                 onEndReached={onEndReached}
                 onEndReachedThreshold={0.2}
                 renderItem={({ item, index }) => {
-                  const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
-                  const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
+                  const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
+                  const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
+                  const isLastMessage = index === 0;
                   return (
                     <Message 
                       content={item} 
                       sameSenderPrevMsg={sameSenderPrevMsg} 
                       sameSenderNextMsg={sameSenderNextMsg}
+                      isLastMessage={isLastMessage}
                     />
                   );
                 }}

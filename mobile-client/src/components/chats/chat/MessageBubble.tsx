@@ -42,9 +42,9 @@ const MessageBubble = ({
 
 const styles = StyleSheet.create({
   bubble: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 18
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    borderRadius: 35
   },
   leftBubble: {
     backgroundColor: Colors.yellowLight
