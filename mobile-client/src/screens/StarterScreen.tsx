@@ -4,6 +4,7 @@ import {
   Text, 
   StyleSheet
 } from 'react-native';
+import Dots from 'react-native-dots-pagination';
 
 import { Colors } from '../variables/variables';
 import ViewPager from '../components/ViewPager';
@@ -15,6 +16,7 @@ import SignupScreen from './modals/SignupScreen';
 const StarterScreen = () => {
   const [showSignin, setShowSignin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [activeDot, setActiveDot] = useState(0);
 
   const closeModal = (): void => {
     setShowSignup(false);
@@ -40,12 +42,27 @@ const StarterScreen = () => {
     setShowSignup(true);
   };
 
+  const onPageChange = (activeIndex: number): void => {
+    setActiveDot(activeIndex);
+  };
+
   return (
     <View style={styles.container}>
       <SignupScreen visible={showSignup} toggleModals={toggleModals} closeModal={closeModal} />
       <SigninScreen visible={showSignin} toggleModals={toggleModals} closeModal={closeModal} />
-      <ViewPager />
-      <ScaleViewAnim style={{ alignItems: 'center' }}>
+      <ViewPager onPageChange={onPageChange} />
+      <View style={styles.dotsContainer}>
+        <Dots 
+          length={4} 
+          active={activeDot} 
+          activeDotWidth={40}
+          passiveDotWidth={40}
+          activeDotHeight={10}
+          passiveColor={Colors.white}
+          activeColor={Colors.yellowDark}  
+        />
+      </View>
+      <ScaleViewAnim style={{ alignItems: 'center', marginTop: 'auto' }}>
         <CustomButton color={Colors.yellowDark} onPress={onPressSignup}> 
           Get Started
         </CustomButton>
@@ -64,10 +81,14 @@ const StarterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.greyLight,
+    backgroundColor: Colors.yellowLight,
+    marginVertical: -45
+  },
+  dotsContainer: {
+    marginTop: 70
   },
   signinButton: {
-    marginBottom: 20,
+    marginBottom: 50,
     padding: 10
   }
 });
