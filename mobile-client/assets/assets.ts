@@ -15,5 +15,8 @@ export const Fonts = {
 };
 
 export const Animations = {
-
+  starterAnimChat: require('./animations/starter_chat.json'),
+  starterAnimActive: require('./animations/starter_active.json'),
+  starterAnimYoutube: require('./animations/starter_youtube.json'),
+  starterAnimGroup: require('./animations/starter_group.json')
 };
