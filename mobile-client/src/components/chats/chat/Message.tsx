@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import dayjs from 'dayjs';
 var localizedFormat = require('dayjs/plugin/localizedFormat')
@@ -15,23 +15,37 @@ type MessageProps = {
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
   isLastMessage: boolean;
+  onShowMessageActions: (bottomPos: number, leftPos: number) => void;
+  hideMessageActions: () => void;
 };
 
 const Message = ({ 
   content: { text, createDate, sender, delivered, read }, 
   sameSenderPrevMsg, 
   sameSenderNextMsg,
-  isLastMessage
+  isLastMessage,
+  onShowMessageActions,
+  hideMessageActions
 }: MessageProps) => {
+  const msgRef = useRef(null);
 
   return (
-    <View style={[
-      styles.container,
-      sender._id === 1 ? styles.rightMessage : styles.leftMessage,
-      {  
-        marginTop: sameSenderPrevMsg ? 3 : 12,
-        marginBottom: isLastMessage ? 8 : 0
-      }
+    <View
+      ref={msgRef}
+      onLayout={(e) => {
+        const { x, y } = e.nativeEvent.layout;
+        if (msgRef.current) {
+          msgRef.current.x = x;
+          msgRef.current.y = y;
+        }
+      }}
+      style={[
+        styles.container,
+        sender._id === 1 ? styles.rightMessage : styles.leftMessage,
+        {  
+          marginTop: sameSenderPrevMsg ? 3 : 12,
+          marginBottom: isLastMessage ? 8 : 0
+        }
     ]}>
       {sender._id === 2 && !sameSenderNextMsg && (
         <Avatar avatar={sender.avatar} />
@@ -42,6 +56,10 @@ const Message = ({
           userId={sender._id}
           sameSenderPrevMsg={sameSenderPrevMsg}
           sameSenderNextMsg={sameSenderNextMsg}
+          onShowMessageActions={onShowMessageActions}
+          hideMessageActions={hideMessageActions}
+          leftPos={msgRef.current && msgRef.current.x}
+          topPos={msgRef.current && msgRef.current.y}
         />
         {!sameSenderNextMsg && 
           <View 

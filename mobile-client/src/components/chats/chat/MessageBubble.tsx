@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
 import CustomText from '../../../components/CustomText';
@@ -9,16 +9,36 @@ type MessageBubbleProps = {
   userId: number;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
+  topPos: number;
+  leftPos: number;
+  onShowMessageActions: (bottomPos: number, leftPos: number) => void;
+  hideMessageActions: () => void;
 };
 
 const MessageBubble = ({ 
   text, 
   userId,
   sameSenderPrevMsg,
-  sameSenderNextMsg
+  sameSenderNextMsg,
+  topPos,
+  leftPos,
+  onShowMessageActions,
+  hideMessageActions
 }: MessageBubbleProps) => {
+
+  const onLongPress = () => {
+    onShowMessageActions(leftPos, topPos);
+  };
+
+  useEffect(() => {
+    console.log(leftPos)
+  }, [leftPos])
+
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback
+      onPress={() => hideMessageActions()} 
+      onLongPress={onLongPress}
+    >
       <View 
         style={[
           styles.bubble,

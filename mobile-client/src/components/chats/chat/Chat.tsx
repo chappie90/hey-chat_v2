@@ -3,7 +3,8 @@ import {
   View, 
   StyleSheet, 
   FlatList,
-  ActivityIndicator 
+  ActivityIndicator,
+  TouchableWithoutFeedback
 } from 'react-native';
 import uuid from 'react-native-uuid';
 
@@ -12,6 +13,7 @@ import { Context as AuthContext } from '../../../context/AuthContext';
 import { Context as ChatsContext } from '../../../context/ChatsContext';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
+import MessageActions from './MessageActions';
 import { Colors } from '../../../variables/variables';
 import ContactInvitation from './ContactInvitation';
 
@@ -39,6 +41,9 @@ const Chat = ({
   } = useContext(ChatsContext);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
+  const [showMsgActions, setShowMsgActions] = useState(false);
+  const [msgActionsBottom, setMsgActionsBottom] = useState<number | null>(null);
+  const [msgActionsLeft, setMsgActionsLeft] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const chatIdRef = useRef<string>(chatId);
   
@@ -106,6 +111,18 @@ const Chat = ({
     }
   };
 
+  const onShowMessageActions = (bottomPos: number, leftPos: number): void => {
+    setShowMsgActions(true);
+    setMsgActionsBottom(bottomPos);
+    setMsgActionsLeft(leftPos);
+  };
+
+  const hideMessageActions = (): void => {
+    setShowMsgActions(false);
+    setMsgActionsBottom(0);
+    setMsgActionsLeft(0);
+  };
+
   useEffect(() => {
     (async () => {
       // Get messages if no previous chat history loaded
@@ -118,52 +135,62 @@ const Chat = ({
   }, []);
   
   return (
-    <View style={styles.container}>
-      {isLoading ? 
-        (
-          <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color={Colors.yellowDark} />
-          </View>
-        ) :
-        (
-          chatHistory[chatIdRef.current]?.messages.length > 0 ?
-            (
-              <FlatList
-                keyExtractor={item => item._id.toString()}
-                data={chatHistory[chatIdRef.current].messages}
-                inverted
-                onEndReached={onEndReached}
-                onEndReachedThreshold={0.2}
-                renderItem={({ item, index }) => {
-                  const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
-                  const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
-                  const isLastMessage = index === 0;
-                  return (
-                    <Message 
-                      content={item} 
-                      sameSenderPrevMsg={sameSenderPrevMsg} 
-                      sameSenderNextMsg={sameSenderNextMsg}
-                      isLastMessage={isLastMessage}
-                    />
-                  );
-                }}
-              />
-            ) :
-            (
-              <ContactInvitation 
-                contactName={contactName} 
-                contactProfile={contactProfile} 
-                onGreeting={onGreeting} 
-              />
-            )
-        ) 
-      }
-      <InputToolbar 
-        message={message} 
-        onChangeText={onChangeText} 
-        onSendMessage={onSendMessage}
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={() => setShowMsgActions(false)}>
+      <View style={styles.container}>
+        {isLoading ? 
+          (
+            <View style={styles.spinnerContainer}>
+              <ActivityIndicator size="large" color={Colors.yellowDark} />
+            </View>
+          ) :
+          (
+            chatHistory[chatIdRef.current]?.messages.length > 0 ?
+              (
+                <FlatList
+                  keyExtractor={item => item._id.toString()}
+                  data={chatHistory[chatIdRef.current].messages}
+                  inverted
+                  onEndReached={onEndReached}
+                  onEndReachedThreshold={0.2}
+                  renderItem={({ item, index }) => {
+                    const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
+                    const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
+                    const isLastMessage = index === 0;
+                    return (
+                      <Message 
+                        content={item} 
+                        sameSenderPrevMsg={sameSenderPrevMsg} 
+                        sameSenderNextMsg={sameSenderNextMsg}
+                        isLastMessage={isLastMessage}
+                        onShowMessageActions={onShowMessageActions}
+                        hideMessageActions={hideMessageActions}
+                      />
+                    );
+                  }}
+                />
+              ) :
+              (
+                <ContactInvitation 
+                  contactName={contactName} 
+                  contactProfile={contactProfile} 
+                  onGreeting={onGreeting} 
+                />
+              )
+          ) 
+        }
+        {showMsgActions &&
+        <MessageActions 
+          isVisible={showMsgActions} 
+          bottomPos={msgActionsBottom} 
+          leftPos={msgActionsLeft} 
+        />}
+        <InputToolbar 
+          message={message} 
+          onChangeText={onChangeText} 
+          onSendMessage={onSendMessage}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
