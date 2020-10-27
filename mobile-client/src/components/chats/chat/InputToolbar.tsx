@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   View,
   StyleSheet, 
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Animated
 } from 'react-native';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
-import Ionicon from 'react-native-vector-icons/Ionicons';
 
-import CustomText from '../../../components/CustomText';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
+import { Colors, Headings } from '../../../variables/variables';
+import ToolbarActions from './ToolbarActions';
 
 type InputToolbarProps = {
   message: string;
@@ -19,27 +20,60 @@ type InputToolbarProps = {
 };
 
 const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProps) => {
-  const takePhotoHandler = () => {
+  const [showActions, setShowActions] = useState(false);
+  const backgroundColorAnim = useRef(new Animated.Value(0));
+  const rotateAnim = useRef(new Animated.Value(0));
 
-  };
+  const onToggleActions = (): void => {
+    setShowActions(!showActions);
 
-  const choosePhotoHandler = () => {
-
+    Animated.timing(
+      backgroundColorAnim.current, { 
+        toValue: showActions ? 0 : 1,
+        duration: 200,
+        useNativeDriver: false
+      }
+    ).start();
+    Animated.timing(
+      rotateAnim.current, { 
+        toValue: showActions ? 0 : 1,
+        duration: 200,
+        useNativeDriver: false
+      }
+    ).start();
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.actions}>
-        <TouchableOpacity style={{paddingHorizontal: 5}} onPress={takePhotoHandler}>
-          <MaterialIcon color={Colors.grey} name="camera-alt" size={28} />
-        </TouchableOpacity>
-        <TouchableOpacity style={{paddingHorizontal: 5}} onPress={choosePhotoHandler}>
-          <Ionicon color={Colors.grey} name="md-images" size={26} />
-        </TouchableOpacity>
-      </View>
+      <ToolbarActions isVisible={showActions} />
+      <TouchableWithoutFeedback onPress={onToggleActions}>
+        <Animated.View 
+          style={[
+            styles.plusIcon,
+            { 
+              backgroundColor: backgroundColorAnim.current.interpolate({
+                inputRange: [0, 1],
+                outputRange: [Colors.yellowLight, Colors.purpleDark]
+              }),
+              transform: [
+                { rotate: rotateAnim.current.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0deg', '45deg']
+                }) }
+              ]
+            }
+          ]}
+        >
+          <MaterialCommunityIcon 
+            color={showActions ? Colors.white : Colors.yellowDark} 
+            name="plus" 
+            size={34} 
+          />
+        </Animated.View>
+      </TouchableWithoutFeedback>
       <TextInput
         style={styles.input} 
-        selectionColor={'grey'}
+        selectionColor={Colors.greyDark}
         placeholder="Type a message..."
         placeholderTextColor={Colors.yellowDark}
         autoFocus
@@ -70,11 +104,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, 
     borderTopColor: Colors.greyLight
   },
-  actions: {
-    flexDirection:'row',
+  plusIcon: {
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingBottom: 2
+    borderRadius: 19,
+    width: 38,
+    height: 38,
+    marginRight: 8
   },
   input: {
     flex: 1,
@@ -84,11 +120,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 40,
     paddingTop: 10,
-    paddingBottom: 7
+    paddingBottom: 7,
+    fontSize: Headings.headingSmall
   },
   sendButton: {
     position: 'absolute',
-    right: 16,
+    right: 15,
     top: 12
   },
   sendIcon: {
