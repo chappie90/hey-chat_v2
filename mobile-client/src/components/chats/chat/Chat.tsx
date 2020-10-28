@@ -41,12 +41,12 @@ const Chat = ({
   } = useContext(ChatsContext);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
-  const [showMsgActions, setShowMsgActions] = useState(false);
-  const [msgActionsBottom, setMsgActionsBottom] = useState<number | null>(null);
-  const [msgActionsLeft, setMsgActionsLeft] = useState<number | null>(null);
+  const [showMsgActions, setShowMsgActions] = useState(true);
+  const [msgActionsCoord, setMsgActionsCoord] = useState([0, 0]);
   const [isLoading, setIsLoading] = useState(false);
   const chatIdRef = useRef<string>(chatId);
-  
+  const flatListRef = useRef<any>(null);
+
   const onGreeting = () => {
     onSendMessage('👋');
   };
@@ -111,16 +111,18 @@ const Chat = ({
     }
   };
 
-  const onShowMessageActions = (bottomPos: number, leftPos: number): void => {
+  const onShowMessageActions = (index: number, coordinates: number[]): void => {
     setShowMsgActions(true);
-    setMsgActionsBottom(bottomPos);
-    setMsgActionsLeft(leftPos);
+    setMsgActionsCoord(coordinates);
   };
 
   const hideMessageActions = (): void => {
     setShowMsgActions(false);
-    setMsgActionsBottom(0);
-    setMsgActionsLeft(0);
+    setMsgActionsCoord([0, 0]);
+  };
+
+  const scrollToEnd = (): void => {
+    flatListRef.current.scrollToEnd({animated: true});
   };
 
   useEffect(() => {
@@ -133,7 +135,7 @@ const Chat = ({
       }
     })();
   }, []);
-  
+
   return (
     <TouchableWithoutFeedback onPress={() => setShowMsgActions(false)}>
       <View style={styles.container}>
@@ -147,17 +149,18 @@ const Chat = ({
             chatHistory[chatIdRef.current]?.messages.length > 0 ?
               (
                 <FlatList
+                  ref={flatListRef}
+                  inverted
+                  initialNumToRender={20}
                   keyExtractor={item => item._id.toString()}
                   data={chatHistory[chatIdRef.current].messages}
-                  inverted
-                  onEndReached={onEndReached}
-                  onEndReachedThreshold={0.2}
                   renderItem={({ item, index }) => {
                     const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
                     const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
                     const isLastMessage = index === 0;
                     return (
                       <Message 
+                        index={index}
                         content={item} 
                         sameSenderPrevMsg={sameSenderPrevMsg} 
                         sameSenderNextMsg={sameSenderNextMsg}
@@ -167,6 +170,11 @@ const Chat = ({
                       />
                     );
                   }}
+                  onEndReached={onEndReached}
+                  onEndReachedThreshold={0.2}
+                  onContentSizeChange={() => scrollToEnd()}
+                  onLayout={() => scrollToEnd()}
+                  disableScrollViewPanResponder
                 />
               ) :
               (
@@ -181,8 +189,7 @@ const Chat = ({
         {showMsgActions &&
         <MessageActions 
           isVisible={showMsgActions} 
-          bottomPos={msgActionsBottom} 
-          leftPos={msgActionsLeft} 
+          coordinates={msgActionsCoord}
         />}
         <InputToolbar 
           message={message} 

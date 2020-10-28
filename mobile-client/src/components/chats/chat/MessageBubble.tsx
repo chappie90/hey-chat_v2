@@ -1,43 +1,46 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { 
+  View, 
+  StyleSheet, 
+  TouchableWithoutFeedback, 
+  useWindowDimensions,
+  GestureResponderEvent 
+} from 'react-native';
 
 import CustomText from '../../../components/CustomText';
 import { Colors, Headings } from '../../../variables/variables';
 
 type MessageBubbleProps = {
+  index: number;
   text: string;
   userId: number;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
-  topPos: number;
-  leftPos: number;
-  onShowMessageActions: (bottomPos: number, leftPos: number) => void;
+  onShowMessageActions: (index: number, coordinates: number[]) => void;
   hideMessageActions: () => void;
 };
 
 const MessageBubble = ({ 
+  index,
   text, 
   userId,
   sameSenderPrevMsg,
   sameSenderNextMsg,
-  topPos,
-  leftPos,
   onShowMessageActions,
   hideMessageActions
 }: MessageBubbleProps) => {
+  const windowWidth = useWindowDimensions().width;
 
-  const onLongPress = () => {
-    onShowMessageActions(leftPos, topPos);
+  const onLongPress = (event: GestureResponderEvent) => {
+    const { pageY } = event.nativeEvent;
+    const pageX = userId === 1 ? windowWidth - 260 : 40;
+    onShowMessageActions(index, [pageX, pageY > 180 ? pageY : 180]);
   };
-
-  useEffect(() => {
-    console.log(leftPos)
-  }, [leftPos])
 
   return (
     <TouchableWithoutFeedback
       onPress={() => hideMessageActions()} 
-      onLongPress={onLongPress}
+      onLongPress={(e) => onLongPress(e)}
     >
       <View 
         style={[

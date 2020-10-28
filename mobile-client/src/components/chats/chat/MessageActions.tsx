@@ -1,55 +1,95 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Animated, Text } from 'react-native';
+import { StyleSheet, Animated, View } from 'react-native';
 
-import { Colors } from '../../../variables/variables';
+import { Colors, Headings } from '../../../variables/variables';
+import CustomText from '../../CustomText';
 
 type MessageActionsProps = { 
   isVisible: boolean;
-  bottomPos: number;
-  leftPos: number;
+  coordinates: number[];
 };
 
-const MessageActions = ({ isVisible, bottomPos, leftPos }: MessageActionsProps) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
+const MessageActions = ({ isVisible, coordinates }: MessageActionsProps) => {
+  const scaleAnim = useRef(new Animated.Value(0));
 
   useEffect(() => {
+    scaleAnim.current.setValue(0);
 
     Animated.spring(
-      scaleAnim, { 
-        toValue: isVisible ? 1 : 0,
+      scaleAnim.current, { 
+        toValue: 1,
         useNativeDriver: false
       }
     ).start();
-    
-    }, [isVisible, bottomPos, leftPos]);
+  }, [isVisible, coordinates]);
   
   return (
     <Animated.View
       style={[ 
-        styles.customModal, 
+        styles.container, 
         { 
-          top: bottomPos - 150,
-          left: leftPos,
+          top: coordinates[1] - 160,
+          left: coordinates[0],
           transform: [
-            { scale: scaleAnim }
+            { scale: scaleAnim.current }
           ]
         }
       ]}
     >
-      <Text>Testing</Text>
+      <View 
+        style={[
+          styles.triangle,
+          { left: coordinates[0] === 40 ? 25 : 185 }
+        ]} 
+      />
+      <View style={styles.innerContainer}>
+        <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
+        <View style={styles.divider} />
+        <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Reply</CustomText>
+        <View style={styles.divider} />
+        <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Delete</CustomText>
+      </View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  customModal: {
+  container: {
     borderRadius: 35,
     backgroundColor: Colors.purpleLight,
     position: 'absolute',
     zIndex: 2,
-    padding: 14,
-    width: 200,
-    height: 60
+    width: 220,
+    height: 45
+  },
+  triangle: {
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderBottomWidth: 16,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: Colors.purpleLight,
+    position: 'absolute',
+    bottom: -13,
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    transform: [
+      {rotate: '180deg'}
+    ]
+  },
+  innerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 22,
+    height: '100%'
+  },
+  divider: {
+    backgroundColor: Colors.purpleDark,
+    width: 0.5,
+    height: '100%'
   }
 });
 

@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
 import dayjs from 'dayjs';
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
@@ -11,55 +11,48 @@ import CustomText from '../../../components/CustomText';
 import { Colors } from '../../../variables/variables';
 
 type MessageProps = {
+  index: number;
   content: TMessage;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
   isLastMessage: boolean;
-  onShowMessageActions: (bottomPos: number, leftPos: number) => void;
+  onShowMessageActions: (index: number, coordinates: number[]) => void;
   hideMessageActions: () => void;
 };
 
 const Message = ({ 
+  index,
   content: { text, createDate, sender, delivered, read }, 
   sameSenderPrevMsg, 
   sameSenderNextMsg,
   isLastMessage,
   onShowMessageActions,
-  hideMessageActions
+  hideMessageActions,
 }: MessageProps) => {
-  const msgRef = useRef(null);
 
   return (
     <View
-      ref={msgRef}
-      onLayout={(e) => {
-        const { x, y } = e.nativeEvent.layout;
-        if (msgRef.current) {
-          msgRef.current.x = x;
-          msgRef.current.y = y;
-        }
-      }}
       style={[
         styles.container,
         sender._id === 1 ? styles.rightMessage : styles.leftMessage,
-        {  
+        {
           marginTop: sameSenderPrevMsg ? 3 : 12,
-          marginBottom: isLastMessage ? 8 : 0
+          marginBottom: isLastMessage ? 12 : 0
         }
-    ]}>
+      ]}
+    >
       {sender._id === 2 && !sameSenderNextMsg && (
         <Avatar avatar={sender.avatar} />
       )}
       <View style={styles.messageContainer}>
         <MessageBubble 
+          index={index}
           text={text} 
           userId={sender._id}
           sameSenderPrevMsg={sameSenderPrevMsg}
           sameSenderNextMsg={sameSenderNextMsg}
           onShowMessageActions={onShowMessageActions}
           hideMessageActions={hideMessageActions}
-          leftPos={msgRef.current && msgRef.current.x}
-          topPos={msgRef.current && msgRef.current.y}
         />
         {!sameSenderNextMsg && 
           <View 
