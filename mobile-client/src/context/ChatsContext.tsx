@@ -13,7 +13,8 @@ type ChatsAction =
   | { type: 'add_chat'; payload: TChat }
   | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
-  | { type: 'add_message'; payload: { chatId: string, message: TMessage } };
+  | { type: 'add_message'; payload: { chatId: string, message: TMessage } }
+  | { type: 'like_message'; payload: { chatId: string, messageId: string } };
 
 const chatReducer = (state: ChatsState, action: ChatsAction) => {
   switch (action.type) {
@@ -69,6 +70,29 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
           } 
         };
       }
+    case 'like_message':
+      const updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+        return msg._id === action.payload.messageId ?
+          { 
+            ...msg,
+            likes: {
+              liked: !msg.liked.likedByUser,
+              likesCount: msg.liked.likedByUser ? msg.liked.likesCount-- : msg.liked.likesCount++
+            }
+          } :
+          msg
+      });
+
+      return {
+        ...state,
+        chatHistory: {
+          ...state.chatHistory,
+          [action.payload.chatId]: {
+            ...state.chatHistory[action.payload.chatId],
+            messages: updatedMessages
+          }
+        }
+      };
     default:
       return state;
   }
@@ -152,6 +176,10 @@ const addMessage = dispatch => (chatId: string, message: TMessage): void => {
   dispatch({ type: 'add_message', payload: { chatId, message } });
 };
 
+const likeMessage = dispatch => (chatId: string, messageId: string): void => {
+  dispatch({ type: 'like_message', payload: { chatId, messageId } });
+};
+
 export const { Context, Provider } = createDataContext(
   chatReducer,
   { 
@@ -159,7 +187,8 @@ export const { Context, Provider } = createDataContext(
     addChat,
     getMessages,
     getMoreMessages,
-    addMessage
+    addMessage,
+    likeMessage
   },
   {  
     chats: [],
@@ -180,7 +209,8 @@ const transformMessagesArray = (
       image, 
       admin, 
       delivered, 
-      read,  
+      read, 
+      liked, 
       reply,
       deleted
     } = message;
@@ -199,6 +229,10 @@ const transformMessagesArray = (
       admin,
       delivered,
       read,
+      liked: {
+        likedByUser: liked.likedByUser,
+        likesCount: liked.likesCount
+      },
       reply: {
         origMsgId: reply?.origMsgId,
         origMsgText: reply?.origMsgText,

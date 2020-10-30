@@ -34,6 +34,11 @@ type TReply = {
   origMsgSender: string;
 };
 
+type TLike = {
+  likedByUser: boolean;
+  likesCount: number;
+};
+
 export type TMessage = {
   _id: string;
   chatId: number;
@@ -44,9 +49,8 @@ export type TMessage = {
   admin?: boolean;
   delivered: boolean;
   read: boolean;
-  likes: number;
+  liked: TLike;
   reply?: TReply;
   deleted?: boolean;
 };
-
 

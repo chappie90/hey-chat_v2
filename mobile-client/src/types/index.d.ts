@@ -68,6 +68,11 @@ type TReply = {
   origMsgSender: string;
 };
 
+type TLike = {
+  likedByUser: boolean;
+  likesCount: number;
+};
+
 type TMessage = {
   _id: string;
   chatId?: string;
@@ -78,6 +83,7 @@ type TMessage = {
   admin?: boolean;
   delivered: boolean;
   read: boolean;
+  liked: TLike;
   reply?: TReply;
   deleted?: boolean;
 };

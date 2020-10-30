@@ -38,7 +38,8 @@ const Chat = ({
     state: { chatHistory }, 
     getMessages, 
     getMoreMessages,
-    addMessage 
+    addMessage,
+    likeMessage
   } = useContext(ChatsContext);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
@@ -81,6 +82,10 @@ const Chat = ({
       sender: {
         _id: 1,
         name: username
+      },
+      liked: {
+        likedByUser: false,
+        likesCount: 0
       },
       delivered: false,
       read: false
@@ -126,6 +131,11 @@ const Chat = ({
 
   const scrollToEnd = (): void => {
     flatListRef.current.scrollToIndex({ index: 0, animated: true });
+  };
+
+  const onLikeMessage = (): void => {
+    likeMessage(activeMsg?.chatId, activeMsg?._id);
+    hideMessageActions();
   };
 
   const onShowReplyBox = (): void => {
@@ -201,6 +211,7 @@ const Chat = ({
           <MessageActions 
             isVisible={showMsgActions} 
             coordinates={msgActionsCoord}
+            onLikeMessage={onLikeMessage}
             onShowReplyBox={onShowReplyBox}
           />
         }

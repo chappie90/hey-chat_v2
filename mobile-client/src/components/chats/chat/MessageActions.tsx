@@ -8,10 +8,16 @@ import CustomText from '../../CustomText';
 type MessageActionsProps = { 
   isVisible: boolean;
   coordinates: number[];
+  onLikeMessage: () => void;
   onShowReplyBox: () => void;
 };
 
-const MessageActions = ({ isVisible, coordinates, onShowReplyBox }: MessageActionsProps) => {
+const MessageActions = ({ 
+  isVisible, 
+  coordinates, 
+  onShowReplyBox,
+  onLikeMessage
+}: MessageActionsProps) => {
   const scaleAnim = useRef(new Animated.Value(0));
 
   useEffect(() => {
@@ -45,7 +51,7 @@ const MessageActions = ({ isVisible, coordinates, onShowReplyBox }: MessageActio
         ]} 
       />
       <View onStartShouldSetResponder={(e) => true} style={styles.innerContainer}>
-        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5}>
+        <TouchableOpacity onPress={() => onLikeMessage()} activeOpacity={0.5}>
           <View style={[styles.button, styles.likeBtn]}>
             <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
           </View>
