@@ -23,6 +23,10 @@ const messageSchema = new mongoose.Schema({
     required: true,
     default: false 
   },
+  likes: {
+    type: Number,
+    default: 0
+  },
   reply: { 
     origMsgId: Number,
     origMsgText: String,

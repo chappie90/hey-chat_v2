@@ -44,6 +44,7 @@ export type TMessage = {
   admin?: boolean;
   delivered: boolean;
   read: boolean;
+  likes: number;
   reply?: TReply;
   deleted?: boolean;
 };

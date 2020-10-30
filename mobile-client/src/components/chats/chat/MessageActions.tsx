@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.purpleLight,
     position: 'absolute',
     zIndex: 2,
-    // width: 220,
     height: 45
   },
   triangle: {
