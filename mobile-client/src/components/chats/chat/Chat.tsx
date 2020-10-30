@@ -120,16 +120,17 @@ const Chat = ({
     setActiveMsg(message);
   };
 
-  const hideMessageActions = (): void => {
+  const hideMessageActions = (): void => {  
     setShowMsgActions(false);
   };
 
   const scrollToEnd = (): void => {
-    flatListRef.current.scrollToEnd({animated: true});
+    flatListRef.current.scrollToIndex({ index: 0, animated: true });
   };
 
   const onShowReplyBox = (): void => {
-    setShowReplyBox(true);
+    setShowReplyBox(true);  
+    hideMessageActions();
   };
 
   const onCloseReplyBox = (): void => {
@@ -151,52 +152,50 @@ const Chat = ({
   return (
     <TouchableWithoutFeedback onPress={() => setShowMsgActions(false)}>
       <View style={styles.container}>
-        {isLoading ? 
+        {isLoading &&
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color={Colors.yellowDark} />
+          </View>
+        }
+        {chatHistory[chatIdRef.current]?.messages.length > 0 ?
           (
-            <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="large" color={Colors.yellowDark} />
-            </View>
+            <FlatList
+              ref={flatListRef}
+              inverted
+              initialNumToRender={20}
+              keyExtractor={item => item._id.toString()}
+              data={chatHistory[chatIdRef.current].messages}
+              renderItem={({ item, index }) => {
+                const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
+                const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
+                const isLastMessage = index === 0;
+                return (
+                  <Message 
+                    index={index}
+                    content={item} 
+                    sameSenderPrevMsg={sameSenderPrevMsg} 
+                    sameSenderNextMsg={sameSenderNextMsg}
+                    isLastMessage={isLastMessage}
+                    onShowMessageActions={onShowMessageActions}
+                    hideMessageActions={hideMessageActions}
+                    onCloseReplyBox={onCloseReplyBox}
+                  />
+                );
+              }}
+              onEndReached={onEndReached}
+              onEndReachedThreshold={0.2}
+              onContentSizeChange={() => scrollToEnd()}
+              onLayout={() => scrollToEnd()}
+              disableScrollViewPanResponder
+            />
           ) :
           (
-            chatHistory[chatIdRef.current]?.messages.length > 0 ?
-              (
-                <FlatList
-                  ref={flatListRef}
-                  inverted
-                  initialNumToRender={20}
-                  keyExtractor={item => item._id.toString()}
-                  data={chatHistory[chatIdRef.current].messages}
-                  renderItem={({ item, index }) => {
-                    const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
-                    const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
-                    const isLastMessage = index === 0;
-                    return (
-                      <Message 
-                        index={index}
-                        content={item} 
-                        sameSenderPrevMsg={sameSenderPrevMsg} 
-                        sameSenderNextMsg={sameSenderNextMsg}
-                        isLastMessage={isLastMessage}
-                        onShowMessageActions={onShowMessageActions}
-                        hideMessageActions={hideMessageActions}
-                      />
-                    );
-                  }}
-                  onEndReached={onEndReached}
-                  onEndReachedThreshold={0.2}
-                  onContentSizeChange={() => scrollToEnd()}
-                  onLayout={() => scrollToEnd()}
-                  disableScrollViewPanResponder
-                />
-              ) :
-              (
-                <ContactInvitation 
-                  contactName={contactName} 
-                  contactProfile={contactProfile} 
-                  onGreeting={onGreeting} 
-                />
-              )
-          ) 
+            <ContactInvitation 
+              contactName={contactName} 
+              contactProfile={contactProfile} 
+              onGreeting={onGreeting} 
+            />
+          )
         }
         {showMsgActions &&
           <MessageActions 
@@ -206,12 +205,7 @@ const Chat = ({
           />
         }
         {showReplyBox && activeMsg &&
-          <ReplyBox 
-            origMsgSenderName={activeMsg.sender.name}
-            origMsgSenderAvatar={activeMsg.sender.avatar}
-            origMsg={activeMsg.text}
-            onCloseReplyBox={onCloseReplyBox} 
-          />
+          <ReplyBox originalMessage={activeMsg} onCloseReplyBox={onCloseReplyBox} />
         }
         <InputToolbar 
           message={message} 
@@ -229,8 +223,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white
   },
   spinnerContainer: {
-    flex: 1,
-    padding: 20
+    position: 'absolute',
+    top: 20,
+    alignSelf: 'center'
   }
 });
 

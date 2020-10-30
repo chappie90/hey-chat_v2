@@ -45,16 +45,20 @@ const MessageActions = ({ isVisible, coordinates, onShowReplyBox }: MessageActio
         ]} 
       />
       <View onStartShouldSetResponder={(e) => true} style={styles.innerContainer}>
-        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5} style={styles.button}>
-          <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
+        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5}>
+          <View style={[styles.button, styles.likeBtn]}>
+            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
+          </View>
         </TouchableOpacity>
-        <View style={styles.divider} />
-        <TouchableOpacity onPress={() => onShowReplyBox()} activeOpacity={0.5} style={styles.button}>
-          <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Reply</CustomText>
+        <TouchableOpacity onPress={() => onShowReplyBox()} activeOpacity={0.5}>
+          <View style={[styles.button, styles.replyBtn]}>
+            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Reply</CustomText>
+          </View>
         </TouchableOpacity>
-        <View style={styles.divider} />
-        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5} style={styles.button}>
-          <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Delete</CustomText>
+        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5}>
+          <View style={styles.button}>
+            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Delete</CustomText>
+          </View>
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -67,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.purpleLight,
     position: 'absolute',
     zIndex: 2,
-    width: 220,
+    // width: 220,
     height: 45
   },
   triangle: {
@@ -89,20 +93,22 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: '100%'
-  },
-  divider: {
-    backgroundColor: Colors.purpleDark,
-    width: 0.5,
+    justifyContent: 'space-evenly',
     height: '100%'
   },
   button: {
     height: '100%',
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8
+    width: 75
+  },
+  likeBtn: {
+    borderRightColor: Colors.purpleDark,
+    borderRightWidth: 0.5
+  },
+  replyBtn: {
+    borderRightColor: Colors.purpleDark,
+    borderRightWidth: 0.5
   }
 });
 

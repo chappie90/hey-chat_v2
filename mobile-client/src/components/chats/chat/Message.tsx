@@ -18,6 +18,7 @@ type MessageProps = {
   isLastMessage: boolean;
   onShowMessageActions: (message: TMessage, coordinates: number[]) => void;
   hideMessageActions: () => void;
+  onCloseReplyBox: () => void;
 };
 
 const Message = ({ 
@@ -27,7 +28,8 @@ const Message = ({
   sameSenderNextMsg,
   isLastMessage,
   onShowMessageActions,
-  hideMessageActions
+  hideMessageActions,
+  onCloseReplyBox
 }: MessageProps) => {
   const { sender, createDate, delivered, read } = content;
 
@@ -54,6 +56,7 @@ const Message = ({
           sameSenderNextMsg={sameSenderNextMsg}
           onShowMessageActions={onShowMessageActions}
           hideMessageActions={hideMessageActions}
+          onCloseReplyBox={onCloseReplyBox}
         />
         {!sameSenderNextMsg && 
           <View 

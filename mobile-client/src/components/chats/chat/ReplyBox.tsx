@@ -12,26 +12,23 @@ import { Images } from '../../../../assets/assets';
 import CustomText from '../../CustomText';
 
 type ReplyBoxProps = {
-  origMsgSenderName: string;
-  origMsgSenderAvatar?: string;
-  origMsg: string;
+  originalMessage: TMessage;
   onCloseReplyBox: () => void;
 };
 
 const ReplyBox = ({ 
-  origMsgSenderName, 
-  origMsgSenderAvatar, 
-  origMsg, 
+  originalMessage,
   onCloseReplyBox 
 }: ReplyBoxProps) => {
+  const { sender, text } = originalMessage;
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        {origMsgSenderAvatar ?
+        {sender.avatar ?
           <Image 
             style={styles.image} 
-            source={{ uri: origMsgSenderAvatar }}
+            source={{ uri: sender.avatar }}
             /> : 
           <Image style={styles.image} source={ Images.avatarSmall } />
         }
@@ -42,14 +39,14 @@ const ReplyBox = ({
           color={Colors.greyDark}
           fontWeight={Fonts.semiBold}
         >
-          {origMsgSenderName}
+          {sender._id === 1 ? 'You' : sender.name}
         </CustomText>
         <CustomText fontSize={Headings.headingExtraSmall} color={Colors.greyDark}>
-          {origMsg}
+          {text}
         </CustomText>
       </View>
-      <TouchableOpacity onPress={onCloseReplyBox}>
-        <MaterialIcon name="close" size={34} color={Colors.purpleDark} />
+      <TouchableOpacity style={styles.closeBtn} onPress={onCloseReplyBox}>
+        <MaterialIcon name="close" size={32} color={Colors.purpleDark} />
       </TouchableOpacity>
     </View>
   );
@@ -69,11 +66,14 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     overflow: 'hidden', 
-    width: 44, 
-    height: 44, 
-    borderRadius: 22, 
+    width: 46, 
+    height: 46, 
+    borderRadius: 23, 
     backgroundColor: Colors.greyLight,
-    marginRight: 15
+    borderWidth: 3,
+    borderColor: Colors.purpleDark,
+    marginRight: 15,
+    alignSelf: 'flex-start'
   },
   image: {
     width: '100%', 
@@ -81,6 +81,9 @@ const styles = StyleSheet.create({
   },
   messageDetails: {
     flex: 1
+  },
+  closeBtn: {
+    alignSelf: 'flex-start'
   }
 });
 

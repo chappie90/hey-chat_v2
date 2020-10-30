@@ -18,6 +18,7 @@ type MessageBubbleProps = {
   sameSenderNextMsg: boolean | undefined;
   onShowMessageActions: (message: TMessage, coordinates: number[]) => void;
   hideMessageActions: () => void;
+  onCloseReplyBox: () => void;
 };
 
 const MessageBubble = ({ 
@@ -27,12 +28,14 @@ const MessageBubble = ({
   sameSenderPrevMsg,
   sameSenderNextMsg,
   onShowMessageActions,
-  hideMessageActions
+  hideMessageActions,
+  onCloseReplyBox
 }: MessageBubbleProps) => {
   const { text } = content;
   const windowWidth = useWindowDimensions().width;
 
   const onLongPress = (event: GestureResponderEvent) => {
+    onCloseReplyBox();
     const { pageY } = event.nativeEvent;
     const pageX = userId === 1 ? windowWidth - 260 : 40;
     onShowMessageActions(content, [pageX, pageY > 180 ? pageY : 180]);
