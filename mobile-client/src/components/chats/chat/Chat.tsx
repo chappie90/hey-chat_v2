@@ -16,6 +16,7 @@ import InputToolbar from './InputToolbar';
 import MessageActions from './MessageActions';
 import { Colors } from '../../../variables/variables';
 import ContactInvitation from './ContactInvitation';
+import ReplyBox from './ReplyBox';
 
 type ChatProps = {
   chatType: string;
@@ -44,6 +45,8 @@ const Chat = ({
   const [showMsgActions, setShowMsgActions] = useState(true);
   const [msgActionsCoord, setMsgActionsCoord] = useState([0, 0]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showReplyBox, setShowReplyBox] = useState(false);
+  const [activeMsg, setActiveMsg] = useState<TMessage | null>(null);
   const chatIdRef = useRef<string>(chatId);
   const flatListRef = useRef<any>(null);
 
@@ -111,18 +114,27 @@ const Chat = ({
     }
   };
 
-  const onShowMessageActions = (index: number, coordinates: number[]): void => {
+  const onShowMessageActions = (message: TMessage, coordinates: number[]): void => {
     setShowMsgActions(true);
     setMsgActionsCoord(coordinates);
+    setActiveMsg(message);
   };
 
   const hideMessageActions = (): void => {
     setShowMsgActions(false);
-    setMsgActionsCoord([0, 0]);
   };
 
   const scrollToEnd = (): void => {
     flatListRef.current.scrollToEnd({animated: true});
+  };
+
+  const onShowReplyBox = (): void => {
+    setShowReplyBox(true);
+  };
+
+  const onCloseReplyBox = (): void => {
+    setShowReplyBox(false);
+    setActiveMsg(null);
   };
 
   useEffect(() => {
@@ -187,10 +199,20 @@ const Chat = ({
           ) 
         }
         {showMsgActions &&
-        <MessageActions 
-          isVisible={showMsgActions} 
-          coordinates={msgActionsCoord}
-        />}
+          <MessageActions 
+            isVisible={showMsgActions} 
+            coordinates={msgActionsCoord}
+            onShowReplyBox={onShowReplyBox}
+          />
+        }
+        {showReplyBox && activeMsg &&
+          <ReplyBox 
+            origMsgSenderName={activeMsg.sender.name}
+            origMsgSenderAvatar={activeMsg.sender.avatar}
+            origMsg={activeMsg.text}
+            onCloseReplyBox={onCloseReplyBox} 
+          />
+        }
         <InputToolbar 
           message={message} 
           onChangeText={onChangeText} 

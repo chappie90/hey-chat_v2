@@ -12,29 +12,30 @@ import { Colors, Headings } from '../../../variables/variables';
 
 type MessageBubbleProps = {
   index: number;
-  text: string;
   userId: number;
+  content: TMessage;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
-  onShowMessageActions: (index: number, coordinates: number[]) => void;
+  onShowMessageActions: (message: TMessage, coordinates: number[]) => void;
   hideMessageActions: () => void;
 };
 
 const MessageBubble = ({ 
   index,
-  text, 
   userId,
+  content,
   sameSenderPrevMsg,
   sameSenderNextMsg,
   onShowMessageActions,
   hideMessageActions
 }: MessageBubbleProps) => {
+  const { text } = content;
   const windowWidth = useWindowDimensions().width;
 
   const onLongPress = (event: GestureResponderEvent) => {
     const { pageY } = event.nativeEvent;
     const pageX = userId === 1 ? windowWidth - 260 : 40;
-    onShowMessageActions(index, [pageX, pageY > 180 ? pageY : 180]);
+    onShowMessageActions(content, [pageX, pageY > 180 ? pageY : 180]);
   };
 
   return (

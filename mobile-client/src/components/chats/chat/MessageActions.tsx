@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Animated, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Colors, Headings } from '../../../variables/variables';
 import CustomText from '../../CustomText';
@@ -7,9 +8,10 @@ import CustomText from '../../CustomText';
 type MessageActionsProps = { 
   isVisible: boolean;
   coordinates: number[];
+  onShowReplyBox: () => void;
 };
 
-const MessageActions = ({ isVisible, coordinates }: MessageActionsProps) => {
+const MessageActions = ({ isVisible, coordinates, onShowReplyBox }: MessageActionsProps) => {
   const scaleAnim = useRef(new Animated.Value(0));
 
   useEffect(() => {
@@ -42,12 +44,18 @@ const MessageActions = ({ isVisible, coordinates }: MessageActionsProps) => {
           { left: coordinates[0] === 40 ? 25 : 185 }
         ]} 
       />
-      <View style={styles.innerContainer}>
-        <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
+      <View onStartShouldSetResponder={(e) => true} style={styles.innerContainer}>
+        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5} style={styles.button}>
+          <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
+        </TouchableOpacity>
         <View style={styles.divider} />
-        <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Reply</CustomText>
+        <TouchableOpacity onPress={() => onShowReplyBox()} activeOpacity={0.5} style={styles.button}>
+          <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Reply</CustomText>
+        </TouchableOpacity>
         <View style={styles.divider} />
-        <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Delete</CustomText>
+        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5} style={styles.button}>
+          <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Delete</CustomText>
+        </TouchableOpacity>
       </View>
     </Animated.View>
   );
@@ -82,14 +90,19 @@ const styles = StyleSheet.create({
   innerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 22,
     height: '100%'
   },
   divider: {
     backgroundColor: Colors.purpleDark,
     width: 0.5,
     height: '100%'
+  },
+  button: {
+    height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8
   }
 });
 

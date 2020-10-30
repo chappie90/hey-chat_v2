@@ -16,19 +16,20 @@ type MessageProps = {
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
   isLastMessage: boolean;
-  onShowMessageActions: (index: number, coordinates: number[]) => void;
+  onShowMessageActions: (message: TMessage, coordinates: number[]) => void;
   hideMessageActions: () => void;
 };
 
 const Message = ({ 
   index,
-  content: { text, createDate, sender, delivered, read }, 
+  content, 
   sameSenderPrevMsg, 
   sameSenderNextMsg,
   isLastMessage,
   onShowMessageActions,
-  hideMessageActions,
+  hideMessageActions
 }: MessageProps) => {
+  const { sender, createDate, delivered, read } = content;
 
   return (
     <View
@@ -47,7 +48,7 @@ const Message = ({
       <View style={styles.messageContainer}>
         <MessageBubble 
           index={index}
-          text={text} 
+          content={content} 
           userId={sender._id}
           sameSenderPrevMsg={sameSenderPrevMsg}
           sameSenderNextMsg={sameSenderNextMsg}
