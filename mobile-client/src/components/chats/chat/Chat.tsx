@@ -40,7 +40,9 @@ const Chat = ({
     getMessages, 
     getMoreMessages,
     addMessage,
-    likeMessage
+    likeMessage,
+    markMessageForDeletion,
+    deleteMessage
   } = useContext(ChatsContext);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
@@ -161,6 +163,15 @@ const Chat = ({
     hideMessageActions();
   };
 
+  const onDeleteMessage = (): void => {
+    hideMessageActions();
+    markMessageForDeletion(chatIdRef.current, activeMsg?._id);
+
+    setTimeout(() => {
+      deleteMessage(chatIdRef.current, activeMsg?._id);
+    }, 350);
+  };
+
   const onCloseReplyBox = (): void => {
     setShowReplyBox(false);
     setActiveMsg(null);
@@ -212,7 +223,7 @@ const Chat = ({
               }}
               onEndReached={onEndReached}
               onEndReachedThreshold={0.2}
-              onContentSizeChange={() => scrollToEnd()}
+              // onContentSizeChange={() => scrollToEnd()}
               onLayout={() => scrollToEnd()}
               onScroll={(e) => onScroll(e.nativeEvent.contentOffset.y)}
               disableScrollViewPanResponder
@@ -232,6 +243,7 @@ const Chat = ({
             coordinates={msgActionsCoord}
             onLikeMessage={onLikeMessage}
             onShowReplyBox={onShowReplyBox}
+            onDeleteMessage={onDeleteMessage}
           />
         }
         {showReplyBox && activeMsg &&

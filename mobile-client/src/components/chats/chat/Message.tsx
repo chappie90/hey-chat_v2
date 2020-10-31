@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, Animated } from 'react-native';
 import dayjs from 'dayjs';
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
@@ -32,16 +32,28 @@ const Message = ({
   hideMessageActions,
   onCloseReplyBox
 }: MessageProps) => {
-  const { sender, createDate, delivered, read, liked } = content;
+  const { sender, createDate, delivered, read, liked, deleted } = content;
+  const deleteAnim = useRef(new Animated.Value(1));
+
+  useEffect(() => {
+    Animated.timing(
+      deleteAnim.current, { 
+        toValue: deleted ? 0 : 1,
+        duration: 350,
+        useNativeDriver: true
+      }
+    ).start();
+  }, [deleted]);
 
   return (
-    <View
+    <Animated.View
       style={[
         styles.container,
         sender._id === 1 ? styles.rightMessage : styles.leftMessage,
         {
           marginTop: sameSenderPrevMsg ? 3 : 12,
-          marginBottom: isLastMessage ? 12 : 0
+          marginBottom: isLastMessage ? 12 : 0,
+          transform: [ { scale: deleteAnim.current } ]
         }
       ]}
     >
@@ -78,7 +90,7 @@ const Message = ({
           </View>
         }
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

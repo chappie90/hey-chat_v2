@@ -10,13 +10,15 @@ type MessageActionsProps = {
   coordinates: number[];
   onLikeMessage: () => void;
   onShowReplyBox: () => void;
+  onDeleteMessage: () => void;
 };
 
 const MessageActions = ({ 
   isVisible, 
   coordinates, 
   onShowReplyBox,
-  onLikeMessage
+  onLikeMessage,
+  onDeleteMessage
 }: MessageActionsProps) => {
   const scaleAnim = useRef(new Animated.Value(0));
 
@@ -70,7 +72,7 @@ const MessageActions = ({
           </View>
         </TouchableOpacity>
         {coordinates[0] !== 40 &&
-          <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5}>
+          <TouchableOpacity onPress={() => onDeleteMessage()} activeOpacity={0.5}>
             <View style={styles.button}>
               <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>
                 Delete

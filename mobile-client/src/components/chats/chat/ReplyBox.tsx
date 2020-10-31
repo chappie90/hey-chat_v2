@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 16,
-    paddingVertical: 6
+    paddingVertical: 6,
+    zIndex: 4
   },
   imageContainer: {
     overflow: 'hidden', 

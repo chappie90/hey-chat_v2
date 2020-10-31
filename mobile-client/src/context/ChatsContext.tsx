@@ -14,9 +14,13 @@ type ChatsAction =
   | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'add_message'; payload: { chatId: string, message: TMessage } }
-  | { type: 'like_message'; payload: { chatId: string, messageId: string } };
+  | { type: 'like_message'; payload: { chatId: string, messageId: string } }
+  | { type: 'mark_message_for_deletion'; payload: { chatId: string, messageId: string } }
+  | { type: 'delete_message'; payload: { chatId: string, messageId: string } };
 
 const chatReducer = (state: ChatsState, action: ChatsAction) => {
+  let updatedMessages: TMessage[];
+
   switch (action.type) {
     case 'get_chats':
       return { ...state, chats: action.payload };
@@ -73,7 +77,7 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
     case 'like_message':
       if (!state.chatHistory[action.payload.chatId]) return;
 
-      const updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+      updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
         return msg._id === action.payload.messageId ?
           { 
             ...msg,
@@ -85,6 +89,40 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
           msg
       });
       
+      return {
+        ...state,
+        chatHistory: {
+          ...state.chatHistory,
+          [action.payload.chatId]: {
+            ...state.chatHistory[action.payload.chatId],
+            messages: updatedMessages
+          }
+        }
+      };
+    case 'mark_message_for_deletion':
+      updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+        return msg._id === action.payload.messageId ?
+          {  ...msg, deleted: true } :
+          msg
+      });
+
+      return {
+        ...state,
+        chatHistory: {
+          ...state.chatHistory,
+          [action.payload.chatId]: {
+            ...state.chatHistory[action.payload.chatId],
+            messages: updatedMessages
+          }
+        }
+      };
+    case 'delete_message':
+      if (!state.chatHistory[action.payload.chatId]) return;
+
+      updatedMessages = state.chatHistory[action.payload.chatId].messages.filter(
+        (msg: TMessage) => msg._id !== action.payload.messageId
+      );
+
       return {
         ...state,
         chatHistory: {
@@ -182,6 +220,14 @@ const likeMessage = dispatch => (chatId: string, messageId: string): void => {
   dispatch({ type: 'like_message', payload: { chatId, messageId } });
 };
 
+const markMessageForDeletion = dispatch => (chatId: string, messageId: string): void => {
+  dispatch({ type: 'mark_message_for_deletion', payload: { chatId, messageId } });
+}; 
+
+const deleteMessage = dispatch => (chatId: string, messageId: string): void => {
+  dispatch({ type: 'delete_message', payload: { chatId, messageId } });
+};
+
 export const { Context, Provider } = createDataContext(
   chatReducer,
   { 
@@ -190,7 +236,9 @@ export const { Context, Provider } = createDataContext(
     getMessages,
     getMoreMessages,
     addMessage,
-    likeMessage
+    likeMessage,
+    markMessageForDeletion,
+    deleteMessage
   },
   {  
     chats: [],
