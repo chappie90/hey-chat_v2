@@ -17,6 +17,7 @@ import MessageActions from './MessageActions';
 import { Colors } from '../../../variables/variables';
 import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
+import ScrollBottomButton from './ScrollBottomButton';
 
 type ChatProps = {
   chatType: string;
@@ -50,6 +51,7 @@ const Chat = ({
   const [activeMsg, setActiveMsg] = useState<TMessage | null>(null);
   const chatIdRef = useRef<string>(chatId);
   const flatListRef = useRef<any>(null);
+  const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
 
   const onGreeting = () => {
     onSendMessage('👋');
@@ -133,6 +135,14 @@ const Chat = ({
     flatListRef.current.scrollToIndex({ index: 0, animated: true });
   };
 
+  const onScroll = (offset: number): void => {
+    if (offset > 300) {
+      setShowScrollBottomBtn(true);
+    } else {
+      setShowScrollBottomBtn(false);
+    }
+  };
+
   const onLikeMessage = (): void => {
     likeMessage(chatIdRef.current, activeMsg?._id);
     
@@ -204,6 +214,7 @@ const Chat = ({
               onEndReachedThreshold={0.2}
               onContentSizeChange={() => scrollToEnd()}
               onLayout={() => scrollToEnd()}
+              onScroll={(e) => onScroll(e.nativeEvent.contentOffset.y)}
               disableScrollViewPanResponder
             />
           ) :
@@ -226,6 +237,7 @@ const Chat = ({
         {showReplyBox && activeMsg &&
           <ReplyBox originalMessage={activeMsg} onCloseReplyBox={onCloseReplyBox} />
         }
+        {showScrollBottomBtn && <ScrollBottomButton scrollToEnd={scrollToEnd} />}
         <InputToolbar 
           message={message} 
           onChangeText={onChangeText} 

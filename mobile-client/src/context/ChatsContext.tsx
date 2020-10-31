@@ -71,6 +71,8 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
         };
       }
     case 'like_message':
+      if (!state.chatHistory[action.payload.chatId]) return;
+
       const updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
         return msg._id === action.payload.messageId ?
           { 
@@ -83,7 +85,6 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
           msg
       });
       
-
       return {
         ...state,
         chatHistory: {
