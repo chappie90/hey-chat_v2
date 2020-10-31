@@ -26,7 +26,7 @@ const MessageActions = ({
     Animated.spring(
       scaleAnim.current, { 
         toValue: 1,
-        useNativeDriver: false
+        useNativeDriver: true
       }
     ).start();
   }, [isVisible, coordinates]);
@@ -53,19 +53,31 @@ const MessageActions = ({
       <View onStartShouldSetResponder={(e) => true} style={styles.innerContainer}>
         <TouchableOpacity onPress={() => onLikeMessage()} activeOpacity={0.5}>
           <View style={[styles.button, styles.likeBtn]}>
-            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Like</CustomText>
+            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>
+              Like
+            </CustomText>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onShowReplyBox()} activeOpacity={0.5}>
-          <View style={[styles.button, styles.replyBtn]}>
-            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Reply</CustomText>
+          <View style={[
+              styles.button, 
+              coordinates[0] !== 40 && styles.replyBtn
+            ]}
+          >
+            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>
+              Reply
+            </CustomText>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5}>
-          <View style={styles.button}>
-            <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>Delete</CustomText>
-          </View>
-        </TouchableOpacity>
+        {coordinates[0] !== 40 &&
+          <TouchableOpacity onPress={onShowReplyBox} activeOpacity={0.5}>
+            <View style={styles.button}>
+              <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>
+                Delete
+              </CustomText>
+            </View>
+          </TouchableOpacity>
+        }
       </View>
     </Animated.View>
   );
