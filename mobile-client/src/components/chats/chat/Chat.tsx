@@ -248,6 +248,7 @@ const Chat = ({
           <MessageActions 
             isVisible={showMsgActions} 
             coordinates={msgActionsCoord}
+            likedByUser={activeMsg?.liked.likedByUser}
             onLikeMessage={onLikeMessage}
             onShowReplyBox={onShowReplyBox}
             onDeleteMessage={onDeleteMessage}

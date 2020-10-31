@@ -1,31 +1,30 @@
 import React from 'react';
-import { 
-  View, 
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { Colors, Headings, Fonts } from '../../../variables/variables';
-import CustomText from '../../../components/CustomText';
+import { Colors, Fonts, Headings } from '../../variables/variables';
+import CustomText from '../../components/CustomText';
 
-type ContactsHeaderProps = {
-  toggleModal: () => void;
-};
+type ProfileHeaderProps = { onSignOut: () => void };
 
-const ContactsHeader = ({ toggleModal }: ContactsHeaderProps) => {
+const ProfileHeader = ({ onSignOut }: ProfileHeaderProps) => {
   return (
     <View style={styles.header}>
       <View style={styles.top}>
         <CustomText 
           color={Colors.white} 
+          fontWeight={Fonts.semiBold} 
           fontSize={Headings.headingLarge}
-          fontWeight={Fonts.semiBold}
         >
-          My Contacts
+          My Account
         </CustomText>
-        <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-          <FontAwesome5 name="user-plus" size={Headings.headingBig} color={Colors.white} />
+        <TouchableOpacity style={styles.signoutButton} onPress={() => onSignOut()}>
+          <CustomText 
+            fontSize={Headings.headingSmall} 
+            fontWeight={Fonts.semiBold} 
+            color={Colors.white}
+          >
+            Sign Out
+          </CustomText>
         </TouchableOpacity>
       </View>
       <View style={styles.bottom}></View>
@@ -43,21 +42,22 @@ const styles = StyleSheet.create({
   top: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
     paddingRight: 20,
     paddingLeft: 30,
     paddingTop: 20,
     paddingBottom: 11
   },
-  addButton: {
-    marginTop: 10
+  signoutButton: {
+    marginTop: 7
   },
   bottom: {
     height: 70,
     backgroundColor: Colors.white,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35
-  }
+  },
 });
 
-export default ContactsHeader;
+export default ProfileHeader;
 

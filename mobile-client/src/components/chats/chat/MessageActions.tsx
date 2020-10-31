@@ -8,6 +8,7 @@ import CustomText from '../../CustomText';
 type MessageActionsProps = { 
   isVisible: boolean;
   coordinates: number[];
+  likedByUser: boolean;
   onLikeMessage: () => void;
   onShowReplyBox: () => void;
   onDeleteMessage: () => void;
@@ -16,6 +17,7 @@ type MessageActionsProps = {
 const MessageActions = ({ 
   isVisible, 
   coordinates, 
+  likedByUser,
   onShowReplyBox,
   onLikeMessage,
   onDeleteMessage
@@ -56,7 +58,7 @@ const MessageActions = ({
         <TouchableOpacity onPress={() => onLikeMessage()} activeOpacity={0.5}>
           <View style={[styles.button, styles.likeBtn]}>
             <CustomText fontSize={Headings.headingExtraSmall} color={Colors.purpleDark}>
-              Like
+              {likedByUser ? 'Unlike' : 'Like'}
             </CustomText>
           </View>
         </TouchableOpacity>

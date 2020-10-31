@@ -12,7 +12,7 @@ type AuthState = {
 
 type AuthAction = 
   | { type: 'signin'; payload: TUser }
-  | { type: 'signout'; }
+  | { type: 'sign_out'; }
   | { type: 'set_socket'; payload: any };
 
 const authReducer = (state: AuthState, action: AuthAction) => {
@@ -23,7 +23,7 @@ const authReducer = (state: AuthState, action: AuthAction) => {
         username: action.payload.username, 
         token: action.payload.token
       };
-    case 'signout':
+    case 'sign_out':
       return {
         userId: null,  
         username: null, 
@@ -95,14 +95,14 @@ const autoSignin = dispatch => async (): Promise<void> => {
   }
 };
 
-const signout = dispatch => async (userId: string, socketInstance: any): Promise<void> => {
+const signOut = dispatch => async (userId: string, socketInstance: any): Promise<void> => {
   try {
     await AsyncStorage.removeItem('user');
     
     socketInstance.disconnect();
     // const response = await api.patch('/signout', { userId });
 
-    dispatch({ type: 'signout' });
+    dispatch({ type: 'sign_out' });
   } catch (err) {
     console.log('Could not remove user data inside signout method ' +  err);
   } 
@@ -118,7 +118,7 @@ export const { Context, Provider } = createDataContext(
     signup,
     signin, 
     autoSignin, 
-    signout,
+    signOut,
     setSocketState
   },
   { 
