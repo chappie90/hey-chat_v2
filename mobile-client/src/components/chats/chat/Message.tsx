@@ -3,6 +3,7 @@ import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
 import dayjs from 'dayjs';
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 import MessageBubble from './MessageBubble';
 import MessageStatus from './MessageStatus';
@@ -31,7 +32,7 @@ const Message = ({
   hideMessageActions,
   onCloseReplyBox
 }: MessageProps) => {
-  const { sender, createDate, delivered, read } = content;
+  const { sender, createDate, delivered, read, liked } = content;
 
   return (
     <View
@@ -48,6 +49,17 @@ const Message = ({
         <Avatar avatar={sender.avatar} />
       )}
       <View style={styles.messageContainer}>
+        {liked.likesCount > 0 &&
+          <View 
+            style={[
+              styles.likeIcon,
+              sender._id === 1 && styles.userMsgLikeIcon,
+              sender._id === 2 && styles.contactMsgLikeIcon,
+            ]}
+          >
+            <EntypoIcon name="thumbs-up" size={19} color={Colors.purpleDark} />
+          </View>
+        }
         <MessageBubble 
           index={index}
           content={content} 
@@ -103,6 +115,23 @@ const styles = StyleSheet.create({
   },
   date: {
 
+  },
+  likeIcon: {
+    position: 'absolute',
+    top: 0,
+    zIndex: 2,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.purpleLight,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  userMsgLikeIcon: {
+    left: -15
+  },
+  contactMsgLikeIcon: {
+    right: -15
   }
 });
 
