@@ -10,7 +10,8 @@ const SocketEventListeners = () => {
     addChat,
     getMessages, 
     getMoreMessages,
-    addMessage
+    addMessage,
+    likeMessage
   } = useContext(ChatsContext);
 
   useEffect(() => {
@@ -24,6 +25,13 @@ const SocketEventListeners = () => {
         const chat = { ...newChat, lastMessage };
         addChat(chat);
       });
+
+      // Update recipient's chat messages with liked message
+      socketState.on('message_liked', (data: string) => {
+        const { chatId, messageId } = JSON.parse(data);
+
+        likeMessage(chatId, messageId);
+      }); 
     }
   }, [socketState]);
 

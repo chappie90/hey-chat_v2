@@ -75,13 +75,14 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
         return msg._id === action.payload.messageId ?
           { 
             ...msg,
-            likes: {
-              liked: !msg.liked.likedByUser,
-              likesCount: msg.liked.likedByUser ? msg.liked.likesCount-- : msg.liked.likesCount++
+            liked: {
+              likedByUser: !msg.liked.likedByUser,
+              likesCount: msg.liked.likedByUser ? msg.liked.likesCount - 1  : msg.liked.likesCount + 1
             }
           } :
           msg
       });
+      
 
       return {
         ...state,

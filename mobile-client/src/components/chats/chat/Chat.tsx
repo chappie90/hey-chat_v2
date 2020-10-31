@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import uuid from 'react-native-uuid';
 
-import { emitMessage } from '../../../socket/eventEmitters';
+import { emitNewMessage, emitLikeMessage } from '../../../socket/eventEmitters';
 import { Context as AuthContext } from '../../../context/AuthContext';
 import { Context as ChatsContext } from '../../../context/ChatsContext';
 import Message from './Message';
@@ -102,7 +102,7 @@ const Chat = ({
 
     setMessage('');
     addMessage(chatIdRef.current, newMessage);
-    emitMessage(JSON.stringify(data), socketState);
+    emitNewMessage(JSON.stringify(data), socketState);
   };
 
   const onEndReached = async (): Promise<void> => {
@@ -134,7 +134,15 @@ const Chat = ({
   };
 
   const onLikeMessage = (): void => {
-    likeMessage(activeMsg?.chatId, activeMsg?._id);
+    likeMessage(chatIdRef.current, activeMsg?._id);
+    
+    const data = { 
+      chatId: chatIdRef.current, 
+      messageId: activeMsg?._id,
+      recipientId: contactId
+    };
+    emitLikeMessage(JSON.stringify(data), socketState);
+
     hideMessageActions();
   };
 

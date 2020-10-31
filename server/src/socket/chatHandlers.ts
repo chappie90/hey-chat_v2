@@ -6,6 +6,7 @@ const Chat = mongoose.model('Chat');
 const Message = mongoose.model('Message');
 import { TChat } from '../types/index';
 
+// User sends new message
 export const onMessage = async (
   io: Socket,
   socket: Socket, 
@@ -132,5 +133,33 @@ export const onMessage = async (
       }
     }
 
+  }
+};
+
+// User likes message
+export const onLikeMessage = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { chatId, messageId, recipientId } = JSON.parse(data);
+
+  const message = await Message.findOne({ 'message.id': messageId });
+
+  await Message.updateOne(
+    { 'message.id': messageId },
+    { liked: { 
+        likedByUser: !message.liked.likedByUser,
+        likesCount: message.liked.likedByUser ? message.liked.likesCount - 1 : message.liked.likesCount + 1
+    }}
+  );
+
+  // Check if message recipient is online and get socket id
+  if (users[recipientId]) {
+    let recipientSocketId = users[recipientId].id;
+    // Notify recipient of like
+    const data = { chatId, messageId };
+    io.to(recipientSocketId).emit('messaged_liked', JSON.stringify(data));
   }
 };
