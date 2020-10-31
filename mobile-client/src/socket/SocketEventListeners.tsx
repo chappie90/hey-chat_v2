@@ -11,7 +11,8 @@ const SocketEventListeners = () => {
     getMessages, 
     getMoreMessages,
     addMessage,
-    likeMessage
+    likeMessage,
+    deleteMessage
   } = useContext(ChatsContext);
 
   useEffect(() => {
@@ -31,6 +32,13 @@ const SocketEventListeners = () => {
         const { chatId, messageId } = JSON.parse(data);
 
         likeMessage(chatId, messageId);
+      }); 
+
+       // Delete message for recipient
+       socketState.on('message_deleted', (data: string) => {
+        const { chatId, messageId } = JSON.parse(data);
+
+        deleteMessage(chatId, messageId);
       }); 
     }
   }, [socketState]);

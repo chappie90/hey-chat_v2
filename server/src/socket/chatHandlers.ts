@@ -163,3 +163,23 @@ export const onLikeMessage = async (
     io.to(recipientSocketId).emit('messaged_liked', JSON.stringify(data));
   }
 };
+
+// User deletes message
+export const onDeleteMessage = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { chatId, messageId, recipientId } = JSON.parse(data);
+
+  await Message.deleteOne({ 'message.id': messageId });
+
+  // Check if message recipient is online and get socket id
+  if (users[recipientId]) {
+    let recipientSocketId = users[recipientId].id;
+    // Notify recipient of delete
+    const data = { chatId, messageId };
+    io.to(recipientSocketId).emit('messaged_deleted', JSON.stringify(data));
+  }
+};

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import uuid from 'react-native-uuid';
 
-import { emitNewMessage, emitLikeMessage } from '../../../socket/eventEmitters';
+import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from '../../../socket/eventEmitters';
 import { Context as AuthContext } from '../../../context/AuthContext';
 import { Context as ChatsContext } from '../../../context/ChatsContext';
 import Message from './Message';
@@ -166,6 +166,13 @@ const Chat = ({
   const onDeleteMessage = (): void => {
     hideMessageActions();
     markMessageForDeletion(chatIdRef.current, activeMsg?._id);
+
+    const data = { 
+      chatId: chatIdRef.current, 
+      messageId: activeMsg?._id,
+      recipientId: contactId
+    };
+    emitDeleteMessage(JSON.stringify(data), socketState);
 
     setTimeout(() => {
       deleteMessage(chatIdRef.current, activeMsg?._id);

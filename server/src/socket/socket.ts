@@ -1,5 +1,5 @@
 import { onConnect } from './indexHandlers';
-import { onMessage, onLikeMessage } from './chatHandlers';
+import { onMessage, onLikeMessage, onDeleteMessage } from './chatHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};
@@ -31,6 +31,11 @@ const initSocket = (io: Socket) => {
     // User likes message
     socket.on('like_message', (data: string) => {
       onLikeMessage(io, socket, users, data);
+    });
+
+    // User deletes message
+    socket.on('delete_message', (data: string) => {
+      onDeleteMessage(io, socket, users, data);
     });
 
     // Disconnect from socket
