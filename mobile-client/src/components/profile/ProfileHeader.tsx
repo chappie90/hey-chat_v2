@@ -18,11 +18,7 @@ const ProfileHeader = ({ onSignOut }: ProfileHeaderProps) => {
           My Account
         </CustomText>
         <TouchableOpacity style={styles.signoutButton} onPress={() => onSignOut()}>
-          <CustomText 
-            fontSize={Headings.headingSmall} 
-            fontWeight={Fonts.semiBold} 
-            color={Colors.white}
-          >
+          <CustomText fontWeight={Fonts.semiBold} color={Colors.white}>
             Sign Out
           </CustomText>
         </TouchableOpacity>
