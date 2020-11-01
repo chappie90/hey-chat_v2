@@ -15,9 +15,10 @@ import CustomText from '../../components/CustomText';
 
 type ImageActionsProps = { 
   isVisible: boolean;
+  onShowCamera: () => void;
 };
 
-const ImageActions = ({ isVisible }: ImageActionsProps) => {
+const ImageActions = ({ isVisible, onShowCamera }: ImageActionsProps) => {
   const { width: windowWidth }  = useWindowDimensions();
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
@@ -44,7 +45,7 @@ const ImageActions = ({ isVisible }: ImageActionsProps) => {
       ]}
     >
       <View style={styles.triangle} />
-      <TouchableOpacity onPress={() => {}} activeOpacity={0.5}>
+        <TouchableOpacity onPress={() => onShowCamera()} activeOpacity={0.5}>
           <View style={[styles.action, styles.takePhotoAction]}>
             <View style={styles.icon}>
               <MaterialIcon color={Colors.purpleDark} name="camera-alt" size={24} />

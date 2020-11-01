@@ -8,12 +8,14 @@ import CustomText from '../components/CustomText';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileImage from '../components/profile/ProfileImage';
 import ImageActions from '../components/profile/ImageActions';
+import CameraWidget from '../components/camera/CameraWidget';
 
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
   const { state: { username, userId, socketState }, signOut } = useContext(AuthContext);
   const [showImageActions, setShowImageActions] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
 
   const onSignOut = (): void => {
     signOut(userId, socketState);  
@@ -21,6 +23,18 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
 
   const onToggleImageActions = (): void => {
     setShowImageActions(!showImageActions);
+  };
+
+  const onShowCamera = () => {
+    setShowCamera(true);
+  };
+
+  const onHideCamera = () => {
+    setShowCamera(false);
+  };
+
+  const onTakePhoto = (photoData: TCameraPhoto): void => {
+    console.log(photoData)
   };
 
   return (
@@ -33,7 +47,15 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
         style={styles.username}>
         {username}
       </CustomText>
-      <ImageActions isVisible={showImageActions} onToggleImageActions={onToggleImageActions} />
+      <ImageActions 
+        isVisible={showImageActions}
+        onShowCamera={onShowCamera}
+      />
+      <CameraWidget 
+        isVisible={showCamera}
+        onTakePhoto={onTakePhoto} 
+        onHideCamera={onHideCamera}
+      />
     </View>
   );
 };
@@ -46,7 +68,7 @@ const styles = StyleSheet.create({
   username: {
     marginTop: 10,
     textAlign: 'center'
-  },
+  }
 });
 
 export default ProfileScreen;

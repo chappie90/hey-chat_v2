@@ -88,5 +88,11 @@ type TMessage = {
   deleted?: boolean;
 };
 
+// Camera
+type TCameraPhoto = {
+  width: number;
+  height: number;
+  uri: string;
+};
 
 

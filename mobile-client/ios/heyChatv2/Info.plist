@@ -55,6 +55,12 @@
 	<false/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs permission to use your camera</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to access your library photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs permission to access your library photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>OpenSans-Bold.ttf</string>
