@@ -20,7 +20,8 @@ const userSchema = new Schema({
   },
   profile: {
     image: {
-      name: String
+      name: String,
+      path: String
     }
   },
   pendingContacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
