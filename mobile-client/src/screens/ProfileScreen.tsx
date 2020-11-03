@@ -9,6 +9,7 @@ import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileImage from '../components/profile/ProfileImage';
 import ImageActions from '../components/profile/ImageActions';
 import CameraWidget from '../components/camera/CameraWidget';
+import PhotosLibraryWidget from '../components/camera/PhotosLibraryWidget';
 
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
@@ -16,6 +17,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   const { state: { username, userId, socketState }, signOut } = useContext(AuthContext);
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
 
   const onSignOut = (): void => {
     signOut(userId, socketState);  
@@ -33,8 +35,16 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
     setShowCamera(false);
   };
 
-  const onTakePhoto = (photoData: TCameraPhoto): void => {
-    console.log(photoData)
+  const onSelectPhoto = (photoData: TCameraPhoto): TCameraPhoto => {
+    return photoData;
+  };
+
+  const onShowLibrary = () => {
+    setShowLibrary(true);
+  };
+
+  const onHideLibrary = () => {
+    setShowLibrary(false);
   };
 
   return (
@@ -50,11 +60,17 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
       <ImageActions 
         isVisible={showImageActions}
         onShowCamera={onShowCamera}
+        onShowLibrary={onShowLibrary}
       />
       <CameraWidget 
         isVisible={showCamera}
-        onTakePhoto={onTakePhoto} 
+        onSelectPhoto={onSelectPhoto} 
         onHideCamera={onHideCamera}
+      />
+      <PhotosLibraryWidget 
+        isVisible={showLibrary} 
+        onSelectPhoto={onSelectPhoto}
+        onHideLibrary={onHideLibrary}
       />
     </View>
   );

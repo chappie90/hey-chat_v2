@@ -1,32 +1,52 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   View, 
   StyleSheet, 
   TouchableOpacity,
+  TouchableWithoutFeedback,
   useWindowDimensions,
-  Animated
+  Animated,
+  Image
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { RNCamera } from 'react-native-camera';
 
 import { Colors } from '../../variables/variables';
+import CustomText from '../CustomText';
 
 type CameraWidgetProps = {
   isVisible: boolean;
-  onTakePhoto: (photoData: TCameraPhoto) => void;
+  onSelectPhoto: (photoData: TCameraPhoto) => TCameraPhoto;
   onHideCamera: () => void; 
  };
 
-const CameraWidget = ({ isVisible, onTakePhoto, onHideCamera }: CameraWidgetProps) => {
-  const windowWidth = useWindowDimensions().width;
+const CameraWidget = ({ isVisible, onSelectPhoto, onHideCamera }: CameraWidgetProps) => {
+  const [photo, setPhoto] = useState<TCameraPhoto | null>(null);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const cameraRef = useRef<RNCamera | null>(null);
   const opacityAnim = useRef(new Animated.Value(0));
+  const opacityTakePhotoAnim = useRef(new Animated.Value(0));
 
-  const takePhoto = async () => {
+  const onTakePhoto = async () => {
     if (cameraRef.current) {
       const data = await cameraRef.current.takePictureAsync();
-      onTakePhoto(data);
+      setPhoto(data);
     }
+  };
+
+  const onCancelPhoto = (): void => {
+    setPhoto(null);
+  };
+
+  const onCloseCamera = (): void => {
+    onHideCamera();
+    setPhoto(null);
+  };
+
+  const onChoosePhoto = (): void => {
+    if (photo) onSelectPhoto(photo);
+    setPhoto(null);
+    onHideCamera();
   };
 
   useEffect(() => {
@@ -39,6 +59,16 @@ const CameraWidget = ({ isVisible, onTakePhoto, onHideCamera }: CameraWidgetProp
     ).start();
   }, [isVisible]);
 
+  useEffect(() => {
+    Animated.timing(
+      opacityTakePhotoAnim.current, { 
+        toValue: photo ? 1 : 0,
+        duration: 350,
+        useNativeDriver: true
+      }
+    ).start();
+  }, [photo]);
+
   if (!isVisible) return <></>;
 
   return (
@@ -48,6 +78,14 @@ const CameraWidget = ({ isVisible, onTakePhoto, onHideCamera }: CameraWidgetProp
         { opacity: opacityAnim.current }
       ]}
     >
+      <View style={styles.closeCameraBtn}>
+        <TouchableOpacity 
+          onPress={() => onCloseCamera()} 
+          activeOpacity={0.5}
+        >
+          <MaterialIcon color={Colors.purpleDark} name="close" size={40} />
+        </TouchableOpacity>
+      </View>
       <RNCamera
         style={styles.camera}
         ref={cameraRef}
@@ -60,18 +98,49 @@ const CameraWidget = ({ isVisible, onTakePhoto, onHideCamera }: CameraWidgetProp
         }}
       />
       <View style={[ styles.takePhotoBtn, { left: windowWidth / 2 - 30 } ]}>
-        <TouchableOpacity onPress={() => takePhoto()}>
+        <TouchableWithoutFeedback onPress={() => onTakePhoto()}>
           <View style={styles.takePhotoIcon} />
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
       </View>
-      <View style={styles.closeCameraBtn}>
-        <TouchableOpacity 
-          onPress={() => onHideCamera()} 
-          activeOpacity={0.5}
+      {photo &&
+        <Animated.View 
+          style={[
+            styles.photoContainer,
+            { opacity: opacityTakePhotoAnim.current }
+          ]}
         >
-          <MaterialIcon color={Colors.purpleDark} name="close" size={40} />
-        </TouchableOpacity>
-      </View>
+          <View 
+            style={[ 
+              styles.actionBtn,
+              styles.cancelBtn,
+              { left: windowWidth /  10 } 
+            ]
+          }>
+            <TouchableOpacity activeOpacity={0.5} onPress={() => onCancelPhoto()}>
+              <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
+                <CustomText color={Colors.greyDark}>Cancel</CustomText>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <Image
+            style={{ width: windowWidth, height: windowHeight }}
+            source={{ uri: photo.uri }}
+          />
+          <View 
+            style={[ 
+              styles.actionBtn,
+              styles.chooseBtn,
+              { right: windowWidth / 10 } 
+            ]}
+          >
+            <TouchableOpacity activeOpacity={0.5} onPress={() => onChoosePhoto()}>
+              <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
+                <CustomText color={Colors.white}>Choose</CustomText>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </Animated.View >
+      }
     </Animated.View>
   );
 };
@@ -91,7 +160,7 @@ const styles = StyleSheet.create({
   takePhotoBtn: {
     position: 'absolute', 
     bottom: 30,  
-    zIndex: 6 
+    zIndex: 7
   },
   takePhotoIcon: {
     width: 50,
@@ -104,7 +173,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 40,
     top: 40,
+    zIndex: 7
+  },
+  photoContainer: {
+    position: 'absolute',
+    top: -3,
+    left: 0,
+    right: 0,
+    bottom: 0,
     zIndex: 6
+  },
+  actionBtn: {
+    position: 'absolute',
+    bottom: 35,
+    zIndex: 7,
+    borderRadius: 35
+  },
+  cancelBtn: {
+    backgroundColor: Colors.purpleLight
+  },
+  chooseBtn: {
+    backgroundColor: Colors.purpleDark 
   }
 });
 

@@ -16,9 +16,10 @@ import CustomText from '../../components/CustomText';
 type ImageActionsProps = { 
   isVisible: boolean;
   onShowCamera: () => void;
+  onShowLibrary: () => void;
 };
 
-const ImageActions = ({ isVisible, onShowCamera }: ImageActionsProps) => {
+const ImageActions = ({ isVisible, onShowCamera, onShowLibrary }: ImageActionsProps) => {
   const { width: windowWidth }  = useWindowDimensions();
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
@@ -55,7 +56,7 @@ const ImageActions = ({ isVisible, onShowCamera }: ImageActionsProps) => {
             </CustomText>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} activeOpacity={0.5}>
+        <TouchableOpacity onPress={() => onShowLibrary()} activeOpacity={0.5}>
           <View style={[styles.action, styles.choosePhotoAction]}>
             <View style={styles.icon}>
               <Ionicon color={Colors.purpleDark} name="md-images" size={24} />
