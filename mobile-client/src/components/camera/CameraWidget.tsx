@@ -78,14 +78,6 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideCamera }: CameraWidgetPr
         { opacity: opacityAnim.current }
       ]}
     >
-      <View style={styles.closeCameraBtn}>
-        <TouchableOpacity 
-          onPress={() => onCloseCamera()} 
-          activeOpacity={0.5}
-        >
-          <MaterialIcon color={Colors.purpleDark} name="close" size={40} />
-        </TouchableOpacity>
-      </View>
       <RNCamera
         style={styles.camera}
         ref={cameraRef}
@@ -97,49 +89,63 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideCamera }: CameraWidgetPr
           buttonNegative: 'Cancel',
         }}
       />
-      <View style={[ styles.takePhotoBtn, { left: windowWidth / 2 - 30 } ]}>
-        <TouchableWithoutFeedback onPress={() => onTakePhoto()}>
-          <View style={styles.takePhotoIcon} />
-        </TouchableWithoutFeedback>
-      </View>
-      {photo &&
-        <Animated.View 
-          style={[
-            styles.photoContainer,
-            { opacity: opacityTakePhotoAnim.current }
-          ]}
-        >
-          <View 
-            style={[ 
-              styles.actionBtn,
-              styles.cancelBtn,
-              { left: windowWidth /  10 } 
-            ]
-          }>
-            <TouchableOpacity activeOpacity={0.5} onPress={() => onCancelPhoto()}>
-              <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
-                <CustomText color={Colors.greyDark}>Cancel</CustomText>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <Image
-            style={{ width: windowWidth, height: windowHeight }}
-            source={{ uri: photo.uri }}
-          />
-          <View 
-            style={[ 
-              styles.actionBtn,
-              styles.chooseBtn,
-              { right: windowWidth / 10 } 
+      {photo ?
+        (
+          <Animated.View 
+            style={[
+              styles.photoContainer,
+              { opacity: opacityTakePhotoAnim.current }
             ]}
           >
-            <TouchableOpacity activeOpacity={0.5} onPress={() => onChoosePhoto()}>
-              <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
-                <CustomText color={Colors.white}>Choose</CustomText>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </Animated.View >
+            <View 
+              style={[ 
+                styles.actionBtn,
+                styles.cancelBtn,
+                { left: windowWidth /  10 } 
+              ]
+            }>
+              <TouchableOpacity activeOpacity={0.5} onPress={() => onCancelPhoto()}>
+                <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
+                  <CustomText color={Colors.greyDark}>Cancel</CustomText>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <Image
+              style={{ width: windowWidth, height: windowHeight }}
+              source={{ uri: photo.uri }}
+            />
+            <View 
+              style={[ 
+                styles.actionBtn,
+                styles.chooseBtn,
+                { right: windowWidth / 10 } 
+              ]}
+            >
+              <TouchableOpacity activeOpacity={0.5} onPress={() => onChoosePhoto()}>
+                <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
+                  <CustomText color={Colors.white}>Choose</CustomText>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Animated.View >
+        ) :
+        (
+          <>
+            <View style={styles.closeCameraBtn}>
+              <TouchableOpacity 
+                onPress={() => onCloseCamera()} 
+                activeOpacity={0.5}
+              >
+                <MaterialIcon color={Colors.purpleDark} name="close" size={40} />
+              </TouchableOpacity>
+            </View>
+            <View style={[ styles.takePhotoBtn, { left: windowWidth / 2 - 30 } ]}>
+              <TouchableWithoutFeedback onPress={() => onTakePhoto()}>
+                <View style={styles.takePhotoIcon} />
+              </TouchableWithoutFeedback>
+            </View>
+          </>
+        )
       }
     </Animated.View>
   );

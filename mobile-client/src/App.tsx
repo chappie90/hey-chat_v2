@@ -5,6 +5,7 @@ import { StyleSheet, View, SafeAreaView } from 'react-native';
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as ContactsProvider } from './context/ContactsContext';
 import { Provider as ChatsProvider } from './context/ChatsContext';
+import { Provider as ProfileProvider } from './context/ProfileContext';
 import Navigator from './navigation/Navigator';
 import AppStateTracker from './components/AppStateTracker';
 import SocketEventListeners from './socket/SocketEventListeners';
@@ -22,11 +23,13 @@ const App = () => {
     <AuthProvider>
       <ChatsProvider>
         <ContactsProvider>
-          <AppStateTracker />
-          <SocketEventListeners />
-          <SafeAreaView style={styles.container}>
-            <Navigator />
-          </SafeAreaView>
+          <ProfileProvider>
+            <AppStateTracker />
+            <SocketEventListeners />
+            <SafeAreaView style={styles.container}>
+              <Navigator />
+            </SafeAreaView>
+          </ProfileProvider>
         </ContactsProvider>
       </ChatsProvider>
     </AuthProvider>
