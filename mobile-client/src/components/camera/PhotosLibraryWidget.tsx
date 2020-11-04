@@ -48,7 +48,10 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideLibrary }: CameraWidgetP
    
     CameraRoll.getPhotos({
       first: 20,
-      assetType: 'Photos'
+      assetType: 'Photos',
+      include: [
+        "filename"
+      ]
     })
     .then(response => {
       console.log(response.edges)
@@ -163,7 +166,7 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideLibrary }: CameraWidgetP
           </View>
           <Image 
             style={{ width: windowWidth, height: windowHeight }}
-            source={{ uri: selectedPhoto.uri }}
+            source={{ uri: `${selectedPhoto.uri}/${selectedPhoto.filename}` }}
           />
           <View 
             style={[ 

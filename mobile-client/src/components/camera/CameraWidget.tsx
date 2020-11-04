@@ -16,7 +16,7 @@ import CustomText from '../CustomText';
 
 type CameraWidgetProps = {
   isVisible: boolean;
-  onSelectPhoto: (photoData: TCameraPhoto) => TCameraPhoto;
+  onSelectPhoto: (photoData: TCameraPhoto) => void;
   onHideCamera: () => void; 
  };
 

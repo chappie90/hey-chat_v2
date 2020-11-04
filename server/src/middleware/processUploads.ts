@@ -23,3 +23,5 @@ const storage = (destination) => {
     }
   })
 };
+
+export default storage;

@@ -93,6 +93,7 @@ type TCameraPhoto = {
   width: number;
   height: number;
   uri: string;
+  filename?: string;
 };
 
 

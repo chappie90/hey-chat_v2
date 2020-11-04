@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
+import api from '../api/api';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Colors, Headings, Fonts } from '../variables/variables';
 import CustomText from '../components/CustomText';
@@ -27,24 +28,56 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
     setShowImageActions(!showImageActions);
   };
 
-  const onShowCamera = () => {
+  const hideImageActions = (): void => {
+    setShowImageActions(false);
+  };
+
+  const onShowCamera = (): void => {
     setShowCamera(true);
   };
 
-  const onHideCamera = () => {
+  const onHideCamera = (): void => {
     setShowCamera(false);
+    hideImageActions();
   };
 
-  const onSelectPhoto = (photoData: TCameraPhoto): TCameraPhoto => {
-    return photoData;
+  const onSelectPhoto = (photoData: TCameraPhoto): void => {
+    uploadProfileImage(photoData);
   };
 
-  const onShowLibrary = () => {
+  const onShowLibrary = (): void => {
     setShowLibrary(true);
   };
 
-  const onHideLibrary = () => {
+  const onHideLibrary = (): void => {
     setShowLibrary(false);
+    hideImageActions();
+  };
+
+  const uploadProfileImage = (imageData: TCameraPhoto) => {
+    let imageUri;
+
+    if (imageData.filename) {
+      imageUri = `${imageData.uri}/${imageData.filename}}`;
+    } else {
+      imageUri = imageData.uri;
+    }
+
+    const uriParts = imageUri.split('.');
+    const fileType = uriParts[uriParts.length - 1].toLowerCase();
+
+    let data = new FormData();
+    data.append('profileImage',{
+      uri: imageUri,
+      name: username,
+      type: `image/${fileType}`
+    });
+
+    data.append('userId', userId);
+
+    const response = api.post('/image/upload', data);
+    
+    console.log(response)
   };
 
   return (
