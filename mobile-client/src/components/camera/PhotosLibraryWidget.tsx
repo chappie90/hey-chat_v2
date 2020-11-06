@@ -166,7 +166,7 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideLibrary }: CameraWidgetP
           </View>
           <Image 
             style={{ width: windowWidth, height: windowHeight }}
-            source={{ uri: `${selectedPhoto.uri}/${selectedPhoto.filename}` }}
+            source={{ uri: selectedPhoto.uri }}
           />
           <View 
             style={[ 
