@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-import transformImage from '../helpers/transformImage';
+import convertImage from '../helpers/convertImage';
+import resizeImage from '../helpers/resizeImage';
 
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -22,11 +23,28 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     const image = req.file;
     const userId = req.body.userId;
 
+    let imageNameOriginal: string;
+
     const profileImgFolder = 'public/uploads/profile';
 
-    const imageNameOriginal = image.filename;
-    const imageNameSmall = transformImage(image, 'profile', 'small');
-    const imageNameMedium = transformImage(image, 'profile', 'medium');
+    let splitNameParts = image.filename.split('.');
+    let fileExt = splitNameParts[splitNameParts.length - 1];
+    splitNameParts.pop();
+    const joinNameParts = splitNameParts.join('');
+
+    imageNameOriginal = image.filename;
+
+    if (fileExt === 'heic' || fileExt === 'heif') {
+      await convertImage(
+        `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`,
+        `${global.appRoot}/${profileImgFolder}/original/${joinNameParts}.jpg`
+      );
+
+      imageNameOriginal = `${joinNameParts}.jpg`;
+    }
+
+    const imageNameSmall = await resizeImage(imageNameOriginal, 'profile', 'small');
+    const imageNameMedium = await resizeImage(imageNameOriginal, 'profile', 'medium');
 
     await User.updateOne(
       { _id: userId },
