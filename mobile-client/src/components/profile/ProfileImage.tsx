@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -7,20 +7,28 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Colors, Fonts, Headings } from '../../variables/variables';
+import { Context as ProfileContext } from '../../context/ProfileContext';
+import { Colors } from '../../variables/variables';
 import CustomText from '../../components/CustomText';
 import { Images } from '../../../assets/assets';
+import { API_BASE_URL } from '@env';
 
 type ProfileImageProps = { onToggleImageActions: () => void };
 
 const ProfileImage = ({ onToggleImageActions }: ProfileImageProps) => {
+  const { state: { profileImage } } = useContext(ProfileContext);
+
+  useEffect(() => {
+    console.log(`${API_BASE_URL}/${profileImage}`)
+  }, [profileImage])
+
   return (
     <TouchableWithoutFeedback onPress={() => onToggleImageActions ()}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          {false ?
+          {profileImage ?
             <Image 
-              source={{ uri: '' }}
+              source={{ uri: `${API_BASE_URL}/${profileImage}` }}
               style={styles.image} /> : 
             <Image source={ Images.avatarBig } style={styles.image} />
           }
