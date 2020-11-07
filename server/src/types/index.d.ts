@@ -1,3 +1,12 @@
+// Extend global object
+declare global {
+  namespace NodeJS {
+    interface Global {
+      appRoot: string;
+    }
+  }
+}
+
 export type TUser = {
   _id: number;
   username: string;

@@ -4,7 +4,8 @@ const storage = (destination) => {
   const MIME_TYPE = {
     'image/png': 'png',
     'image/jpeg': 'jpg',
-    'image/jpg': 'jpg'
+    'image/jpg': 'jpg',
+    'image/heic': 'heic'
   };
 
   return multer.diskStorage({

@@ -9,7 +9,7 @@ const router = Router();
 router.get('/api/image', ProfileCtrl.getImage);
 router.post(
   '/api/image/upload', 
-  multer({ storage: processUploads('/profile/original') }).single('profileImage'),
+  multer({ storage: processUploads('profile/original') }).single('profileImage'),
   ProfileCtrl.uploadImage
 );
 router.patch('/api/image/delete', ProfileCtrl.deleteImage);

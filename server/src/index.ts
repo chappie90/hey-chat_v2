@@ -5,6 +5,7 @@ require('./models/Chat');
 require('./models/Message');
 import express, { Application, Request, Response, NextFunction } from 'express';
 import http from 'http';
+import path from 'path';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 const socket = require('socket.io');
@@ -13,6 +14,8 @@ const app: Application = express();
 const server = http.createServer(app);
 
 app.use(bodyParser.json());
+
+(global as any).appRoot = path.resolve(__dirname);
 
 // MongoDB connection
 const mongoUri = `mongodb+srv://stoyangarov:${

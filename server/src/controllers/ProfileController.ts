@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
 import { TUser } from '../types/index';
+import transformImage from '../helpers/transformImage';
 
 const getImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -10,7 +11,9 @@ const getImage = async (req: Request, res: Response, next: NextFunction): Promis
 
 const uploadImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log(req.file)
+    const image = req.file;
+
+    transformImage(image, 'profile', 'small');
 
     res.status(200).send({ placeholder: '' }); 
   } catch (err) {
