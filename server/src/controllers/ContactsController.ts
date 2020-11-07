@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
-import { TUser, TContact } from '../types/index';
+import { TContact } from '../types/index';
 
 const searchContacts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const { username } = req.query;
@@ -30,7 +30,7 @@ const getContacts = async (req: Request, res: Response, next: NextFunction): Pro
   const { userId } = req.query;
 
   try {
-    const user: TUser = await User.findOne(
+    const user = await User.findOne(
       { _id: userId }
     ).lean()
      .populate('pendingContacts', 'username')

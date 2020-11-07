@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 import api from '../api/api';
 import { Context as AuthContext } from '../context/AuthContext';
+import { Context as ProfileContext } from '../context/ProfileContext';
 import { Colors, Headings, Fonts } from '../variables/variables';
 import CustomText from '../components/CustomText';
 import ProfileHeader from '../components/profile/ProfileHeader';
@@ -16,6 +17,7 @@ type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
   const { state: { username, userId, socketState }, signOut } = useContext(AuthContext);
+  const { getProfileImage, updateProfileImage } = useContext(ProfileContext);
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
@@ -54,7 +56,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
     hideImageActions();
   };
 
-  const uploadProfileImage = (imageData: TCameraPhoto) => {
+  const uploadProfileImage = async (imageData: TCameraPhoto): Promise<void> => {
     let imageUri;
 
     if (imageData.filename) {
@@ -72,13 +74,16 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
       name: username,
       type: `image/${fileType}`
     });
-
     data.append('userId', userId);
 
-    const response = api.post('/image/upload', data);
-    
-    console.log(response)
+    const response = await api.post('/image/upload', data);
+
+    updateProfileImage(response.data.profileImage);
   };
+
+  useEffect(() => {
+    getProfileImage(userId);
+  }, []);
 
   return (
     <View style={styles.container}>
