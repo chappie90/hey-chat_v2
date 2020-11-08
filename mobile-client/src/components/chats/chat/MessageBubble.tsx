@@ -4,7 +4,8 @@ import {
   StyleSheet, 
   TouchableWithoutFeedback, 
   useWindowDimensions,
-  GestureResponderEvent 
+  GestureResponderEvent, 
+  Keyboard
 } from 'react-native';
 
 import CustomText from '../../../components/CustomText';
@@ -43,7 +44,10 @@ const MessageBubble = ({
 
   return (
     <TouchableWithoutFeedback
-      onPress={() => hideMessageActions()} 
+      onPress={() => {
+        hideMessageActions();
+        Keyboard.dismiss();
+      }} 
       onLongPress={(e) => onLongPress(e)}
     >
       <View 

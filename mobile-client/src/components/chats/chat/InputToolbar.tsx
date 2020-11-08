@@ -76,7 +76,6 @@ const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProp
         selectionColor={Colors.greyDark}
         placeholder="Type a message..."
         placeholderTextColor={Colors.yellowDark}
-        autoFocus
         multiline
         value={message}
         onChangeText={onChangeText}

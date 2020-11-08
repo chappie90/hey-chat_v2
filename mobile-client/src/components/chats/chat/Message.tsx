@@ -1,5 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { 
+  View, 
+  StyleSheet, 
+  Animated,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
 import dayjs from 'dayjs';
 var localizedFormat = require('dayjs/plugin/localizedFormat')
 dayjs.extend(localizedFormat);
@@ -46,51 +52,54 @@ const Message = ({
   }, [deleted]);
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        sender._id === 1 ? styles.rightMessage : styles.leftMessage,
-        {
-          marginTop: sameSenderPrevMsg ? 3 : 12,
-          marginBottom: isLastMessage ? 12 : 0,
-          transform: [ { scale: deleteAnim.current } ]
-        }
-      ]}
-    >
-      {sender._id === 2 && !sameSenderNextMsg && (
-        <Avatar avatar={sender.avatar} />
-      )}
-      <View style={styles.messageContainer}>
-        <LikeIcon sender={sender} liked={liked} />
-        <MessageBubble 
-          index={index}
-          content={content} 
-          userId={sender._id}
-          sameSenderPrevMsg={sameSenderPrevMsg}
-          sameSenderNextMsg={sameSenderNextMsg}
-          onShowMessageActions={onShowMessageActions}
-          hideMessageActions={hideMessageActions}
-          onCloseReplyBox={onCloseReplyBox}
-        />
-        {!sameSenderNextMsg && 
-          <View 
-            style={[
-              styles.messageMeta,
-              { justifyContent: sender._id === 1 ? 'flex-end' : 'flex-start' }
-            ]}
-          >
-            <CustomText 
-              style={styles.date}
-              fontSize={11}
-              color={Colors.greyDark}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <Animated.View
+        style={[
+          styles.container,
+          sender._id === 1 ? styles.rightMessage : styles.leftMessage,
+          {
+            marginTop: sameSenderPrevMsg ? 3 : 12,
+            marginBottom: isLastMessage ? 12 : 0,
+            transform: [ { scale: deleteAnim.current } ]
+          }
+        ]}
+        onStartShouldSetResponder={() => true}
+      >
+        {sender._id === 2 && !sameSenderNextMsg && (
+          <Avatar avatar={sender.avatar} />
+        )}
+        <View style={styles.messageContainer}>
+          <LikeIcon sender={sender} liked={liked} />
+          <MessageBubble 
+            index={index}
+            content={content} 
+            userId={sender._id}
+            sameSenderPrevMsg={sameSenderPrevMsg}
+            sameSenderNextMsg={sameSenderNextMsg}
+            onShowMessageActions={onShowMessageActions}
+            hideMessageActions={hideMessageActions}
+            onCloseReplyBox={onCloseReplyBox}
+          />
+          {!sameSenderNextMsg && 
+            <View 
+              style={[
+                styles.messageMeta,
+                { justifyContent: sender._id === 1 ? 'flex-end' : 'flex-start' }
+              ]}
             >
-              {dayjs(createDate).format('LT')}
-            </CustomText>
-            {sender._id === 1 && <MessageStatus delivered={delivered} read={read} />}
-          </View>
-        }
-      </View>
-    </Animated.View>
+              <CustomText 
+                style={styles.date}
+                fontSize={11}
+                color={Colors.greyDark}
+              >
+                {dayjs(createDate).format('LT')}
+              </CustomText>
+              {sender._id === 1 && <MessageStatus delivered={delivered} read={read} />}
+            </View>
+          }
+        </View>
+      </Animated.View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -98,16 +107,14 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row'
   },
-  messageContainer: {
-
-  },
+  messageContainer: {},
   leftMessage: {
-    marginLeft: 55,
-    marginRight: 40
+    paddingRight: 40,
+    paddingLeft: 55
   },
   rightMessage: {
-    marginRight: 10,
-    marginLeft: 40,
+    paddingRight: 10,
+    paddingLeft: 40,
     alignSelf: 'flex-end'
   },
   messageMeta: {

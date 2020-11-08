@@ -70,7 +70,7 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
     }
       
     if (uploadProgress > 0) {
-      indicatorRef.current.animateTo(uploadProgress, 5000, Easing.quad);
+      indicatorRef.current.animateTo(uploadProgress, 6000, Easing.quad);
       pulsateLoopRef.start();
     } 
 
@@ -82,7 +82,7 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
 
   useEffect(() => {
     if (uploadFinished) {
-      setTimeout(function() {
+      setTimeout(() => {
         setImage(profileImage);
       }, 4000);
     } else {

@@ -1,4 +1,5 @@
 import { onConnect } from './indexHandlers';
+import { onUpdateProfileImage } from './profileHandlers';
 import { onMessage, onLikeMessage, onDeleteMessage } from './chatHandlers';
 import { Socket } from 'socket.io';
 
@@ -36,6 +37,11 @@ const initSocket = (io: Socket) => {
     // User deletes message
     socket.on('delete_message', (data: string) => {
       onDeleteMessage(io, socket, users, data);
+    });
+
+    // User updated profile image
+    socket.on('update_profile_image', (data: string) => {
+      onUpdateProfileImage(socket, data);
     });
 
     // Disconnect from socket

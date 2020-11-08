@@ -3,7 +3,8 @@ import axiosRetry from 'axios-retry';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3006/api/' 
+  // baseURL: 'http://localhost:3006/api/' 
+  baseURL: 'http://0e3d02fb79a2.ngrok.io/api/' 
 });
 
 axiosRetry(instance, { retries: 3 });

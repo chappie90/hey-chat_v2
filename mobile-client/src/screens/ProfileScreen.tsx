@@ -12,6 +12,7 @@ import ProfileImage from '../components/profile/ProfileImage';
 import ImageActions from '../components/profile/ImageActions';
 import CameraWidget from '../components/camera/CameraWidget';
 import PhotosLibraryWidget from '../components/camera/PhotosLibraryWidget';
+import { emitUpdateProfileImage } from '../socket/eventEmitters';
 
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
@@ -104,6 +105,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
         }, 1200);
 
         updateProfileImage(response.data.profileImage);
+        emitUpdateProfileImage(JSON.stringify({ userId }), socketState);
       }
     })
     .catch(error => {

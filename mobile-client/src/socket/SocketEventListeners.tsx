@@ -22,7 +22,6 @@ const SocketEventListeners = () => {
       // and send confirmation of message delivered to sender
       socketState.on('first_message_sent', (data: string) => {
         const { newChat, lastMessage } = JSON.parse(data);
-
         const chat = { ...newChat, lastMessage };
         addChat(chat);
       });
@@ -30,16 +29,21 @@ const SocketEventListeners = () => {
       // Update recipient's chat messages with liked message
       socketState.on('message_liked', (data: string) => {
         const { chatId, messageId } = JSON.parse(data);
-
         likeMessage(chatId, messageId);
       }); 
 
-       // Delete message for recipient
-       socketState.on('message_deleted', (data: string) => {
+      // Delete message for recipient
+      socketState.on('message_deleted', (data: string) => {
         const { chatId, messageId } = JSON.parse(data);
-
         deleteMessage(chatId, messageId);
       }); 
+
+      // Update recipient's chat with new contact profile image
+      socketState.on('profile_image_updated', (data: string) => {
+        const { userId, profileImage } = JSON.parse(data);
+        console.log(userId)
+        console.log(profileImage)
+      });
     }
   }, [socketState]);
 

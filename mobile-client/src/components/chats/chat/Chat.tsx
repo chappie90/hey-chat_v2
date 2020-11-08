@@ -4,7 +4,10 @@ import {
   StyleSheet, 
   FlatList,
   ActivityIndicator,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import uuid from 'react-native-uuid';
 
@@ -71,6 +74,8 @@ const Chat = ({
   };
 
   const onSendMessage = (text: string): void => {
+    scrollToEnd();
+    
     let isFirstMessage: boolean = false;
 
     // Create chat id if new chat
@@ -196,75 +201,85 @@ const Chat = ({
   }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={() => setShowMsgActions(false)}>
-      <View style={styles.container}>
-        {isLoading &&
-          <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color={Colors.yellowDark} />
-          </View>
-        }
-        {chatHistory[chatIdRef.current]?.messages.length > 0 ?
-          (
-            <FlatList
-              ref={flatListRef}
-              inverted
-              initialNumToRender={20}
-              keyExtractor={item => item._id.toString()}
-              data={chatHistory[chatIdRef.current].messages}
-              renderItem={({ item, index }) => {
-                const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
-                const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
-                const isLastMessage = index === 0;
-                return (
-                  <Message 
-                    index={index}
-                    content={item} 
-                    sameSenderPrevMsg={sameSenderPrevMsg} 
-                    sameSenderNextMsg={sameSenderNextMsg}
-                    isLastMessage={isLastMessage}
-                    onShowMessageActions={onShowMessageActions}
-                    hideMessageActions={hideMessageActions}
-                    onCloseReplyBox={onCloseReplyBox}
-                  />
-                );
-              }}
-              onEndReached={onEndReached}
-              onEndReachedThreshold={0.2}
-              // onContentSizeChange={() => scrollToEnd()}
-              onLayout={() => scrollToEnd()}
-              onScroll={(e) => onScroll(e.nativeEvent.contentOffset.y)}
-              disableScrollViewPanResponder
+    <KeyboardAvoidingView 
+      behavior={Platform.OS == "ios" ? "padding" : "height"} 
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 65 : 0}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={() => {
+          setShowMsgActions(false);
+          Keyboard.dismiss();
+      }}>
+        <View style={styles.container}>
+          {isLoading &&
+            <View style={styles.spinnerContainer}>
+              <ActivityIndicator size="large" color={Colors.yellowDark} />
+            </View>
+          }
+          {chatHistory[chatIdRef.current]?.messages.length > 0 ?
+            (
+              <FlatList
+                ref={flatListRef}
+                inverted
+                initialNumToRender={20}
+                keyExtractor={item => item._id.toString()}
+                data={chatHistory[chatIdRef.current].messages}
+                renderItem={({ item, index }) => {
+                  const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
+                  const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
+                  const isLastMessage = index === 0;
+                  return (
+                    <Message 
+                      index={index}
+                      content={item} 
+                      sameSenderPrevMsg={sameSenderPrevMsg} 
+                      sameSenderNextMsg={sameSenderNextMsg}
+                      isLastMessage={isLastMessage}
+                      onShowMessageActions={onShowMessageActions}
+                      hideMessageActions={hideMessageActions}
+                      onCloseReplyBox={onCloseReplyBox}
+                    />
+                  );
+                }}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.2}
+                // onContentSizeChange={() => scrollToEnd()}
+                // onLayout={() => scrollToEnd()}
+                onScroll={(e) => onScroll(e.nativeEvent.contentOffset.y)}
+                disableScrollViewPanResponder
+                keyboardDismissMode='on-drag'
+              />
+            ) :
+            (
+              <ContactInvitation 
+                contactName={contactName} 
+                contactProfile={contactProfile} 
+                onGreeting={onGreeting} 
+              />
+            )
+          }
+          {showMsgActions &&
+            <MessageActions 
+              isVisible={showMsgActions} 
+              coordinates={msgActionsCoord}
+              likedByUser={activeMsg?.liked.likedByUser}
+              onLikeMessage={onLikeMessage}
+              onShowReplyBox={onShowReplyBox}
+              onDeleteMessage={onDeleteMessage}
             />
-          ) :
-          (
-            <ContactInvitation 
-              contactName={contactName} 
-              contactProfile={contactProfile} 
-              onGreeting={onGreeting} 
-            />
-          )
-        }
-        {showMsgActions &&
-          <MessageActions 
-            isVisible={showMsgActions} 
-            coordinates={msgActionsCoord}
-            likedByUser={activeMsg?.liked.likedByUser}
-            onLikeMessage={onLikeMessage}
-            onShowReplyBox={onShowReplyBox}
-            onDeleteMessage={onDeleteMessage}
+          }
+          {showReplyBox && activeMsg &&
+            <ReplyBox originalMessage={activeMsg} onCloseReplyBox={onCloseReplyBox} />
+          }
+          {showScrollBottomBtn && <ScrollBottomButton scrollToEnd={scrollToEnd} />}
+          <InputToolbar 
+            message={message} 
+            onChangeText={onChangeText} 
+            onSendMessage={onSendMessage}
           />
-        }
-        {showReplyBox && activeMsg &&
-          <ReplyBox originalMessage={activeMsg} onCloseReplyBox={onCloseReplyBox} />
-        }
-        {showScrollBottomBtn && <ScrollBottomButton scrollToEnd={scrollToEnd} />}
-        <InputToolbar 
-          message={message} 
-          onChangeText={onChangeText} 
-          onSendMessage={onSendMessage}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

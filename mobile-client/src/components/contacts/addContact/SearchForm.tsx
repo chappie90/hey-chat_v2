@@ -1,10 +1,5 @@
 import React from 'react';
-import { 
-  View, 
-  StyleSheet,
-  TouchableOpacity,
-  TextInput
-} from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { Colors, Headings } from '../../../variables/variables';
@@ -23,7 +18,6 @@ const SearchForm = ({ search, onChangeText, }: SearchFormProps) => {
         selectionColor={'grey'}
         placeholder="Find people"
         placeholderTextColor={Colors.purpleDark}
-        autoFocus
         value={search}
         onChangeText={onChangeText}
         autoCapitalize="none"
