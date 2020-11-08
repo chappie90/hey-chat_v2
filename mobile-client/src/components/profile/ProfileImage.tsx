@@ -7,19 +7,20 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
+import { Context as AuthContext } from '../../context/AuthContext';
 import { Context as ProfileContext } from '../../context/ProfileContext';
 import { Colors } from '../../variables/variables';
-import CustomText from '../../components/CustomText';
 import { Images } from '../../../assets/assets';
 import { API_BASE_URL } from '@env';
 
 type ProfileImageProps = { onToggleImageActions: () => void };
 
 const ProfileImage = ({ onToggleImageActions }: ProfileImageProps) => {
-  const { state: { profileImage } } = useContext(ProfileContext);
+  const { state: { profileImage }, getProfileImage } = useContext(ProfileContext);
+  const { state: { userId } } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log(`${API_BASE_URL}/${profileImage}`)
+    console.log(profileImage)
   }, [profileImage])
 
   return (
@@ -28,7 +29,12 @@ const ProfileImage = ({ onToggleImageActions }: ProfileImageProps) => {
         <View style={styles.imageContainer}>
           {profileImage ?
             <Image 
-              source={{ uri: `${API_BASE_URL}/${profileImage}` }}
+              onError={({ nativeEvent: {error} }) => {
+                console.log(error);
+                getProfileImage(userId);
+              }}
+              key={`${API_BASE_URL}/${profileImage}`}
+              source={{ uri: `${API_BASE_URL}/${profileImage}`, cache: 'reload' }}
               style={styles.image} /> : 
             <Image source={ Images.avatarBig } style={styles.image} />
           }

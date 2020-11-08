@@ -36,12 +36,24 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
     imageNameOriginal = image.filename;
 
     if (fileExt === 'heic' || fileExt === 'heif') {
+      const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
+
       await convertImage(
-        `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`,
+        originalImgPath,
         `${global.appRoot}/${profileImgFolder}/original/${joinNameParts}.jpg`
       );
 
       imageNameOriginal = `${joinNameParts}.jpg`;
+
+       // Delete original heic / heif file
+      if (fs.existsSync(originalImgPath)) {
+        fs.unlink(originalImgPath, (err) => {
+          if (err) {
+            console.log(err);
+            next(err);
+          }
+        });
+      }
     }
 
     const imageNameSmall = await resizeImage(imageNameOriginal, 'profile', 'small');

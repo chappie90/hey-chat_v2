@@ -3,7 +3,7 @@ dotenv.config();
 require('./models/User');
 require('./models/Chat');
 require('./models/Message');
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response } from 'express';
 import http from 'http';
 import path from 'path';
 import bodyParser from 'body-parser';
@@ -45,6 +45,21 @@ require('./routes/routes')(app);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello !');
+});
+
+// Handle errors
+app.use((err, req: Request, res: Response, next) => {
+  // console.error(err);
+  console.log('some error')
+  // console.log(err.) 
+  // res.status(422).send({ message: 'Something went wrong!' });
+  next(err);
+  // res.status(error.status || 500).send({
+  //   error: {
+  //     status: error.status || 500,
+  //     message: error.message || 'Internal Server Error',
+  //   },
+  // });
 });
 
 const port = process.env.SERVER_PORT || 3006;
