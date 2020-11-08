@@ -17,7 +17,11 @@ type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
   const { state: { username, userId, socketState }, signOut } = useContext(AuthContext);
-  const { getProfileImage, updateProfileImage } = useContext(ProfileContext);
+  const { 
+    getProfileImage, 
+    updateProfileImage,
+    deleteProfileImage
+  } = useContext(ProfileContext);
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
@@ -81,6 +85,11 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
     updateProfileImage(response.data.profileImage);
   };
 
+  const onDeleteImage = (): void => {
+    deleteProfileImage(userId);
+    hideImageActions();
+  };
+
   useEffect(() => {
     getProfileImage(userId);
   }, []);
@@ -99,6 +108,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
         isVisible={showImageActions}
         onShowCamera={onShowCamera}
         onShowLibrary={onShowLibrary}
+        onDeleteImage={onDeleteImage}
       />
       <CameraWidget 
         isVisible={showCamera}

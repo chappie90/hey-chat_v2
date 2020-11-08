@@ -17,9 +17,15 @@ type ImageActionsProps = {
   isVisible: boolean;
   onShowCamera: () => void;
   onShowLibrary: () => void;
+  onDeleteImage: () => void;
 };
 
-const ImageActions = ({ isVisible, onShowCamera, onShowLibrary }: ImageActionsProps) => {
+const ImageActions = ({ 
+  isVisible, 
+  onShowCamera, 
+  onShowLibrary,
+  onDeleteImage
+}: ImageActionsProps) => {
   const { width: windowWidth }  = useWindowDimensions();
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
@@ -66,7 +72,7 @@ const ImageActions = ({ isVisible, onShowCamera, onShowLibrary }: ImageActionsPr
             </CustomText>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} activeOpacity={0.5}>
+        <TouchableOpacity onPress={() => onDeleteImage()} activeOpacity={0.5}>
           <View style={styles.action}>
             <View style={styles.icon}>
               <AntDesignIcon color={Colors.purpleDark} name="delete" size={24} />

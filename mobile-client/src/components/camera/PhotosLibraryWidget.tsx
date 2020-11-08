@@ -54,7 +54,6 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideLibrary }: CameraWidgetP
       ]
     })
     .then(response => {
-      console.log(response.edges)
       setPhotos(response.edges);
     })
     .catch(err => console.log(err));

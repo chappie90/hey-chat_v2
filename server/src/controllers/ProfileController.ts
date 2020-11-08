@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
+import fs from 'fs';
 
 const User = mongoose.model('User');
 import convertImage from '../helpers/convertImage';
@@ -74,7 +75,55 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 };
 
 const deleteImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { userId } = req.body;
 
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    const pathToFiles = [
+      `${global.appRoot}/${user.profile.image.original.path}`,
+      `${global.appRoot}/${user.profile.image.small.path}`,
+      `${global.appRoot}/${user.profile.image.medium.path}`
+    ];
+
+    await User.updateOne(
+      { _id: userId },
+      { profile: {
+        image: {
+          original: {
+            name: '',
+            path: ''
+          },
+          small: {
+            name: '',
+            path: ''
+          },
+          medium: {
+            name: '',
+            path: ''
+          }
+        }
+      } }
+    );
+    
+
+    // Delete all files
+    for (let image of pathToFiles) {
+      if (fs.existsSync(image)) {
+        fs.unlink(image, (err) => {
+          if (err) {
+            console.log(err);
+            next(err);
+          }
+        });
+      }
+    }
+
+    res.status(200).send({ imageDeleted: true });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
 
 export default {
