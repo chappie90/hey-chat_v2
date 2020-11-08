@@ -25,6 +25,8 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadFinished, setUploadFinished] = useState(false);
 
   const onSignOut = (): void => {
     signOut(userId, socketState);  
@@ -40,6 +42,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
 
   const onShowCamera = (): void => {
     setShowCamera(true);
+    hideImageActions();
   };
 
   const onHideCamera = (): void => {
@@ -53,11 +56,11 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
 
   const onShowLibrary = (): void => {
     setShowLibrary(true);
+    hideImageActions();
   };
 
   const onHideLibrary = (): void => {
     setShowLibrary(false);
-    hideImageActions();
   };
 
   const uploadProfileImage = async (imageData: TCameraPhoto): Promise<void> => {
@@ -80,9 +83,34 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
     });
     data.append('userId', userId);
 
-    const response = await api.post('/image/upload', data);
+    api.post('/image/upload', data, {
+      onUploadProgress: progressEvent => {
+        const totalLength = progressEvent.lengthComputable ? 
+          progressEvent.total : 
+          progressEvent.target.getResponseHeader('content-length') || 
+          progressEvent.target.getResponseHeader('x-decompressed-content-length');
 
-    updateProfileImage(response.data.profileImage);
+        if (totalLength !== null) {
+          setUploadProgress(Math.round(((progressEvent.loaded * 100) / totalLength) * 0.85));
+        }  
+      }
+    })
+    .then(response => {
+      if (response.data) {
+        setUploadFinished(true);
+        setTimeout(() => {
+          setUploadProgress(0);
+          setUploadFinished(false);
+        }, 1200);
+
+        updateProfileImage(response.data.profileImage);
+      }
+    })
+    .catch(error => {
+      console.log('Upload image method error');
+      if (error.response) console.log(error.response.data.message);
+      if (error.message) console.log(error.message);
+    });
   };
 
   const onDeleteImage = (): void => {
@@ -97,7 +125,11 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   return (
     <View style={styles.container}>
       <ProfileHeader onSignOut={onSignOut} />
-      <ProfileImage onToggleImageActions={onToggleImageActions} />
+      <ProfileImage 
+        uploadProgress={uploadProgress} 
+        uploadFinished={uploadFinished}
+        onToggleImageActions={onToggleImageActions} 
+      />
       <CustomText 
         fontSize={Headings.headingExtraLarge}
         fontWeight={Fonts.regular}
