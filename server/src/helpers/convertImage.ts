@@ -2,6 +2,7 @@ import { promisify } from 'util';
 import fs from 'fs';
 import convert from 'heic-convert';
  
+// Convert heic / heif images to jpg
 const convertImage = async (oldPath: string, newPath: string): Promise<void> => {
   const inputBuffer = await promisify(fs.readFile)(oldPath);
   const outputBuffer = await convert({

@@ -35,6 +35,7 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
 
     imageNameOriginal = image.filename;
 
+    // Convert heic / heif images to jpg because jimp doesn't support format
     if (fileExt === 'heic' || fileExt === 'heif') {
       const originalImgPath = `${global.appRoot}/${profileImgFolder}/original/${imageNameOriginal}`;
 
@@ -56,8 +57,17 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
       }
     }
 
+    // Create different size versions of original image
     const imageNameSmall = await resizeImage(imageNameOriginal, 'profile', 'small');
     const imageNameMedium = await resizeImage(imageNameOriginal, 'profile', 'medium');
+
+    const user = await User.findOne({ _id: userId });
+
+    const pathToFiles = [
+      `${global.appRoot}/${user.profile.image.original.path}`,
+      `${global.appRoot}/${user.profile.image.small.path}`,
+      `${global.appRoot}/${user.profile.image.medium.path}`
+    ];
 
     await User.updateOne(
       { _id: userId },
@@ -78,6 +88,18 @@ const uploadImage = async (req: Request, res: Response, next: NextFunction): Pro
         }
       } }
     );
+
+    // Delete old profile images
+    for (let image of pathToFiles) {
+      if (fs.existsSync(image)) {
+        fs.unlink(image, (err) => {
+          if (err) {
+            console.log(err);
+            next(err);
+          }
+        });
+      }
+    }
 
     res.status(200).send({ profileImage: `${profileImgFolder}/medium/${imageNameMedium}` }); 
   } catch (err) {
@@ -117,9 +139,8 @@ const deleteImage = async (req: Request, res: Response, next: NextFunction): Pro
         }
       } }
     );
-    
 
-    // Delete all files
+    // Delete all profile image files
     for (let image of pathToFiles) {
       if (fs.existsSync(image)) {
         fs.unlink(image, (err) => {

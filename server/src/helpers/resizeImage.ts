@@ -23,7 +23,7 @@ const resizeImage = async (
 
   const originalImagePath = `${uploadsFolder}/${destinationFolder}/original/${imageName}`;
 
-  Jimp.read(originalImagePath)
+  await Jimp.read(originalImagePath)
     .then(file => {
       return file
         .cover(outputDimensions[0], outputDimensions[1])
