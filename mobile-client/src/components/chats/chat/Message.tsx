@@ -6,9 +6,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
-import dayjs from 'dayjs';
-var localizedFormat = require('dayjs/plugin/localizedFormat')
-dayjs.extend(localizedFormat);
 
 import MessageBubble from './MessageBubble';
 import MessageStatus from './MessageStatus';
@@ -16,6 +13,7 @@ import Avatar from './Avatar';
 import LikeIcon from './LikeIcon';
 import CustomText from '../../../components/CustomText';
 import { Colors } from '../../../variables/variables';
+import { formatDate } from '../../../helpers/formatDate';
 
 type MessageProps = {
   index: number;
@@ -92,7 +90,7 @@ const Message = ({
                 fontSize={11}
                 color={Colors.greyDark}
               >
-                {dayjs(createDate).format('LT')}
+                {formatDate(createDate)}
               </CustomText>
               {sender._id === 1 && <MessageStatus delivered={delivered} read={read} />}
             </View>

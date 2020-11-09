@@ -8,7 +8,8 @@ export const Colors = {
   greyDark: '#343434',
   white: '#fff',
   black: '#000',
-  red: '#e50000'
+  red: '#e50000',
+  greenLight: '#65ff00'
 };
 
 export const Fonts = {

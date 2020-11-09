@@ -97,6 +97,7 @@ const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProp
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    marginTop: 'auto',
     alignItems: 'flex-end',
     paddingVertical: 8,
     paddingHorizontal: 10,

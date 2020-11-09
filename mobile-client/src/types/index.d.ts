@@ -31,15 +31,34 @@ type ContactsStackParams = {
   };
 };
 
+// User
 type TUser = {
   userId: number;
   username: string;
   token: string;
 };
 
+type TUserProfile = {
+  image?: {
+    original: {
+      name: string;
+      path: string;
+    },  
+    small: {
+      name: string;
+      path: string;
+    },
+    medium: {
+      name: string;
+      path: string;
+    }
+  }
+};
+
 type TContact = {
   _id: number;
   username: string;
+  profile?: TUserProfile;
   chatId?: number;
   pending?: boolean;
 };

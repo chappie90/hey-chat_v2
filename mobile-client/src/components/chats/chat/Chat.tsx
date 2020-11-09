@@ -250,7 +250,7 @@ const Chat = ({
                 keyboardDismissMode='on-drag'
               />
             ) :
-            (
+            (!isLoading &&
               <ContactInvitation 
                 contactName={contactName} 
                 contactProfile={contactProfile} 

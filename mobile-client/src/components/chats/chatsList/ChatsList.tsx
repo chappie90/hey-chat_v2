@@ -132,7 +132,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
           <View style={styles.rowBack}>
             <View style={[
               styles.muteBtnContainer,
-              { backgroundColor: data.item.muted ? Colors.secondaryGreen : Colors.grey } 
+              { backgroundColor: data.item.muted ? Colors.greyDark : Colors.greyLight } 
             ]}>
               <TouchableOpacity style={{ }} onPress={() => muteChatHandler(data.index, rowMap, data.item)}>
                 <Animated.View style={[
