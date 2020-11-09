@@ -139,7 +139,7 @@ const Chat = ({
   };
 
   const scrollToEnd = (): void => {
-    flatListRef.current.scrollToIndex({ index: 0, animated: true });
+    flatListRef.current?.scrollToIndex({ index: 0, animated: true });
   };
 
   const onScroll = (offset: number): void => {

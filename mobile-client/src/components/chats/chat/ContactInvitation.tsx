@@ -30,7 +30,7 @@ const ContactInvitation = ({ contactName, contactProfile, onGreeting }: ContactI
         fontSize={Headings.headingBig}>
         {contactName}
       </CustomText>
-      <CustomButton color={Colors.primaryOrange} onPress={onGreeting}>
+      <CustomButton color={Colors.yellowDark} onPress={onGreeting}>
         Say hi
       </CustomButton>
     </View>
@@ -49,14 +49,14 @@ const styles = StyleSheet.create({
     height: 100, 
     borderRadius: 50, 
     marginBottom: 10,
-    backgroundColor: Colors.lightGrey
+    backgroundColor: Colors.greyLight
   },
   image: {
     width: '100%', 
     height: '100%'
   },
   contact: {
-    marginBottom: 40
+    marginBottom: 30
   }
 });
 

@@ -12,7 +12,8 @@ const SocketEventListeners = () => {
     getMoreMessages,
     addMessage,
     likeMessage,
-    deleteMessage
+    deleteMessage,
+    markMessageAsDelivered
   } = useContext(ChatsContext);
 
   useEffect(() => {
@@ -23,6 +24,7 @@ const SocketEventListeners = () => {
       socketState.on('first_message_sent', (data: string) => {
         const { newChat, lastMessage } = JSON.parse(data);
         const chat = { ...newChat, lastMessage };
+        markMessageAsDelivered(newChat.chatId, lastMessage.message.id);
         addChat(chat);
       });
 
@@ -41,6 +43,7 @@ const SocketEventListeners = () => {
       // Update recipient's chat with new contact profile image
       socketState.on('profile_image_updated', (data: string) => {
         const { userId, profileImage } = JSON.parse(data);
+        console.log('inside profile event listener')
         console.log(userId)
         console.log(profileImage)
       });
