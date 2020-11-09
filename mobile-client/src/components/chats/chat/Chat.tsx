@@ -10,6 +10,7 @@ import {
   Platform
 } from 'react-native';
 import uuid from 'react-native-uuid';
+import moment from 'moment';
 
 import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from '../../../socket/eventEmitters';
 import { Context as AuthContext } from '../../../context/AuthContext';
@@ -67,6 +68,13 @@ const Chat = ({
     compareMsg: TMessage | undefined
   ): boolean | undefined => {
     return compareMsg && currentMsg.sender._id === compareMsg.sender._id;
+  };
+
+  const isSameDay = (
+    currentMsg: TMessage,
+    compareMsg: TMessage | undefined
+  ): boolean | undefined => {
+    return compareMsg && moment(currentMsg.createDate).isSame(moment(compareMsg.createDate), 'day');
   };
 
   const onChangeText = (text: string): void => {
@@ -228,6 +236,7 @@ const Chat = ({
                   const sameSenderPrevMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
                   const sameSenderNextMsg = isSameSender(item, chatHistory[chatIdRef.current].messages[(index - 1)]);
                   const isLastMessage = index === 0;
+                  const shouldRenderDate = !isSameDay(item, chatHistory[chatIdRef.current].messages[(index + 1)]);
                   return (
                     <Message 
                       index={index}
@@ -235,6 +244,7 @@ const Chat = ({
                       sameSenderPrevMsg={sameSenderPrevMsg} 
                       sameSenderNextMsg={sameSenderNextMsg}
                       isLastMessage={isLastMessage}
+                      shouldRenderDate={shouldRenderDate}
                       onShowMessageActions={onShowMessageActions}
                       hideMessageActions={hideMessageActions}
                       onCloseReplyBox={onCloseReplyBox}

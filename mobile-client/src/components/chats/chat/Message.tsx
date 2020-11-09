@@ -6,13 +6,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
+import moment from 'moment';
 
 import MessageBubble from './MessageBubble';
 import MessageStatus from './MessageStatus';
 import Avatar from './Avatar';
 import LikeIcon from './LikeIcon';
 import CustomText from '../../../components/CustomText';
-import { Colors } from '../../../variables/variables';
+import { Colors, Headings } from '../../../variables/variables';
 import { formatDate } from '../../../helpers/formatDate';
 
 type MessageProps = {
@@ -21,6 +22,7 @@ type MessageProps = {
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
   isLastMessage: boolean;
+  shouldRenderDate: boolean | undefined;
   onShowMessageActions: (message: TMessage, coordinates: number[]) => void;
   hideMessageActions: () => void;
   onCloseReplyBox: () => void;
@@ -32,6 +34,7 @@ const Message = ({
   sameSenderPrevMsg, 
   sameSenderNextMsg,
   isLastMessage,
+  shouldRenderDate,
   onShowMessageActions,
   hideMessageActions,
   onCloseReplyBox
@@ -50,54 +53,61 @@ const Message = ({
   }, [deleted]);
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <Animated.View
-        style={[
-          styles.container,
-          sender._id === 1 ? styles.rightMessage : styles.leftMessage,
-          {
-            marginTop: sameSenderPrevMsg ? 3 : 12,
-            marginBottom: isLastMessage ? 12 : 0,
-            transform: [ { scale: deleteAnim.current } ]
-          }
-        ]}
-        onStartShouldSetResponder={() => true}
-      >
-        {sender._id === 2 && !sameSenderNextMsg && (
-          <Avatar avatar={sender.avatar} />
-        )}
-        <View style={styles.messageContainer}>
-          <LikeIcon sender={sender} liked={liked} />
-          <MessageBubble 
-            index={index}
-            content={content} 
-            userId={sender._id}
-            sameSenderPrevMsg={sameSenderPrevMsg}
-            sameSenderNextMsg={sameSenderNextMsg}
-            onShowMessageActions={onShowMessageActions}
-            hideMessageActions={hideMessageActions}
-            onCloseReplyBox={onCloseReplyBox}
-          />
-          {!sameSenderNextMsg && 
-            <View 
-              style={[
-                styles.messageMeta,
-                { justifyContent: sender._id === 1 ? 'flex-end' : 'flex-start' }
-              ]}
-            >
-              <CustomText 
-                style={styles.date}
-                fontSize={11}
-                color={Colors.greyDark}
+    <>
+      {shouldRenderDate &&
+        <CustomText style={styles.date} fontSize={Headings.headingSmall}>
+          {moment(createDate).format('ll')}
+        </CustomText>
+      }
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <Animated.View
+          style={[
+            styles.container,
+            sender._id === 1 ? styles.rightMessage : styles.leftMessage,
+            {
+              marginTop: sameSenderPrevMsg ? 3 : 12,
+              marginBottom: isLastMessage ? 12 : 0,
+              transform: [ { scale: deleteAnim.current } ]
+            }
+          ]}
+          onStartShouldSetResponder={() => true}
+        >
+          {sender._id === 2 && !sameSenderNextMsg && (
+            <Avatar avatar={sender.avatar} />
+          )}
+          <View style={styles.messageContainer}>
+            <LikeIcon sender={sender} liked={liked} />
+            <MessageBubble 
+              index={index}
+              content={content} 
+              userId={sender._id}
+              sameSenderPrevMsg={sameSenderPrevMsg}
+              sameSenderNextMsg={sameSenderNextMsg}
+              onShowMessageActions={onShowMessageActions}
+              hideMessageActions={hideMessageActions}
+              onCloseReplyBox={onCloseReplyBox}
+            />
+            {!sameSenderNextMsg && 
+              <View 
+                style={[
+                  styles.messageMeta,
+                  { justifyContent: sender._id === 1 ? 'flex-end' : 'flex-start' }
+                ]}
               >
-                {formatDate(createDate)}
-              </CustomText>
-              {sender._id === 1 && <MessageStatus delivered={delivered} read={read} />}
-            </View>
-          }
-        </View>
-      </Animated.View>
-    </TouchableWithoutFeedback>
+                <CustomText 
+                  style={styles.messageDate}
+                  fontSize={11}
+                  color={Colors.greyDark}
+                >
+                  {formatDate(createDate)}
+                </CustomText>
+                {sender._id === 1 && <MessageStatus delivered={delivered} read={read} />}
+              </View>
+            }
+          </View>
+        </Animated.View>
+      </TouchableWithoutFeedback>
+    </>
   );
 };
 
@@ -121,8 +131,11 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   date: {
-
-  }
+    alignSelf: 'center',
+    marginTop: 8,
+    marginBottom: 20
+  },
+  messageDate: {}
 });
 
 export default Message;
