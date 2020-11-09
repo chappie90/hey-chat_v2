@@ -11,6 +11,7 @@ type ChatsState = {
 type ChatsAction =
   | { type: 'get_chats'; payload: TChat[] }
   | { type: 'add_chat'; payload: TChat }
+  | { type: 'update_chat'; payload: TChat }
   | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'add_message'; payload: { chatId: string, message: TMessage } }
@@ -20,6 +21,7 @@ type ChatsAction =
   | { type: 'mark_message_as_delivered'; payload: { chatId: string, messageId: string } };
 
 const chatReducer = (state: ChatsState, action: ChatsAction) => {
+  let updatedChats: TChat[];
   let updatedMessages: TMessage[];
 
   switch (action.type) {
@@ -27,6 +29,19 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
       return { ...state, chats: action.payload };
     case 'add_chat':
       return { ...state, chats: [ action.payload, ...state.chats ] };
+    case 'update_chat':
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return chat.chatId === action.payload.chatId ?
+          { ...action.payload } :
+          chat
+      });
+
+      updatedChats = updatedChats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+
+      return { 
+        ...state, 
+        chats: updatedChats
+      };
     case 'get_messages':
       return { 
         ...state, 
@@ -197,6 +212,10 @@ const addChat = dispatch => (chat: TChat): void => {
   dispatch({ type: 'add_chat', payload: chat });
 };
 
+const updateChat = dispatch => (chat: TChat): void => {
+  dispatch({ type: 'update_chat', payload: chat });
+};
+
 const getMessages = dispatch => async (
   username: string, 
   contactProfile: string, 
@@ -290,6 +309,7 @@ export const { Context, Provider } = createDataContext(
   { 
     getChats,
     addChat,
+    updateChat,
     getMessages,
     getMoreMessages,
     addMessage,

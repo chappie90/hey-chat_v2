@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as ChatsContext } from '../context/ChatsContext';
@@ -8,6 +8,7 @@ const SocketEventListeners = () => {
   const { 
     state: { chatHistory }, 
     addChat,
+    updateChat,
     getMessages, 
     getMoreMessages,
     addMessage,
@@ -23,9 +24,17 @@ const SocketEventListeners = () => {
       // and send confirmation of message delivered to sender
       socketState.on('first_message_sent', (data: string) => {
         const { newChat, lastMessage } = JSON.parse(data);
-        const chat = { ...newChat, lastMessage };
         markMessageAsDelivered(newChat.chatId, lastMessage.message.id);
+        const chat = { ...newChat, lastMessage };
         addChat(chat);
+      });
+
+      // Update sender chat and send confirmation of message delivered to sender
+      socketState.on('message_sent', (data: string) => {
+        const { chat, lastMessage } = JSON.parse(data);
+        markMessageAsDelivered(chat.chatId, lastMessage.message.id);
+        const updatedChat = { ...chat, lastMessage };
+        updateChat(updatedChat);
       });
 
       // Update recipient's chat messages with liked message

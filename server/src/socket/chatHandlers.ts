@@ -59,7 +59,7 @@ export const onMessage = async (
       );
     } else {
       // Check if chat request accepted
-      chat = await Chat.findOne({ chatId });
+      chat = await Chat.findOne({ chatId }).lean();
 
       if (!chat.requestAccepted) {
         // Accept chat request if message sender is recipient of request
@@ -68,6 +68,7 @@ export const onMessage = async (
             { chatId }, 
             { $set: { requestAccepted: true } }
           );
+          chat.requestAccepted = true;
 
           // Add both users to each other's contact lists
           await User.updateOne(
@@ -123,13 +124,15 @@ export const onMessage = async (
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
         // Send new message to recipient and update chat
+        const data = { chat, lastMessage: newMessage };
+
         if (recipientSocketId) {
           io.to(recipientSocketId).emit('message_received', {
 
           });
         }
         // Send confirmation of message delivered to sender and update chat list
-        socket.emit('message_sent');
+        socket.emit('message_sent', JSON.stringify(data));
       }
     }
 
