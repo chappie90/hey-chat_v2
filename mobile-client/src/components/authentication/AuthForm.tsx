@@ -157,11 +157,11 @@ const AuthForm = ({
 const styles = StyleSheet.create({ 
   container: {
     width: '100%',
-    paddingHorizontal: 30
+    paddingHorizontal: 60
   },
   header: {
     textAlign: 'center',
-    marginBottom: 30
+    marginBottom: 50
   },
   input: {
     height: 60,
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
     marginBottom: 10,
-    marginTop: 25
+    marginTop: 55
   },
   toggleText: {
     fontSize: Headings.headingSmall,

@@ -24,5 +24,5 @@ export const Headings = {
   headingMedium: 18,
   headingBig: 20,
   headingLarge: 24,
-  headingExtraLarge: 30
+  headingExtraLarge: 36
 };

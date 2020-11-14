@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as ContactsProvider } from './context/ContactsContext';

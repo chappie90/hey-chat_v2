@@ -8,7 +8,7 @@ import CustomText from '../../CustomText';
 type MessageActionsProps = { 
   isVisible: boolean;
   coordinates: number[];
-  likedByUser: boolean;
+  likedByUser?: boolean;
   onLikeMessage: () => void;
   onShowReplyBox: () => void;
   onDeleteMessage: () => void;

@@ -54,7 +54,7 @@ const Message = ({
 
   return (
     <>
-      {shouldRenderDate &&
+      {shouldRenderDate && !isLastMessage &&
         <CustomText style={styles.date} fontSize={Headings.headingSmall}>
           {moment(createDate).format('ll')}
         </CustomText>

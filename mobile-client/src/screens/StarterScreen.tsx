@@ -88,8 +88,7 @@ const styles = StyleSheet.create({
     marginTop: 70
   },
   signinButton: {
-    marginBottom: 50,
-    padding: 10
+    marginBottom: 60
   }
 });
 

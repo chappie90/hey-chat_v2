@@ -1,12 +1,10 @@
 import React, { useContext } from 'react';
 import { 
   View, 
-  Text, 
   StyleSheet, 
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
-  TouchableOpacity,
   Platform
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -34,20 +32,20 @@ const SigninScreen = ({ visible, toggleModals, closeModal }: SigninScreenProps) 
       isVisible={visible} 
       animationIn="slideInUp"
       animationOut="slideOutDown"
-      onSwipeComplete={closeModal}
+      onSwipeComplete={() => closeModal()}
       swipeThreshold={60}
       swipeDirection="down"
       coverScreen={false}
       backdropOpacity={0}
       onBackdropPress={dismissKeyboard}
-      propagateSwipe={true}
+      // propagateSwipe={true}
       style={styles.modal}
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
-          <TouchableOpacity style={styles.closeModalButton} onPress={closeModal}>
-            <MaterialIcon name="close" size={35} color={Colors.red} />
-          </TouchableOpacity>
+          <View style={styles.arrowIcon}>
+            <MaterialIcon name="keyboard-arrow-down" size={85} color={Colors.yellowDark} />
+          </View>
           <AuthForm
             heading="Welcome back"
             buttonText="Sign In"
@@ -73,14 +71,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.white,
-    marginTop: '15%',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30
+    marginTop: '35%',
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35
   },
-  closeModalButton: {
+  arrowIcon: {
     position: 'absolute',
-    top: 30,
-    right: 15
+    top: 10,
+    margin: 'auto'
   }
 });
 

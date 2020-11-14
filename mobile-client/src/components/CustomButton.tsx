@@ -33,7 +33,7 @@ const CustomButton = ({
   let paddingHorizontal;
 
   if (buttonSize === 'big') {
-    paddingHorizontal = 50;
+    paddingHorizontal = 60;
   } else if (buttonSize === 'small') {
     paddingHorizontal = 10;
   } else {
@@ -63,7 +63,7 @@ const CustomButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 7,
+    paddingVertical: 12,
     borderRadius: 35
   }
 });
