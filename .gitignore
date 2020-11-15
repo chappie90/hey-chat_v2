@@ -56,8 +56,8 @@ buck-out/
 *.jsbundle
 
 # CocoaPods
-/ios/Pods/
-/ios/Podfile.lock
+mobile-client/ios/Pods/
+mobile-client/ios/Podfile.lock
 
 # Environment variables
 .env
