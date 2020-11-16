@@ -796,7 +796,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = heyChatv2;
-				PROVISIONING_PROFILE_SPECIFIER = "Hey chat v2, 2020";
+				PROVISIONING_PROFILE_SPECIFIER = "Hey chat v2, 2020 - Ad hoc Distribution";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -822,7 +822,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = heyChatv2;
-				PROVISIONING_PROFILE_SPECIFIER = "Hey chat v2, 2020";
+				PROVISIONING_PROFILE_SPECIFIER = "Hey chat v2, 2020 - Ad hoc Distribution";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
