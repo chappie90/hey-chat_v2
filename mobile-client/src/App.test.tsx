@@ -6,15 +6,15 @@ import App from './App';
 import renderer from 'react-test-renderer';
 import { cleanup, render, fireEvent } from '@testing-library/react-native';
 
-describe('App', () => {
-  beforeEach(() => jest.useFakeTimers());
-  afterEach(cleanup);
+// describe('App', () => {
+//   beforeEach(() => jest.useFakeTimers());
+//   afterEach(cleanup);
   
-  it('should render App component  correctly', () => {
-    const rendered = render(<App />);
-    expect(rendered).toBeTruthy();
-  });
-});
+//   it('should render App component  correctly', () => {
+//     const rendered = render(<App />);
+//     expect(rendered).toBeTruthy();
+//   });
+// });
 
 
 // // Snapshot test
