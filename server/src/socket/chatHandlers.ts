@@ -38,6 +38,7 @@ export const onMessage = async (
         participants: [senderId, recipientId],
         requester: senderId
       });
+      newChat.populate('participants', '_id username profile').execPopulate();
       await newChat.save();
 
       // Add chat to both users chat lists
@@ -47,19 +48,20 @@ export const onMessage = async (
       );
 
       // Add contact to user's pending contacts
-      const addContactToPending = await User.updateOne(
+      await User.updateOne(
         { _id: senderId }, 
         { 
           $addToSet: {
             pendingContacts:  recipientId,
             chats: newChat._id
           }
-        },
-        { new: true }
+        }
       );
     } else {
       // Check if chat request accepted
-      chat = await Chat.findOne({ chatId }).lean();
+      chat = await Chat.findOne({ chatId })
+        .lean()
+        .populate('participants', '_id username profile');
 
       if (!chat.requestAccepted) {
         // Accept chat request if message sender is recipient of request
