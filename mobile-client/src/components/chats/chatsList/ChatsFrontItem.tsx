@@ -82,9 +82,12 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                 {chat.lastMessage.message.text}
               </CustomText>
                {!chat.muted && (
-                  <View>
-                    <Octicon style={{marginLeft: 5}} name="mute" size={20} color={Colors.purpleDark} />
-                  </View>
+                  <Octicon 
+                    style={styles.muteIcon} 
+                    name="mute" 
+                    size={20} 
+                    color={Colors.purpleDark} 
+                  />
                 )}
               {/* {rowData.item.unreadMessageCount !== 0 && ( */}
                 <View style={styles.unreadBadge}>
@@ -145,7 +148,11 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   messageText: {
-    maxWidth: '84%'
+    maxWidth: '84%',
+    flex: 1
+  },
+  muteIcon: {
+    marginHorizontal: 5
   },
   divider: {
     position: 'absolute',
