@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   View, 
   StyleSheet,
@@ -20,9 +20,6 @@ type ChatsFrontItemProps = {
 };
 
 const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) => {
-
-  // console.log(chat)
-  // console.log(contact)
 
   // const renderLastMessageText = (item) => {
   //   if (isTyping && typingUser == item.contact) {
@@ -82,7 +79,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                 fontWeight={false ? Fonts.semiBold : Fonts.regular}
                 style={styles.messageText}
               >
-                Some very very long even longer bless bless damnnnn bit more message text yeaahh baby
+                {chat.lastMessage.message.text}
               </CustomText>
                {!chat.muted && (
                   <View>

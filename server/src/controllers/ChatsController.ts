@@ -33,7 +33,7 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
       const lastMessage = await Message.find({ chatId: chat.chatId })
         .sort({ 'message.createDate': -1 })
         .limit(1);
-      chat.lastMessage = lastMessage;
+      chat.lastMessage = lastMessage[0];
     } 
 
     res.status(200).send({ chats });

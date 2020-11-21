@@ -70,7 +70,7 @@ type TChat = {
   createDate: Date; 
   requestAccepted?: boolean;
   muted: false;
-  lastMessage: string;
+  lastMessage: TLastChatMessage;
   unreadMessagesCount: number;
 };
 
@@ -105,6 +105,11 @@ type TMessage = {
   liked: TLike;
   reply?: TReply;
   deleted?: boolean;
+};
+
+type TLastChatMessage = {
+  message: { text: string };
+  sender: string;
 };
 
 // Camera
