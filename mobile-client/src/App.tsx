@@ -10,6 +10,7 @@ import Navigator from './navigation/Navigator';
 import AppStateTracker from './components/AppStateTracker';
 import SocketEventListeners from './socket/SocketEventListeners';
 import SplashScreen from 'react-native-splash-screen'
+import BackgroundTasksManager from './components/utility/BackgroundTasksManager';
 
 declare const global: {HermesInternal: null | {}};
 
@@ -25,6 +26,7 @@ const App = () => {
         <ContactsProvider>
           <ProfileProvider>
             <AppStateTracker />
+            <BackgroundTasksManager />
             <SocketEventListeners />
             <SafeAreaView style={styles.container}>
               <Navigator />

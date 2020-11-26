@@ -50,9 +50,9 @@ const AddContactScreen = ({ visible }: AddContactScreenProps) => {
   };
 
   const onSendMessage = (contact: TContact): void => {
-    setIsFirstRender(true);
-    setSearch('');
-    setSearchResults([]);
+    // setIsFirstRender(true);
+    // setSearch('');
+    // setSearchResults([]);
 
     navigation.navigate('CurrentChat', {
       chatType: 'private',

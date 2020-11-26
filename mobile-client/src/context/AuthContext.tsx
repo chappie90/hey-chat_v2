@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import { Dispatch } from 'react';
 
 import createDataContext from './createDataContext';
 import api from '../api/api';
@@ -37,7 +38,7 @@ const authReducer = (state: AuthState, action: AuthAction) => {
   }
 };
 
-const signup = dispatch => async (username: string, password: string): Promise<void> => {
+const signup = (dispatch: Dispatch<any>) => async (username: string, password: string): Promise<void> => {
   try {
     const response = await api.post('/signup', { username, password });
 
@@ -60,7 +61,7 @@ const signup = dispatch => async (username: string, password: string): Promise<v
   }
 };
 
-const signin = dispatch => async (username: string, password: string): Promise<void> => {
+const signin = (dispatch: Dispatch<any>)  => async (username: string, password: string): Promise<void> => {
   try {
     const response = await api.post('/signin', { username, password });
 
@@ -82,7 +83,7 @@ const signin = dispatch => async (username: string, password: string): Promise<v
   }
 };
 
-const autoSignin = dispatch => async (): Promise<void> => {
+const autoSignin = (dispatch: Dispatch<any>) => async (): Promise<void> => {
   try {
     const jsonValue = await AsyncStorage.getItem('user')
     const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
@@ -95,7 +96,7 @@ const autoSignin = dispatch => async (): Promise<void> => {
   }
 };
 
-const signOut = dispatch => async (userId: string, socketInstance: any): Promise<void> => {
+const signOut = (dispatch: Dispatch<any>) => async (userId: string, socketInstance: any): Promise<void> => {
   try {
     await AsyncStorage.removeItem('user');
     
@@ -108,7 +109,7 @@ const signOut = dispatch => async (userId: string, socketInstance: any): Promise
   } 
 };
 
-const setSocketState = dispatch => (socketState: any): void => {
+const setSocketState = (dispatch: Dispatch<any>) => (socketState: any): void => {
   dispatch({ type: 'set_socket', payload: socketState });
 };
 
