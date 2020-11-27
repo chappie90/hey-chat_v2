@@ -6,8 +6,8 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import Octicon from 'react-native-vector-icons/Octicons';
+import Config from 'react-native-config';
 
-import { API_BASE_URL } from '@env';
 import { Images } from '../../../../assets/assets';
 import CustomText from '../../CustomText';
 import { Colors, Fonts, Headings } from '../../../variables/variables';
@@ -44,7 +44,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
           <View style={styles.imageContainer}>
             {contact?.profile?.image?.small.path ? (
               <Image 
-                source={{ uri: `${API_BASE_URL}/${contact.profile.image.small.path}` }} 
+                source={{ uri: `${Config.RN_API_BASE_URL}/${contact.profile.image.small.path}` }} 
                 style={styles.image} 
               />
             ) : (

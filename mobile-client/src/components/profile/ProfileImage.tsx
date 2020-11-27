@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
+import Config from 'react-native-config';
 
 import { Context as ProfileContext } from '../../context/ProfileContext';
 import { Colors } from '../../variables/variables';
 import { Images } from '../../../assets/assets';
-import { API_BASE_URL } from '@env';
 
 type ProfileImageProps = { 
   uploadProgress: number;
@@ -112,8 +112,8 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
         <View style={styles.imageContainer}>
           {profileImage ?
             <Animated.Image 
-              key={`${API_BASE_URL}/${image}`}
-              source={{ uri: `${API_BASE_URL}/${image}` }}
+              key={`${Config.RN_API_BASE_URL}/${image}`}
+              source={{ uri: `${Config.RN_API_BASE_URL}/${image}` }}
               style={[
                 styles.image,
                 { opacity: opacityAnim.current }
