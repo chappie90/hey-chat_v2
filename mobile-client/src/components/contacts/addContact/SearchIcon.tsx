@@ -5,10 +5,10 @@ import {
   Image
 } from 'react-native';
 
-import ScaleImageAnim from '../../../components/animations/ScaleImageAnim';
-import TranslateFadeViewAnim from '../../../components/animations/TranslateFadeViewAnim';
-import CustomText from '../../../components/CustomText';
-import { Images } from '../../../../assets/assets';
+import ScaleImageAnim from 'components/animations/ScaleImageAnim';
+import TranslateFadeViewAnim from 'components/animations/TranslateFadeViewAnim';
+import CustomText from 'components/CustomText';
+import { Images } from 'assets';
 
 type SearchIconProps = {
   isFirstRender: boolean;

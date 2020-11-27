@@ -3,10 +3,10 @@ import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import ViewPager from '@react-native-community/viewpager';
 import LottieView from 'lottie-react-native';
 
-import { Images, Animations } from '../../assets/assets';
+import { Images, Animations } from 'assets';
 import CustomText from './CustomText';
-import ScaleImageAnim from './animations/ScaleImageAnim';
-import TranslateFadeViewAnim from './animations/TranslateFadeViewAnim';
+import ScaleImageAnim from 'components/animations/ScaleImageAnim';
+import TranslateFadeViewAnim from 'components/animations/TranslateFadeViewAnim';
 
 
 type StarterPagerProps = {

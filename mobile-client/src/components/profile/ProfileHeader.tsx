@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { Colors, Fonts, Headings } from '../../variables/variables';
-import CustomText from '../../components/CustomText';
+import { Colors, Fonts, Headings } from 'variables';
+import CustomText from 'components/CustomText';
 
 type ProfileHeaderProps = { onSignOut: () => void };
 

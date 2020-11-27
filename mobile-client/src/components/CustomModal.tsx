@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
 import { StyleSheet, Animated, useWindowDimensions } from 'react-native';
 
-import { Colors } from '../variables/variables';
+import { Colors } from 'variables';
 
 type CustomModalProps = { isVisible: boolean; children: ReactNode };
 

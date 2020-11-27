@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import StarterScreen from '../screens/StarterScreen';
+import StarterScreen from 'screens/StarterScreen';
 
 const Stack = createStackNavigator<AuthenticationStackParams>();
 

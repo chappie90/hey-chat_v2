@@ -10,9 +10,9 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import Config from 'react-native-config';
 
-import { Context as ProfileContext } from '../../context/ProfileContext';
-import { Colors } from '../../variables/variables';
-import { Images } from '../../../assets/assets';
+import { Context as ProfileContext } from 'context/ProfileContext';
+import { Colors } from 'variables';
+import { Images } from 'assets';
 
 type ProfileImageProps = { 
   uploadProgress: number;

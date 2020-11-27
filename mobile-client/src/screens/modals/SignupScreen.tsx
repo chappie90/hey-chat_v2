@@ -10,9 +10,9 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from "react-native-modal";
 
-import { Context as AuthContext } from '../../context/AuthContext';
-import AuthForm from '../../components/authentication/AuthForm';
-import { Colors } from '../../variables/variables';
+import { Context as AuthContext } from 'context/AuthContext';
+import AuthForm from 'components/authentication/AuthForm';
+import { Colors } from 'variables';
 
 type SignupScreenProps = {
   visible: boolean;

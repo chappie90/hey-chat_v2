@@ -12,13 +12,13 @@ import {
 import uuid from 'react-native-uuid';
 import moment from 'moment';
 
-import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from '../../../socket/eventEmitters';
-import { Context as AuthContext } from '../../../context/AuthContext';
-import { Context as ChatsContext } from '../../../context/ChatsContext';
+import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from 'socket/eventEmitters';
+import { Context as AuthContext } from 'context/AuthContext';
+import { Context as ChatsContext } from 'context/ChatsContext';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
 import MessageActions from './MessageActions';
-import { Colors } from '../../../variables/variables';
+import { Colors } from 'variables';
 import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';

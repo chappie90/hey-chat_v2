@@ -1,5 +1,5 @@
 import createDataContext from './createDataContext';
-import api from '../api/api';
+import api from 'api';
 
 type ProfileState = {
   profileImage: string | null;

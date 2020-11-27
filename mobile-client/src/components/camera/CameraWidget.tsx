@@ -11,8 +11,8 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { RNCamera } from 'react-native-camera';
 
-import { Colors } from '../../variables/variables';
-import CustomText from '../CustomText';
+import { Colors } from 'variables';
+import CustomText from 'components/CustomText';
 
 type CameraWidgetProps = {
   isVisible: boolean;

@@ -1,4 +1,4 @@
-import React, { useState, useRef, Fragment } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -7,10 +7,10 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import { Colors, Fonts, Headings } from '../../variables/variables';
-import CustomText from '../CustomText';
-import CustomButton from '../CustomButton';
-import ErrorMessage from '../ErrorMessage';
+import { Colors, Fonts, Headings } from 'variables';
+import CustomText from 'components/CustomText';
+import CustomButton from 'components/CustomButton';
+import ErrorMessage from 'components/ErrorMessage';
 
 type AuthFormTypes = {
   heading: string;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, RefreshControl, FlatList } from 'react-native';
 
-import { Colors } from '../../../variables/variables';
-import CustomText from '../../../components/CustomText';
+import { Colors } from 'variables';
+import CustomText from 'components/CustomText';
 import ContactsItem from './ContactsItem';
 
 type ActiveContactsProps = {

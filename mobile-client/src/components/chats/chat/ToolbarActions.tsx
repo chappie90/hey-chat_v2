@@ -3,7 +3,7 @@ import { StyleSheet, TouchableWithoutFeedback, Animated } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
-import { Colors } from '../../../variables/variables';
+import { Colors } from 'variables';
 
 type ToolbarActionsProps = { isVisible: boolean };
 

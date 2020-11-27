@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { Context as AuthContext } from '../context/AuthContext';
-import SplashScreen from '../screens/SplashScreen';
+import { Context as AuthContext } from 'context/AuthContext';
+import SplashScreen from 'screens/SplashScreen';
 import AuthenticationFlow from './AuthenticationFlow';
 import MainFlow from './MainFlow';
 

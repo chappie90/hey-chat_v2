@@ -6,8 +6,8 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Colors, Headings, Fonts } from '../../../variables/variables';
-import CustomText from '../../../components/CustomText';
+import { Colors, Headings, Fonts } from 'variables';
+import CustomText from 'components/CustomText';
 
 type ChatsHeaderProps = {
   openModal: () => void;

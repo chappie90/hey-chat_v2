@@ -10,8 +10,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
-import { Colors, Fonts } from '../../variables/variables';
-import CustomText from '../../components/CustomText';
+import { Colors, Fonts } from 'variables';
+import CustomText from 'components/CustomText';
 
 type ImageActionsProps = { 
   isVisible: boolean;

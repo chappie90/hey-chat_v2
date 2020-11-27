@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { 
   View, 
-  Text, 
   StyleSheet
 } from 'react-native';
 import Dots from 'react-native-dots-pagination';
 
-import { Colors } from '../variables/variables';
-import ViewPager from '../components/ViewPager';
-import CustomButton from '../components/CustomButton';
-import ScaleViewAnim from '../components/animations/ScaleViewAnim';
+import { Colors } from 'variables';
+import ViewPager from 'components/ViewPager';
+import CustomButton from 'components/CustomButton';
+import ScaleViewAnim from 'components/animations/ScaleViewAnim';
 import SigninScreen from './modals/SigninScreen';
 import SignupScreen from './modals/SignupScreen';
 

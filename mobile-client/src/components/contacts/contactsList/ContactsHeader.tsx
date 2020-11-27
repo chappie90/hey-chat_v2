@@ -6,8 +6,8 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import { Colors, Headings, Fonts } from '../../../variables/variables';
-import CustomText from '../../../components/CustomText';
+import { Colors, Headings, Fonts } from 'variables';
+import CustomText from 'components/CustomText';
 
 type ContactsHeaderProps = {
   toggleModal: () => void;

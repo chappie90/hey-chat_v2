@@ -6,10 +6,10 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Images } from '../../../../assets/assets';
-import CustomButton from '../../../components/CustomButton';
-import CustomText from '../../../components/CustomText';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
+import { Images } from 'assets';
+import CustomButton from 'components/CustomButton';
+import CustomText from 'components/CustomText';
+import { Colors, Fonts, Headings } from 'variables';
 
 type SearchItemProps = {
   item: TContact,

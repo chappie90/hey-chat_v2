@@ -10,7 +10,7 @@ import {
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
 
-import { Colors, Headings } from '../../../variables/variables';
+import { Colors, Headings } from 'variables';
 import ToolbarActions from './ToolbarActions';
 
 type InputToolbarProps = {

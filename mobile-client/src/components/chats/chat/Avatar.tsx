@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
-import { Images } from '../../../../assets/assets';
-import { Colors } from '../../../variables/variables';
+import { Images } from 'assets';
+import { Colors } from 'variables';
 
 type AvatarProps = {
   avatar?: string;

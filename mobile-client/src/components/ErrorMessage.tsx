@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { Animated } from 'react-native';
 
-import { Colors, Fonts, Headings } from '../variables/variables';
+import { Colors, Fonts, Headings } from 'variables';
 import CustomText from './CustomText';
 import CustomButton from './CustomButton';
 

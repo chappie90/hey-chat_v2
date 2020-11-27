@@ -4,12 +4,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import ChatsScreen from '../screens/ChatsScreen';
-import CurrentChatScreen from '../screens/CurrentChatScreen';
-import ContactsScreen from '../screens/ContactsScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ChatsScreen from 'screens/ChatsScreen';
+import CurrentChatScreen from 'screens/CurrentChatScreen';
+import ContactsScreen from 'screens/ContactsScreen';
+import ProfileScreen from 'screens/ProfileScreen';
 import CustomTabBar from './CustomTabBar';
-import { Colors } from '../variables/variables';
+import { Colors } from 'variables';
 
 // Hide bottom tab navigator on current chat screen
 const hideTabBar = (route: any) => {

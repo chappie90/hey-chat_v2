@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Animated, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { Colors, Headings } from '../../../variables/variables';
-import CustomText from '../../CustomText';
+import { Colors, Headings } from 'variables';
+import CustomText from 'components/CustomText';
 
 type MessageActionsProps = { 
   isVisible: boolean;

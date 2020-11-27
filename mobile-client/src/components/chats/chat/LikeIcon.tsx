@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Animated } from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 
-import { Colors, Headings } from '../../../variables/variables';
-import CustomText from '../../CustomText';
+import { Colors, Headings } from 'variables';
+import CustomText from 'components/CustomText';
 
 type LikeIconProps = { sender: TSender, liked: TLike };
 

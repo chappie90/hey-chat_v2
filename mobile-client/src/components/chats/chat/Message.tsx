@@ -12,9 +12,9 @@ import MessageBubble from './MessageBubble';
 import MessageStatus from './MessageStatus';
 import Avatar from './Avatar';
 import LikeIcon from './LikeIcon';
-import CustomText from '../../../components/CustomText';
-import { Colors, Headings } from '../../../variables/variables';
-import { formatDate } from '../../../helpers/formatDate';
+import CustomText from 'components/CustomText';
+import { Colors, Headings } from 'variables';
+import { formatDate } from 'utils/formatDate';
 
 type MessageProps = {
   index: number;

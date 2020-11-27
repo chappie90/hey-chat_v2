@@ -9,15 +9,15 @@ import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-import { Context as AuthContext } from '../context/AuthContext';
-import { Context as ContactsContext } from '../context/ContactsContext';
+import { Context as AuthContext } from 'context/AuthContext';
+import { Context as ContactsContext } from 'context/ContactsContext';
 import AddContactScreen from './modals/AddContactScreen';
-import { Colors } from '../variables/variables';
-import ContactsHeader from '../components/contacts/contactsList/ContactsHeader';
-import ToggleListTabs from '../components/contacts/contactsList/toggleListTabs';
-import AllContacts from '../components/contacts/contactsList/AllContacts';
-import ActiveContacts from '../components/contacts/contactsList/ActiveContacts';
-import ContactsIcon from '../components/contacts/contactsList/ContactsIcon';
+import { Colors } from 'variables';
+import ContactsHeader from 'components/contacts/contactsList/ContactsHeader';
+import ToggleListTabs from 'components/contacts/contactsList/toggleListTabs';
+import AllContacts from 'components/contacts/contactsList/AllContacts';
+import ActiveContacts from 'components/contacts/contactsList/ActiveContacts';
+import ContactsIcon from 'components/contacts/contactsList/ContactsIcon';
 
 type ContactsScreenRouteProp = RouteProp<MainStackParams, 'Contacts'>;
 type ContactsScreenNavigationProp = CompositeNavigationProp<

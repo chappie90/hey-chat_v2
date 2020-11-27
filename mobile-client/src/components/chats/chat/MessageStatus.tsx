@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
-import { Colors } from '../../../variables/variables';
+import { Colors } from 'variables';
 
 type MessageStatusProps = {
   delivered: boolean;

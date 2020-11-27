@@ -1,7 +1,7 @@
 import React, { CSSProperties, ReactNode } from 'react';
 import { Text } from 'react-native';
 
-import { Colors, Fonts, Headings } from '../variables/variables';
+import { Colors, Fonts, Headings } from 'variables';
 
 type CustomTextProps = {
   color?: string;

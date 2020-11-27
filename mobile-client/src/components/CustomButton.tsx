@@ -7,7 +7,7 @@ import {
   GestureResponderEvent 
 } from 'react-native';
 
-import { Colors, Fonts, Headings } from '../variables/variables';
+import { Colors, Fonts, Headings } from 'variables';
 
 type CustomButtonProps = {
   color?: string;

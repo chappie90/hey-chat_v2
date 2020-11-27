@@ -8,14 +8,14 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { Context as AuthContext } from "../../context/AuthContext";
-import { Context as ContactsContext } from "../../context/ContactsContext";
-import SearchForm from '../../components/contacts/addContact/SearchForm';
-import SearchList from '../../components/contacts/addContact/SearchList';
-import SearchIcon from '../../components/contacts/addContact/SearchIcon';
-import CustomText from '../../components/CustomText';
-import CustomModal from '../../components/CustomModal';
-import { Colors, Fonts, Headings } from '../../variables/variables';
+import { Context as AuthContext } from "context/AuthContext";
+import { Context as ContactsContext } from "context/ContactsContext";
+import SearchForm from 'components/contacts/addContact/SearchForm';
+import SearchList from 'components/contacts/addContact/SearchList';
+import SearchIcon from 'components/contacts/addContact/SearchIcon';
+import CustomText from 'components/CustomText';
+import CustomModal from 'components/CustomModal';
+import { Colors, Fonts, Headings } from 'variables';
 
 type AddContactScreenProps = { visible: boolean };
 

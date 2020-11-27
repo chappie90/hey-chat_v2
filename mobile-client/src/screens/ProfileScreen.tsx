@@ -2,17 +2,17 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
-import api from '../api/api';
-import { Context as AuthContext } from '../context/AuthContext';
-import { Context as ProfileContext } from '../context/ProfileContext';
-import { Colors, Headings, Fonts } from '../variables/variables';
-import CustomText from '../components/CustomText';
-import ProfileHeader from '../components/profile/ProfileHeader';
-import ProfileImage from '../components/profile/ProfileImage';
-import ImageActions from '../components/profile/ImageActions';
-import CameraWidget from '../components/camera/CameraWidget';
-import PhotosLibraryWidget from '../components/camera/PhotosLibraryWidget';
-import { emitUpdateProfileImage } from '../socket/eventEmitters';
+import api from 'api';
+import { Context as AuthContext } from 'context/AuthContext';
+import { Context as ProfileContext } from 'context/ProfileContext';
+import { Colors, Headings, Fonts } from 'variables';
+import CustomText from 'components/CustomText';
+import ProfileHeader from 'components/profile/ProfileHeader';
+import ProfileImage from 'components/profile/ProfileImage';
+import ImageActions from 'components/profile/ImageActions';
+import CameraWidget from 'components/camera/CameraWidget';
+import PhotosLibraryWidget from 'components/camera/PhotosLibraryWidget';
+import { emitUpdateProfileImage } from 'socket/eventEmitters';
 
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 

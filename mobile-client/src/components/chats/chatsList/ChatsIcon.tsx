@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import ScaleImageAnim from '../../../components/animations/ScaleImageAnim';
-import TranslateFadeViewAnim from '../../../components/animations/TranslateFadeViewAnim';
-import CustomText from '../../../components/CustomText';
-import { Images } from '../../../../assets/assets';
+import ScaleImageAnim from 'components/animations/ScaleImageAnim';
+import TranslateFadeViewAnim from 'components/animations/TranslateFadeViewAnim';
+import CustomText from 'components/CustomText';
+import { Images } from 'assets';
 
 const ChatsIcon = () => {
   return (

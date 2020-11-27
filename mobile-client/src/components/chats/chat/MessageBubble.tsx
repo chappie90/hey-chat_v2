@@ -8,8 +8,8 @@ import {
   Keyboard
 } from 'react-native';
 
-import CustomText from '../../../components/CustomText';
-import { Colors, Headings } from '../../../variables/variables';
+import CustomText from 'components/CustomText';
+import { Colors, Headings } from 'variables';
 
 type MessageBubbleProps = {
   index: number;

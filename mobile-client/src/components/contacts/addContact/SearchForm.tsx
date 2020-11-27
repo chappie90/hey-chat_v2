@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TextInput } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Colors, Headings } from '../../../variables/variables';
+import { Colors, Headings } from 'variables';
 
 type SearchFormProps = {
   search: string;

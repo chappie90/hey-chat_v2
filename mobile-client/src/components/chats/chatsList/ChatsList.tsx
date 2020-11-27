@@ -13,9 +13,9 @@ import Octicon from 'react-native-vector-icons/Octicons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
 
-import { Context as AuthContext } from '../../../context/AuthContext';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
-import CustomText from '../../../components/CustomText';
+import { Context as AuthContext } from 'context/AuthContext';
+import { Colors, Fonts, Headings } from 'variables';
+import CustomText from 'components/CustomText';
 import ChatsFrontItem from './ChatsFrontItem';
 
 type ChatsListProps = {

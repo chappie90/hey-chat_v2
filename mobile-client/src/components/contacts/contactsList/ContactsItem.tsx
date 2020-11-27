@@ -6,9 +6,9 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 
-import { Images } from '../../../../assets/assets';
-import CustomText from '../../CustomText';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
+import { Images } from 'assets';
+import CustomText from 'components/CustomText';
+import { Colors, Fonts, Headings } from 'variables';
 
 type ContactsItemProps = {
   item: TContact;

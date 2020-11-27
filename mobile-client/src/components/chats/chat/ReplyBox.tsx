@@ -7,9 +7,9 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { Colors, Fonts, Headings } from '../../../variables/variables';
-import { Images } from '../../../../assets/assets';
-import CustomText from '../../CustomText';
+import { Colors, Fonts, Headings } from 'variables';
+import { Images } from 'assets';
+import CustomText from 'components/CustomText';
 
 type ReplyBoxProps = {
   originalMessage: TMessage;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
-import CustomText from '../../../components/CustomText';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
+import CustomText from 'components/CustomText';
+import { Colors, Fonts, Headings } from 'variables';
 
 type ToggleListTabsProps = {
   allUsersCount: number;

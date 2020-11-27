@@ -1,5 +1,5 @@
 import createDataContext from './createDataContext';
-import api from '../api/api';
+import api from 'api';
 
 type ChatsState = {
   chats: TChat[] | [];

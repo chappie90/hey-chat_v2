@@ -7,7 +7,7 @@ import {
   LayoutChangeEvent
 } from 'react-native';
 
-import { Colors } from '../variables/variables';
+import { Colors } from 'variables';
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   const translateAnim = useRef(new Animated.Value(7)).current;

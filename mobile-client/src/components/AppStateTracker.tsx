@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useContext } from 'react';
 import { AppState, Platform } from 'react-native';
 
-import { connectToSocket } from '../socket/socketConnection';
-import { Context as AuthContext } from '../context/AuthContext';
+import { connectToSocket } from 'socket/socketConnection';
+import { Context as AuthContext } from 'context/AuthContext';
 
 const AppStateTracker = () => {
   const { state: { userId, token, socketState }, setSocketState } = useContext(AuthContext);

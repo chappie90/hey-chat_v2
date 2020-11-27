@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
-import CustomText from '../../CustomText';
-import CustomButton from '../../CustomButton';
-import { Images } from '../../../../assets/assets';
-import { Fonts, Colors, Headings } from '../../../variables/variables';
+import CustomText from 'components/CustomText';
+import CustomButton from 'components/CustomButton';
+import { Images } from 'assets';
+import { Fonts, Colors, Headings } from 'variables';
 
 type ContactInvitationProps = {
   contactName?: string;

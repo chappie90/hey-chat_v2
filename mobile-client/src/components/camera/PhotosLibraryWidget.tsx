@@ -13,8 +13,8 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import CameraRoll from "@react-native-community/cameraroll";
 
-import { Colors } from '../../variables/variables';
-import CustomText from '../../components/CustomText';
+import { Colors } from 'variables';
+import CustomText from 'components/CustomText';
 
 type CameraWidgetProps = {
   isVisible: boolean;

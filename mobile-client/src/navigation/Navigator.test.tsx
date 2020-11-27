@@ -4,7 +4,7 @@ import renderer from 'react-test-renderer';
 import { cleanup, render, fireEvent, waitFor } from '@testing-library/react-native';
 
 import Navigator from './Navigator';
-import { Provider as AuthProvider } from '../context/AuthContext';
+import { Provider as AuthProvider } from 'context/AuthContext';
 
 describe('Navigation', () => {
   beforeEach(() => jest.useFakeTimers());

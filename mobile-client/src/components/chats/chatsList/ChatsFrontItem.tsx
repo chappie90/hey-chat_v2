@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { 
   View, 
   StyleSheet,
@@ -8,10 +8,10 @@ import {
 import Octicon from 'react-native-vector-icons/Octicons';
 import Config from 'react-native-config';
 
-import { Images } from '../../../../assets/assets';
-import CustomText from '../../CustomText';
-import { Colors, Fonts, Headings } from '../../../variables/variables';
-import { formatDate } from '../../../helpers/formatDate';
+import { Images } from 'assets';
+import CustomText from 'components/CustomText';
+import { Colors, Fonts } from 'variables';
+import { formatDate } from 'utils/formatDate';
 
 type ChatsFrontItemProps = {
   chat: TChat;

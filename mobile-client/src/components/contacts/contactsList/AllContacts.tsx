@@ -9,7 +9,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 import ContactsItem from './ContactsItem';
-import { Colors } from '../../../variables/variables';
+import { Colors } from 'variables';
 
 type AllContactsProps = {
   contacts: TContact[];
