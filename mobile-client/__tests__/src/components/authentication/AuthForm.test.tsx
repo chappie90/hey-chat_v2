@@ -2,7 +2,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import { cleanup, render, fireEvent, RenderAPI } from '@testing-library/react-native';
 
-import AuthForm from './AuthForm';
+import AuthForm from 'components/authentication/AuthForm';
 
 describe('AuthForm', () => {
   let component: RenderAPI,

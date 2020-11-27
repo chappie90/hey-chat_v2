@@ -1,10 +1,10 @@
 import 'react-native';
 import React from 'react';
-import App from './App';
-
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
 import { cleanup, render, fireEvent } from '@testing-library/react-native';
+
+import App from 'App';
 
 // describe('App', () => {
 //   beforeEach(() => jest.useFakeTimers());
