@@ -41,7 +41,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 // API routes
-require('./routes/routes')(app);
+require('./routes')(app);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello !');
