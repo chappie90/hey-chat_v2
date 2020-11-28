@@ -7,7 +7,8 @@ import { Provider as ContactsProvider } from 'context/ContactsContext';
 import { Provider as ChatsProvider } from 'context/ChatsContext';
 import { Provider as ProfileProvider } from 'context/ProfileContext';
 import Navigator from 'navigation/Navigator';
-import AppStateTracker from 'components/AppStateTracker';
+import AppStateManager from 'components/utility/AppStateManager';
+import PushNotificationsManager from 'components/utility/PushNotificationsManager';
 import SocketEventListeners from 'socket/SocketEventListeners';
 import SplashScreen from 'react-native-splash-screen'
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
@@ -25,12 +26,15 @@ const App = () => {
       <ChatsProvider>
         <ContactsProvider>
           <ProfileProvider>
-            <AppStateTracker />
             <BackgroundTasksManager />
             <SocketEventListeners />
-            <SafeAreaView style={styles.container}>
-              <Navigator />
-            </SafeAreaView>
+            <AppStateManager>
+              <PushNotificationsManager>
+                <SafeAreaView style={styles.container}>
+                  <Navigator />
+                </SafeAreaView>
+              </PushNotificationsManager>
+            </AppStateManager>
           </ProfileProvider>
         </ContactsProvider>
       </ChatsProvider>

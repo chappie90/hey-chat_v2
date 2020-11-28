@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 
 import { connectToSocket } from 'socket/socketConnection';
 import { Context as AuthContext } from 'context/AuthContext';
 
-const AppStateTracker = () => {
+type AppStateManagerProps = { children: ReactNode };
+
+const AppStateManager = ({ children }: AppStateManagerProps) => {
   const { state: { userId, token, socketState }, setSocketState } = useContext(AuthContext);
   const appState = useRef<string>(AppState.currentState);
   const socket = useRef<any>(null);
@@ -73,7 +75,7 @@ const AppStateTracker = () => {
     }
   }, [socketState]);
 
-  return <></>;
+  return <>{children}</>;
 };
 
-export default AppStateTracker;
+export default AppStateManager;
