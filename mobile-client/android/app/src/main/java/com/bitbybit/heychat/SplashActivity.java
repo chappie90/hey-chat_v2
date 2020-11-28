@@ -1,4 +1,4 @@
-package com.heychatv2; // Change this to your package name.
+package com.bitbybit.heychat; // Change this to your package name.
 
 import android.content.Intent;
 import android.os.Bundle;

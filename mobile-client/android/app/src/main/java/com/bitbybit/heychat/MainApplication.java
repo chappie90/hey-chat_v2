@@ -1,4 +1,4 @@
-package com.heychatv2;
+package com.bitbybit.heychat;
 
 import android.app.Application;
 import android.content.Context;
