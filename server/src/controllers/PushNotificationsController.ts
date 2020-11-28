@@ -5,11 +5,11 @@ const User = mongoose.model('User');
 
 const saveDeviceToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { userId, deviceToken } = req.body;
+    const { userId, deviceToken, deviceOS } = req.body;
 
     await User.updateOne(
       { _id: userId },
-      { deviceToken }
+      { deviceToken, deviceOS }
     );
 
     res.status(200).send({ success: true });

@@ -9,7 +9,9 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import serveIndex from 'serve-index';
 import mongoose from 'mongoose';
-const socket = require('socket.io');
+import socket from 'socket.io';
+import apn from 'apn';
+import firebaseAdmin from "firebase-admin";
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -39,6 +41,26 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
   console.log('Error connecting to database: ' + err);
 });
+
+// Apple Push Notification provider API connection
+const options = {
+  token: {
+    key: `${(global as any).appRoot}/private/certificates/${process.env.APPLE_KEY_FILE}`,
+    keyId: process.env.APPLE_KEY_ID,
+    teamId: process.env.APPLE_TEAM_ID
+  },
+  production: false
+};
+const apnProvider = new apn.Provider(options);
+(global as any).apnProvider = apnProvider;
+
+// Firebase Admin connection
+const serviceAccount = require(`${(global as any).appRoot}/private/certificates/${process.env.FIREBASE_ACCOUNT_KEY}`);
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
+  databaseURL: process.env.FIREBASE_DATABASE_URL
+});
+(global as any).firebaseAdmin = firebaseAdmin;
 
 // API routes
 require('./routes')(app);

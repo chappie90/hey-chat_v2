@@ -38,7 +38,8 @@ const userSchema = new Schema({
   contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   chats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
   archivedChats: [{ type: Schema.Types.ObjectId, ref: 'Chat' }],
-  deviceToken: { type: String }
+  deviceToken: { type: String },
+  deviceOS: { type: String }
 });
 
 userSchema.pre<IUser>('save', function(next) {
