@@ -61,3 +61,6 @@ mobile-client/ios/Podfile.lock
 
 # Environment variables
 .env
+
+# Private files
+private
