@@ -12,13 +12,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		20128A34E7F549879B7D3B87 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1DB2BC8390242ACAFDA4B0F /* OpenSans-Regular.ttf */; };
+		2136D00167C94F37AF44E7EE /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2C6BB9AE2DAC47618D241758 /* OpenSans-SemiBold.ttf */; };
+		2AE0982A207F41B1BD556CD1 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26540173C3F94728A416CA5E /* OpenSans-Bold.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* heyChatv2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* heyChatv2Tests.m */; };
-		5BFCF14025200CCE00424E34 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BFCF13F25200CCE00424E34 /* OpenSans-Bold.ttf */; };
-		5BFCF14225200CFC00424E34 /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BFCF14125200CF900424E34 /* OpenSans-SemiBold.ttf */; };
-		5BFCF14425200D0A00424E34 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BFCF14325200D0800424E34 /* OpenSans-Regular.ttf */; };
 		5EAFA9E83F42D5ACF41E96CE /* libPods-heyChatv2-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC6965E616A0AB045DF6435D /* libPods-heyChatv2-tvOSTests.a */; };
 		5F48D99AB50D822358395B30 /* libPods-heyChatv2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72F217DFC285AFAEF542E5D /* libPods-heyChatv2.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -59,7 +59,9 @@
 		1CEB5C924B7C88E9520B9432 /* Pods-heyChatv2-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-heyChatv2-tvOSTests/Pods-heyChatv2-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		1DD8CDDA3B9F497D96264D3E /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		21DFD27E5C214358BD38D0AC /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		26540173C3F94728A416CA5E /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../src/assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		2B40482428124793BDCF1035 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		2C6BB9AE2DAC47618D241758 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../src/assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* heyChatv2-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "heyChatv2-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* heyChatv2-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "heyChatv2-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		331051E52DEF922D589D01E1 /* libPods-heyChatv2-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-heyChatv2-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,10 +69,6 @@
 		49ABAF9994874995B389975B /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		4C8450F2448E4438A65F2EC0 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		510D91556A31C57B7D469D87 /* Pods-heyChatv2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2.release.xcconfig"; path = "Target Support Files/Pods-heyChatv2/Pods-heyChatv2.release.xcconfig"; sourceTree = "<group>"; };
-		5BFCF13F25200CCE00424E34 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
-		5BFCF14125200CF900424E34 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
-		5BFCF14325200D0800424E34 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
-		6AA2C71EAEE84741AAE4CB90 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		7B05267F7AE749CB9762833E /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		7D4448FA37B54BF9B0343E9F /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		7E42FEEE1ED14F51A64FFE9E /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -80,11 +78,11 @@
 		903B2C6B2561C403003E6E6E /* AppCenter-Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AppCenter-Config.plist"; path = "heyChatv2/AppCenter-Config.plist"; sourceTree = "<group>"; };
 		A05C93E8F7F876E0478B56F4 /* Pods-heyChatv2-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-heyChatv2-tvOS/Pods-heyChatv2-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		AC6965E616A0AB045DF6435D /* libPods-heyChatv2-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-heyChatv2-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1DB2BC8390242ACAFDA4B0F /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../src/assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		B294B4EE34FDEDBF056DEA09 /* Pods-heyChatv2-heyChatv2Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2-heyChatv2Tests.debug.xcconfig"; path = "Target Support Files/Pods-heyChatv2-heyChatv2Tests/Pods-heyChatv2-heyChatv2Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		B5C87BD9846A470785625FBB /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		B72F217DFC285AFAEF542E5D /* libPods-heyChatv2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-heyChatv2.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B905696A90F14D73BFB16F81 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		C313E8716A974273AD35A60C /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		C808485B3FF145148B92D116 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		CA4765662B6148827579720C /* Pods-heyChatv2-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2-tvOS.release.xcconfig"; path = "Target Support Files/Pods-heyChatv2-tvOS/Pods-heyChatv2-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		CC3A6DC29C384ABC8765CB07 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -93,7 +91,6 @@
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		ED66BE527B35F64B88C6B564 /* libPods-heyChatv2-heyChatv2Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-heyChatv2-heyChatv2Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6147F8BFBB6A424C8F2DDED /* Pods-heyChatv2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2.debug.xcconfig"; path = "Target Support Files/Pods-heyChatv2/Pods-heyChatv2.debug.xcconfig"; sourceTree = "<group>"; };
-		F7DD24937D104044ADB34802 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,9 +176,6 @@
 		4EB05F8D527646A09BFE7CA8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F7DD24937D104044ADB34802 /* OpenSans-Bold.ttf */,
-				6AA2C71EAEE84741AAE4CB90 /* OpenSans-Regular.ttf */,
-				C313E8716A974273AD35A60C /* OpenSans-SemiBold.ttf */,
 				B5C87BD9846A470785625FBB /* AntDesign.ttf */,
 				4C8450F2448E4438A65F2EC0 /* Entypo.ttf */,
 				7E42FEEE1ED14F51A64FFE9E /* EvilIcons.ttf */,
@@ -198,6 +192,9 @@
 				49ABAF9994874995B389975B /* Octicons.ttf */,
 				DDC32AA5650F4164AC33E632 /* SimpleLineIcons.ttf */,
 				C808485B3FF145148B92D116 /* Zocial.ttf */,
+				26540173C3F94728A416CA5E /* OpenSans-Bold.ttf */,
+				B1DB2BC8390242ACAFDA4B0F /* OpenSans-Regular.ttf */,
+				2C6BB9AE2DAC47618D241758 /* OpenSans-SemiBold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -213,9 +210,6 @@
 			isa = PBXGroup;
 			children = (
 				903B2C6B2561C403003E6E6E /* AppCenter-Config.plist */,
-				5BFCF14325200D0800424E34 /* OpenSans-Regular.ttf */,
-				5BFCF14125200CF900424E34 /* OpenSans-SemiBold.ttf */,
-				5BFCF13F25200CCE00424E34 /* OpenSans-Bold.ttf */,
 				13B07FAE1A68108700A75B9A /* heyChatv2 */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* heyChatv2Tests */,
@@ -401,10 +395,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				5BFCF14225200CFC00424E34 /* OpenSans-SemiBold.ttf in Resources */,
-				5BFCF14425200D0A00424E34 /* OpenSans-Regular.ttf in Resources */,
-				5BFCF14025200CCE00424E34 /* OpenSans-Bold.ttf in Resources */,
 				903B2C6C2561C403003E6E6E /* AppCenter-Config.plist in Resources */,
+				2AE0982A207F41B1BD556CD1 /* OpenSans-Bold.ttf in Resources */,
+				20128A34E7F549879B7D3B87 /* OpenSans-Regular.ttf in Resources */,
+				2136D00167C94F37AF44E7EE /* OpenSans-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

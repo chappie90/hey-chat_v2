@@ -10,6 +10,8 @@ target 'heyChatv2' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
+
   target 'heyChatv2Tests' do
     inherit! :complete
     # Pods for testing
