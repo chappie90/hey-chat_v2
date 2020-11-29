@@ -43,13 +43,15 @@ mongoose.connection.on('error', (err) => {
 });
 
 // Apple Push Notification provider API connection
+// Sandbox or production APN service
+const apnProduction = process.env.NODE_ENV === 'production' ? true : false;
 const options = {
   token: {
     key: `${(global as any).appRoot}/private/certificates/${process.env.APPLE_KEY_FILE}`,
     keyId: process.env.APPLE_KEY_ID,
     teamId: process.env.APPLE_TEAM_ID
   },
-  production: false
+  production: apnProduction
 };
 const apnProvider = new apn.Provider(options);
 (global as any).apnProvider = apnProvider;

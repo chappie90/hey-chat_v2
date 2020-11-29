@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
 const mongoose = require('mongoose');
+import apn from 'apn';
 
 const User = mongoose.model('User');
 const Chat = mongoose.model('Chat');
@@ -24,7 +25,8 @@ export const onMessage = async (
 
   let chat: TChat,
       newChat,
-      recipientSocketId: string;
+      recipientSocketId: string,
+      notification;
 
   // Update database
   // Private chat
@@ -136,6 +138,52 @@ export const onMessage = async (
         // Send confirmation of message delivered to sender and update chat list
         socket.emit('message_sent', JSON.stringify(data));
       }
+
+      // Send push notification
+      // Check device OS to use approriate notification provider and get device token
+      const recipient = await User.findOne({ _id: recipientId });
+      const { deviceOS, deviceToken } = recipient;
+      
+      if (deviceOS === 'ios') {
+        notification = new apn.Notification();
+        notification.body = 'Test message body';
+        notification.title = 'Some title';
+        notification.badge  = 10;
+        notification.topic = process.env.APP_ID;
+        notification.pushType = 'alert';
+        
+        global.apnProvider.send(notification, deviceToken)
+          .then( response => {
+            // successful device tokens
+            console.log(response.sent);
+            // failed device tokens
+            console.log(response.failed);
+          });
+      }
+      if (deviceOS === 'android') {
+        notification = {
+          "notification": {
+            "title": 'Some title',
+            "body": 'Test message body'
+          },
+          "data": {
+            "key_1" : "Value_1",
+            "key_2" : "Value_2",
+            "key_3" : "Value_3"
+          },
+          token: deviceToken
+          // topic: 'general'
+        };
+
+        global.firebaseAdmin.messaging().send(notification)
+          .then((response) => {
+            // Response is a message ID string.
+            console.log('Successfully sent message:', response);
+          })
+          .catch((error) => {
+            console.log('Error sending message:', error);
+          });
+      } 
     }
 
   }
