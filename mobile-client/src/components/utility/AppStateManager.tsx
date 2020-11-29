@@ -1,20 +1,22 @@
 import React, { useEffect, useRef, useContext, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { connectToSocket } from 'socket/socketConnection';
-import { Context as AuthContext } from 'context/AuthContext';
+import actions from 'redux/actions';
 
 type AppStateManagerProps = { children: ReactNode };
 
 const AppStateManager = ({ children }: AppStateManagerProps) => {
-  const { state: { userId, token, socketState }, setSocketState } = useContext(AuthContext);
+  const { userId, token, socketState } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
   const appState = useRef<string>(AppState.currentState);
   const socket = useRef<any>(null);
 
   const createSocketConnection = (): void => {
     if (token && userId) {
       socket.current = connectToSocket(userId);
-      setSocketState(socket.current);
+      dispatch(actions.authActions.setSocketState(socket.current));
     //   // if (Platform.OS === 'ios') {
     //   //   await Notifications.setBadgeNumberAsync(0);
     //   // }
@@ -27,7 +29,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
 
   const destroySocketConnection = (): void => {
     socket.current.disconnect();
-    setSocketState(null);
+    dispatch(actions.authActions.setSocketState(null));
   };
 
   const handleAppStateChange = (nextAppState: string) => {

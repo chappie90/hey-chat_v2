@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -10,7 +10,7 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from "react-native-modal";
 
-import { Context as AuthContext } from 'context/AuthContext';
+import actions from 'redux/actions';
 import AuthForm from 'components/authentication/AuthForm';
 import { Colors } from 'variables';
 
@@ -21,7 +21,6 @@ type SignupScreenProps = {
 };
 
 const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) => {
-  const { signup } = useContext(AuthContext);
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();
@@ -51,7 +50,7 @@ const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) 
             buttonText="Sign Up"
             toggleModalPrompt="Already have an account?"
             toggleModalLink="Sign in here"
-            onSubmitCallback={signup}
+            onSubmitCallback={actions.authActions.signup}
             toggleModals={toggleModals}
           />
           {Platform.OS === 'ios' && <KeyboardAvoidingView behavior="padding" />}

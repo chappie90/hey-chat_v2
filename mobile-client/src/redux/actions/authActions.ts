@@ -1,7 +1,7 @@
+import { ActionCreator, Dispatch } from 'redux';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dispatch } from 'react';
 
-import createDataContext from './createDataContext';
 import api from 'api';
 
 type AuthState = {
@@ -16,29 +16,7 @@ type AuthAction =
   | { type: 'sign_out'; }
   | { type: 'set_socket'; payload: any };
 
-const authReducer = (state: AuthState, action: AuthAction) => {
-  switch (action.type) {
-    case 'signin':
-      return { 
-        userId: action.payload.userId,
-        username: action.payload.username, 
-        token: action.payload.token
-      };
-    case 'sign_out':
-      return {
-        userId: null,  
-        username: null, 
-        token: null,
-        socketState: null
-      };
-    case 'set_socket':
-      return { ...state, socketState: action.payload };
-    default: 
-      return state;
-  }
-};
-
-const signup = (dispatch: Dispatch<any>) => async (username: string, password: string): Promise<void> => {
+const signup = (username: string, password: string) => async (dispatch: Dispatch<any>) => {
   try {
     const response = await api.post('/signup', { username, password });
 
@@ -50,7 +28,7 @@ const signup = (dispatch: Dispatch<any>) => async (username: string, password: s
     await AsyncStorage.setItem('user', JSON.stringify(user));
 
     dispatch({ type: 'signin', payload: user });
-} catch (error) {
+  } catch (error) {
     console.log('Signup method error');
     if (error.response) {
       console.log(error.response.data.message);
@@ -61,7 +39,7 @@ const signup = (dispatch: Dispatch<any>) => async (username: string, password: s
   }
 };
 
-const signin = (dispatch: Dispatch<any>)  => async (username: string, password: string): Promise<void> => {
+const signin = (username: string, password: string) => async (dispatch: Dispatch<any>) => {
   try {
     const response = await api.post('/signin', { username, password });
 
@@ -83,7 +61,7 @@ const signin = (dispatch: Dispatch<any>)  => async (username: string, password: 
   }
 };
 
-const autoSignin = (dispatch: Dispatch<any>) => async (): Promise<void> => {
+const autoSignin = () => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
     const jsonValue = await AsyncStorage.getItem('user')
     const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
@@ -96,7 +74,7 @@ const autoSignin = (dispatch: Dispatch<any>) => async (): Promise<void> => {
   }
 };
 
-const signOut = (dispatch: Dispatch<any>) => async (userId: string, socketInstance: any): Promise<void> => {
+const signOut = (userId: string, socketInstance: any) => async (dispatch: Dispatch<any>) => {
   try {
     await AsyncStorage.removeItem('user');
     
@@ -109,23 +87,12 @@ const signOut = (dispatch: Dispatch<any>) => async (userId: string, socketInstan
   } 
 };
 
-const setSocketState = (dispatch: Dispatch<any>) => (socketState: any): void => {
-  dispatch({ type: 'set_socket', payload: socketState });
-};
+const setSocketState = (socketState: any) => ({ type: 'set_socket', payload: socketState });
 
-export const { Context, Provider } = createDataContext(
-  authReducer,
-  { 
-    signup,
-    signin, 
-    autoSignin, 
-    signOut,
-    setSocketState
-  },
-  { 
-    userId: null, 
-    username: null,
-    token: null,
-    socketState: null
-  }
-);
+export default {
+  signup,
+  signin,
+  autoSignin,
+  signOut,
+  setSocketState
+};  

@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useContext, ReactNode } from 'react';
+import React, { useEffect, useRef, useState, useContext, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { Context as AuthContext } from 'context/AuthContext';
 import api from 'api';
+import actions from 'redux/actions';
 
 type PushNotificationsManagerProps = { children: ReactNode };
 
 const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) => {
+  const { userId } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
   const configure = (): void => {
     PushNotification.configure({
@@ -24,18 +27,17 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             const deviceObj = JSON.parse(deviceStr);
             if (deviceObj.token === deviceToken) return;
           } 
-
-          const data = { deviceOS, deviceToken };
-
+    
+          const data = { userId, deviceOS, deviceToken };
+    
           await AsyncStorage.setItem('deviceInfo', JSON.stringify(data));
-
+    
           await api.post('/push-notifications/token/save', data);
         } catch (error) {
           console.log('Save device token method error');
           if (error.response) console.log(error.response.data.message);
           if (error.message) console.log(error.message);
         }
-
       },
       // Notification received / opened in-app event
       onNotification: function (notification) {

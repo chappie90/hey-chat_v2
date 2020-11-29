@@ -6,6 +6,7 @@ import {
   TextInput, 
   TouchableOpacity
 } from 'react-native';
+import { useDispatch } from 'react-redux'
 
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
@@ -29,6 +30,7 @@ const AuthForm = ({
   onSubmitCallback, 
   toggleModals
 }: AuthFormTypes) => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameIsValid, setUsernameIsValid] = useState<boolean | null>(null);
@@ -72,7 +74,7 @@ const AuthForm = ({
       return;
     }
 
-    const response = await onSubmitCallback(username, password);
+    const response = await dispatch(onSubmitCallback(username, password));
     if (response) {
       let errorMsg;
       if (response.data && response.data.message) {

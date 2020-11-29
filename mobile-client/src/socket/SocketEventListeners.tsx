@@ -1,10 +1,10 @@
 import React, { useEffect, useContext } from 'react';
+import { useSelector } from 'react-redux';
 
-import { Context as AuthContext } from 'context/AuthContext';
 import { Context as ChatsContext } from 'context/ChatsContext';
 
 const SocketEventListeners = () => {
-  const { state: { userId, token, socketState } } = useContext(AuthContext);
+  const { userId, token, socketState } = useSelector(state => state.auth);
   const { 
     state: { chatHistory }, 
     addChat,

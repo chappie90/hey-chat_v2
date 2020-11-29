@@ -8,8 +8,8 @@ import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useSelector } from 'react-redux';
 
-import { Context as AuthContext } from 'context/AuthContext';
 import { Context as ContactsContext } from 'context/ContactsContext';
 import AddContactScreen from './modals/AddContactScreen';
 import { Colors } from 'variables';
@@ -31,7 +31,7 @@ type ContactsScreenProps = {
 };
 
 const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
-  const { state: { userId } } = useContext(AuthContext);
+  const { userId } = useSelector(state => state.auth);
   const { state: { contacts }, getContacts } = useContext(ContactsContext);
   const [showAddContact, setShowAddContact] = useState(false);
   const [showActiveUsers, setShowActiveUsers] = useState(false);

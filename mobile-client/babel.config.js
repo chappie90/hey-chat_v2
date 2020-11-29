@@ -21,6 +21,7 @@ module.exports = {
           assets: './src/assets',
           components: './src/components',
           navigation: './src/navigation',
+          redux: './src/redux',
           context: './src/context',
           screens: './src/screens',
           socket: './src/socket',

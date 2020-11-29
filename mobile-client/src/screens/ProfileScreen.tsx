@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import { Context as AuthContext } from 'context/AuthContext';
+import actions from 'redux/actions';
 import { Context as ProfileContext } from 'context/ProfileContext';
 import { Colors, Headings, Fonts } from 'variables';
 import CustomText from 'components/CustomText';
@@ -17,12 +18,13 @@ import { emitUpdateProfileImage } from 'socket/eventEmitters';
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
-  const { state: { username, userId, socketState }, signOut } = useContext(AuthContext);
+  const { username, userId, socketState } = useSelector(state => state.auth);
   const { 
     getProfileImage, 
     updateProfileImage,
     deleteProfileImage
   } = useContext(ProfileContext);
+  const dispatch = useDispatch();
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
@@ -30,7 +32,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   const [uploadFinished, setUploadFinished] = useState(false);
 
   const onSignOut = (): void => {
-    signOut(userId, socketState);  
+    dispatch(actions.authActions.signOut(userId, socketState));  
   }; 
 
   const onToggleImageActions = (): void => {

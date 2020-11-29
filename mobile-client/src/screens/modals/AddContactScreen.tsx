@@ -7,8 +7,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
-import { Context as AuthContext } from "context/AuthContext";
 import { Context as ContactsContext } from "context/ContactsContext";
 import SearchForm from 'components/contacts/addContact/SearchForm';
 import SearchList from 'components/contacts/addContact/SearchList';
@@ -21,7 +21,7 @@ type AddContactScreenProps = { visible: boolean };
 
 const AddContactScreen = ({ visible }: AddContactScreenProps) => {
   const { searchContacts } = useContext(ContactsContext);
-  const { state: { userId, username } } = useContext(AuthContext);
+  const { userId, username } = useSelector(state => state.auth);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<TContact[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);

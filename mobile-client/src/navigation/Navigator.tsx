@@ -1,17 +1,19 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { Context as AuthContext } from 'context/AuthContext';
 import SplashScreen from 'screens/SplashScreen';
 import AuthenticationFlow from './AuthenticationFlow';
 import MainFlow from './MainFlow';
+import actions from 'redux/actions';
 
 const Navigator = () => {
-  const { state: { token }, autoSignin } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+  const { token } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    autoSignin();
+    dispatch(actions.authActions.autoSignin());
   }, []);
 
   if (isLoading) return <SplashScreen />;

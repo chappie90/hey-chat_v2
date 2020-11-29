@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import uuid from 'react-native-uuid';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from 'socket/eventEmitters';
-import { Context as AuthContext } from 'context/AuthContext';
 import { Context as ChatsContext } from 'context/ChatsContext';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
@@ -22,6 +22,7 @@ import { Colors } from 'variables';
 import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';
+import authActions from 'redux/actions/authActions';
 
 type ChatProps = {
   chatType: string;
@@ -38,7 +39,7 @@ const Chat = ({
   contactName, 
   contactProfile 
 }: ChatProps) => {
-  const { state: { userId, username, socketState } } = useContext(AuthContext);
+  const { userId, username, socketState } = useSelector(state => state.auth);
   const { 
     state: { chatHistory }, 
     getMessages, 

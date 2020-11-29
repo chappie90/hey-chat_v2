@@ -4,8 +4,8 @@ import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useSelector } from 'react-redux'
 
-import { Context as AuthContext } from 'context/AuthContext';
 import { Context as ChatsContext } from 'context/ChatsContext';
 import { Colors } from 'variables';
 import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
@@ -24,7 +24,7 @@ type ChatsScreenProps = {
 };
 
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
-  const { state: { userId, socketState } } = useContext(AuthContext);
+  const { userId } = useSelector(state => state.auth);
   const { state: { chats }, getChats } = useContext(ChatsContext);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

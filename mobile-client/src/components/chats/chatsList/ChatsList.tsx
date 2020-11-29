@@ -12,8 +12,8 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import Octicon from 'react-native-vector-icons/Octicons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
-import { Context as AuthContext } from 'context/AuthContext';
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
 import ChatsFrontItem from './ChatsFrontItem';
@@ -23,7 +23,7 @@ type ChatsListProps = {
 };
 
 const ChatsList = ({ chats }: ChatsListProps) => {
-  const { state: { userId } } = useContext(AuthContext);
+  const { userId } = useSelector(state => state.auth);
   const rowOpenValue = useRef(0);
   const isRowOpen = useRef(false);
   const rowTranslateAnimatedValues = useRef({}).current;
