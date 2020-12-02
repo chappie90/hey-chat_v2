@@ -143,6 +143,11 @@ export const onMessage = async (
       // Check device OS to use approriate notification provider and get device token
       const recipient = await User.findOne({ _id: recipientId });
       const { deviceOS, deviceToken } = recipient;
+
+      console.log('chat handler push notifications')
+      console.log(recipient)
+      console.log(deviceOS)
+      console.log(deviceToken)
       
       if (deviceOS === 'ios') {
         notification = new apn.Notification();

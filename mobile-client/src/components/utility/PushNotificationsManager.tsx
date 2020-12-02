@@ -18,23 +18,11 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     PushNotification.configure({
       // User accepted notification permission - register token
       onRegister: async (tokenData): Promise<void> => {
-        const { os: deviceOS, token: deviceToken } = tokenData;
-
+        // Save to storage to send to server when user id is available from store
         try {
-          // If token is not in storage or new token has been issued send it to server
-          const deviceStr = await AsyncStorage.getItem('deviceInfo');
-          if (deviceStr !== null) {
-            const deviceObj = JSON.parse(deviceStr);
-            if (deviceObj.token === deviceToken) return;
-          } 
-    
-          const data = { userId, deviceOS, deviceToken };
-    
-          await AsyncStorage.setItem('deviceInfo', JSON.stringify(data));
-    
-          await api.post('/push-notifications/token/save', data);
+          await AsyncStorage.setItem('deviceInfo', JSON.stringify(tokenData));
         } catch (error) {
-          console.log('Save device token method error');
+          console.log('Save device info to async storage method error');
           if (error.response) console.log(error.response.data.message);
           if (error.message) console.log(error.message);
         }
@@ -55,6 +43,30 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   useEffect(() => {
     configure();
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      (async () => {
+        try {
+          // Send token to server
+          const deviceStr = await AsyncStorage.getItem('deviceInfo');
+          if (deviceStr !== null) {
+            const { os: deviceOS, token: deviceToken } = JSON.parse(deviceStr);
+        
+            const data = { userId, deviceOS, deviceToken };
+    
+            await AsyncStorage.setItem('deviceInfo', JSON.stringify(data));
+      
+            await api.post('/push-notifications/token/save', data);
+          } 
+        } catch (error) {
+          console.log('Save device token method error');
+          if (error.response) console.log(error.response.data.message);
+          if (error.message) console.log(error.message);
+        }
+      })();
+    }
+  }, [userId]);
 
   return <>{children}</>;
 };
