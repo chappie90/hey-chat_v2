@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -13,10 +14,10 @@ import { Colors } from 'variables';
 
 // Hide bottom tab navigator on current chat screen
 const hideTabBar = (route: any) => {
-  const routeName = route.state
-    ? route.state.routes[route.state.index].name
-    : route.params?.screen;
-
+  // const routeName = route.state
+  //   ? route.state.routes[route.state.index].name
+  //   : route.params?.screen;
+  const routeName = getFocusedRouteNameFromRoute(route);
   if (routeName === 'CurrentChat') return false;
 
   return true;
@@ -67,12 +68,12 @@ const MainFlow = () => {
       initialRouteName="Chats"
       tabBarOptions={{
         style: {
-          backgroundColor: Colors.darkGrey
+          backgroundColor: Colors.greyDark
         },
         tabStyle: {
           paddingVertical: 4,
         },
-        activeTintColor: Colors.primaryOrange,
+        activeTintColor: Colors.yellowDark,
         inactiveTintColor: Colors.white
       }}
     >
@@ -82,7 +83,7 @@ const MainFlow = () => {
         options={({ route }) => ({
           tabBarVisible: hideTabBar(route),
           tabBarIcon: ({ size, focused }) => (
-            <MaterialIcon name="chat" size={size} color={focused ? Colors.white : Colors.darkGrey} />
+            <MaterialIcon name="chat" size={size} color={focused ? Colors.white : Colors.greyDark} />
           )
           // tabBarBadge: 3,
         })}
