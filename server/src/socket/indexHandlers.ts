@@ -6,10 +6,11 @@ const User = mongoose.model('User');
 export const onConnect = async (
   io: Socket,
   socket: Socket, 
-  users: { [key: string]: Socket }, 
-  onlineContacts: string[]
+  users: { [key: string]: Socket }
 ): Promise<{ userId: string, socketId: string }> => {
   console.log('Socket connected');
+
+  const onlineContacts: string[] = [];
 
   const userId: string = socket.handshake.query.userId;
   const socketId: string = socket.id;
@@ -21,22 +22,19 @@ export const onConnect = async (
   socket.join(userId);
 
   try {
-    const user = await User.findOne({ _id: userId })
-                           .populate('pendingContacts', '_id')
-                           .populate('contacts', '_id');
+    const user = await User.findOne({ _id: userId }).lean();
 
     const contacts = [ ...user.pendingContacts, ...user.contacts ];
 
     // Get a list of user contacts who are online
-    for (const contact of contacts) {
-      for (const [key, value] of Object.entries(users)) {
-        if (contact._id === key) {
-          if (!onlineContacts.includes(key)) {
-            onlineContacts.push(key);
-          }
-          // Add online contact to user channel
-          users[key].join(userId);
+    for (const contactId of contacts) {
+      const contactIdStr = contactId.toString();
+      if (contactIdStr in users) {
+        if (!onlineContacts.includes(contactIdStr)) {
+          onlineContacts.push(contactIdStr);
         }
+        // Add online contact to user channel
+        users[contactIdStr].join(userId);
       }
     }
 

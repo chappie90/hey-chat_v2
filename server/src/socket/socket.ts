@@ -4,12 +4,11 @@ import { onMessage, onLikeMessage, onDeleteMessage } from './chatHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};
-const onlineContacts: string[] = [];
 
 const initSocket = (io: Socket) => {
   // Connect to socket
   io.on('connection', async (socket: Socket) => {
-    const { userId, socketId } = await onConnect(io, socket, users, onlineContacts);
+    const { userId, socketId } = await onConnect(io, socket, users);
     
     // To show a list of all room
     // console.log(io.sockets.adapter.rooms);
