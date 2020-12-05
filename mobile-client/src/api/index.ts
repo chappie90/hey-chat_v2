@@ -5,7 +5,6 @@ import Config from 'react-native-config';
 
 const instance = axios.create({
   baseURL: `${Config.RN_API_BASE_URL}/api/` 
-  // baseURL: 'http://a37abb4bf87e.ngrok.io/api/' 
 });
 
 axiosRetry(instance, { retries: 3 });

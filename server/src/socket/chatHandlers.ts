@@ -145,12 +145,27 @@ export const onMessage = async (
       const { deviceOS, deviceToken } = recipient;
       
       if (deviceOS === 'ios') {
-        notification = new apn.Notification();
-        notification.body = 'Test message body';
-        notification.title = 'Some title';
-        notification.badge  = 10;
-        notification.topic = process.env.APP_ID;
-        notification.pushType = 'alert';
+        notification = new apn.Notification({
+          "aps": {
+            "content-available": "1",
+            "alert": "",
+            // "badge": 7
+          },
+          "topic": process.env.APP_ID,
+          "payload": {
+            "key_1" : "Value_1",
+            "key_2" : "Value_2",
+            "key_3" : "Value_3"
+          },
+        });
+
+       console.log(process.env.APP_ID) 
+        // notification.body = 'Test message body';
+        // notification.title = 'Some title';
+        // notification.badge  = 10;
+        // notification.topic = process.env.APP_ID;
+        // notification.pushType = 'alert';
+        // // notification.pushType = 'background';
         
         global.apnProvider.send(notification, deviceToken)
           .then( response => {
@@ -162,10 +177,17 @@ export const onMessage = async (
       }
       if (deviceOS === 'android') {
         notification = {
-          "notification": {
-            "title": 'Some title',
-            "body": 'Test message body'
-          },
+          // "notification": {
+          //   "title": 'Some title',
+          //   "body": 'Test message body'
+          // },
+          "android":{
+            "notification":{
+               "body":"Very good news",
+               "title":"Good news",
+               "sound":"default"
+            }
+         },
           "data": {
             "key_1" : "Value_1",
             "key_2" : "Value_2",

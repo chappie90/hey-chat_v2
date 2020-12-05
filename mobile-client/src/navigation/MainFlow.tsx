@@ -14,9 +14,6 @@ import { Colors } from 'variables';
 
 // Hide bottom tab navigator on current chat screen
 const hideTabBar = (route: any) => {
-  // const routeName = route.state
-  //   ? route.state.routes[route.state.index].name
-  //   : route.params?.screen;
   const routeName = getFocusedRouteNameFromRoute(route);
   if (routeName === 'CurrentChat') return false;
 
