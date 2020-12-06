@@ -2,9 +2,10 @@ import React, { useEffect, useContext } from 'react';
 
 import { Context as AuthContext } from 'context/AuthContext';
 import { Context as ChatsContext } from 'context/ChatsContext';
+import { emitMarkAllMessagesAsRead } from './eventEmitters';
 
 const SocketEventListeners = () => {
-  const { state: { userId, token, socketState } } = useContext(AuthContext);
+  const { state: { userId, token, socketState, currentScreen } } = useContext(AuthContext);
   const { 
     state: { chatHistory }, 
     addChat,
@@ -14,7 +15,8 @@ const SocketEventListeners = () => {
     addMessage,
     likeMessage,
     deleteMessage,
-    markMessageAsDelivered
+    markMessageAsDelivered,
+    markMessagesAsReadSender
   } = useContext(ChatsContext);
 
   useEffect(() => {
@@ -39,10 +41,36 @@ const SocketEventListeners = () => {
 
       // Update recipient's chats list and add new message to chat history
       socketState.on('message_received', (data: string) => {
-        const { chat, newMessage, newTMessage } = JSON.parse(data);
+        const { chat, newMessage, newTMessage, senderId } = JSON.parse(data);
         const updatedChat = { ...chat, lastMessage: newMessage };
         updateChat(updatedChat);
-        addMessage(newMessage.chatId, newTMessage);
+        addMessage(
+          newMessage.chatId, 
+          {
+            ...newTMessage,
+            sender: {
+              ...newTMessage.sender,
+              _id: 2
+            },
+            delivered: true,
+            read: true
+          }
+        );
+
+        console.log(currentScreen)
+
+        // If recipient is active on current chat screen, send signal to sender message has been read
+        // and mark recipient's chat as read
+        if (currentScreen && currentScreen === 'CurrentChat') {
+          const eventData = { chatId: newMessage.chatId, senderId };
+          emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+        }
+      });
+
+      // Mark all sender's chat history messages as read
+      socketState.on('messages_marked_as_read_sender', (data: string) => {
+        const { chatId } = JSON.parse(data);
+        markMessagesAsReadSender(chatId);
       });
 
       // Update recipient's chat messages with liked message

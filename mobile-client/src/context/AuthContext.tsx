@@ -14,7 +14,8 @@ type AuthState = {
 type AuthAction = 
   | { type: 'signin'; payload: TUser }
   | { type: 'sign_out'; }
-  | { type: 'set_socket'; payload: any };
+  | { type: 'set_socket'; payload: any }
+  | { type: 'get_current_screen'; payload: string };
 
 const authReducer = (state: AuthState, action: AuthAction) => {
   switch (action.type) {
@@ -29,10 +30,13 @@ const authReducer = (state: AuthState, action: AuthAction) => {
         userId: null,  
         username: null, 
         token: null,
-        socketState: null
+        socketState: null,
+        currentScreen: null
       };
     case 'set_socket':
       return { ...state, socketState: action.payload };
+    case 'get_current_screen':
+      return { ...state, currentScreen: action.payload };
     default: 
       return state;
   }
@@ -113,6 +117,10 @@ const setSocketState = (dispatch: Dispatch<any>) => (socketState: any): void => 
   dispatch({ type: 'set_socket', payload: socketState });
 };
 
+const getCurrentScreen = (dispatch: Dispatch<any>) => (currentScreen: string): void => {
+  dispatch({ type: 'get_current_screen', payload: currentScreen });
+};
+
 export const { Context, Provider } = createDataContext(
   authReducer,
   { 
@@ -120,12 +128,14 @@ export const { Context, Provider } = createDataContext(
     signin, 
     autoSignin, 
     signOut,
-    setSocketState
+    setSocketState,
+    getCurrentScreen
   },
   { 
     userId: null, 
     username: null,
     token: null,
-    socketState: null
+    socketState: null,
+    currentScreen: null
   }
 );

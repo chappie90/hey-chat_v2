@@ -89,7 +89,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                     color={Colors.purpleDark} 
                   />
                 )}
-              {chat.unreadMessagesCount !== 0 && (
+              {chat.unreadMessagesCount > 0 && (
                 <View style={styles.unreadBadge}>
                   <CustomText 
                     color={Colors.white}

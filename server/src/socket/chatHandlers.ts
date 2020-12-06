@@ -129,7 +129,7 @@ export const onMessage = async (
         // Add new chat, register chat id and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
-        const data = { chat, newMessage, newTMessage: message };
+        const data = { chat, newMessage, newTMessage: message, senderId };
 
         // Send new message to recipient and update chat
         // If recipient is online, emit socket event with data
@@ -255,9 +255,30 @@ export const onDeleteMessage = async (
 
   // Check if message recipient is online and get socket id
   if (users[recipientId]) {
-    let recipientSocketId = users[recipientId].id;
+    const recipientSocketId = users[recipientId].id;
     // Notify recipient of delete
     const data = { chatId, messageId };
     io.to(recipientSocketId).emit('messaged_deleted', JSON.stringify(data));
+  }
+};
+
+// User reads messages
+export const onMarkAllMessagesAsRead = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { chatId, senderId } = JSON.parse(data);
+
+  // Mark all messages as read
+  await Message.updateMany({ chatId }, { read: true });
+
+  // Check if message sender is online and get socket id
+  if (users[senderId]) {
+    const senderSocketId = users[senderId].id;
+    // Notify sender all messages have been read
+    const data = { chatId };
+    io.to(senderSocketId).emit('messages_marked_as_read_sender', JSON.stringify(data));
   }
 };

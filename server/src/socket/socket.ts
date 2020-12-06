@@ -1,6 +1,11 @@
 import { onConnect } from './indexHandlers';
 import { onUpdateProfileImage } from './profileHandlers';
-import { onMessage, onLikeMessage, onDeleteMessage } from './chatHandlers';
+import { 
+  onMessage, 
+  onLikeMessage, 
+  onDeleteMessage,
+  onMarkAllMessagesAsRead
+} from './chatHandlers';
 import { Socket } from 'socket.io';
 
 const users: { [key: string]: Socket } = {};
@@ -41,6 +46,11 @@ const initSocket = (io: Socket) => {
     // User updated profile image
     socket.on('update_profile_image', (data: string) => {
       onUpdateProfileImage(socket, data);
+    });
+
+    // User reads messages
+    socket.on('mark_messages_as_read', (data: string) => {
+      onMarkAllMessagesAsRead(io, socket, users, data);
     });
 
     // Disconnect from socket
