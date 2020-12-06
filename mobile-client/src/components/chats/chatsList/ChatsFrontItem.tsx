@@ -76,7 +76,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                 numberOfLines={2}
                 ellipsize="tail"
                 fontSize={13}
-                fontWeight={false ? Fonts.semiBold : Fonts.regular}
+                fontWeight={chat.lastMessage.read ? Fonts.regular : Fonts.bold}
                 style={styles.messageText}
               >
                 {chat.lastMessage.message.text}
