@@ -115,6 +115,10 @@ export const onMessage = async (
         recipientSocketId = users[recipientId].id;
       }
 
+      // Check device OS to use approriate notification provider and get device token
+      const recipient = await User.findOne({ _id: recipientId });
+      const { deviceOS, deviceToken } = recipient;
+
       if (isFirstMessage) {
         const data = { newChat, newMessage };
 
@@ -128,12 +132,25 @@ export const onMessage = async (
         const data = { chat, newMessage, newTMessage: message };
 
         // Send new message to recipient and update chat
-        // If recipient is online, emit socket event with data and send push notification
+        // If recipient is online, emit socket event with data
         if (recipientSocketId) {
           io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
         } else {
-        // If recipient is offline, send silent push notification with data to update app state
-          
+          // If recipient is offline, send silent push notification with data to update app state
+          if (deviceOS === 'ios') {
+            notification = new apn.Notification({
+              "aps": {
+                "content-available": "1",
+                "alert": ""
+              },
+              "topic": process.env.APP_ID,
+              "payload": {
+                "key_1" : "Value_1",
+                "key_2" : "Value_2",
+                "key_3" : "Value_3"
+              }
+            });
+          }
         }
 
         // Send confirmation of message delivered to sender and update chat list
@@ -141,32 +158,18 @@ export const onMessage = async (
       }
 
       // Send push notification
-      // Check device OS to use approriate notification provider and get device token
-      const recipient = await User.findOne({ _id: recipientId });
-      const { deviceOS, deviceToken } = recipient;
-      
       if (deviceOS === 'ios') {
         notification = new apn.Notification({
           "aps": {
-            "content-available": "1",
-            "alert": "",
-            // "badge": 7
+            "alert": {
+              "title": "New message received",
+              "body": "Hi! How's it going?",
+              "sound": "default"
+            },
+            "badge": 1
           },
-          "topic": process.env.APP_ID,
-          "payload": {
-            "key_1" : "Value_1",
-            "key_2" : "Value_2",
-            "key_3" : "Value_3"
-          },
+          "topic": process.env.APP_ID
         });
-
-        // notification.body = 'Test message body';
-        // notification.title = 'Some title';
-        // notification.badge  = 10;
-        // notification.topic = process.env.APP_ID;
-        // notification.pushType = 'alert';
-        // // notification.pushType = 'background';
-        
         global.apnProvider.send(notification, deviceToken)
           .then( response => {
             // successful device tokens

@@ -36,7 +36,7 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
           chat
       });
 
-      updatedChats = updatedChats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+      updatedChats = updatedChats.sort((a, b) => new Date(b.lastMessage.message.createDate) - new Date(a.lastMessage.message.createDate));
 
       return { 
         ...state, 
@@ -196,7 +196,7 @@ const getChats = dispatch => async (userId: number): Promise<TChat[] | void> => 
 
   try {
     const response = await api.get('/chats', { params });
-    const chats: TChat[] = response.data.chats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+    const chats: TChat[] = response.data.chats.sort((a, b) => new Date(b.lastMessage.message.createDate) - new Date(a.lastMessage.message.createDate));
 
     dispatch({ type: 'get_chats', payload: chats });
 
