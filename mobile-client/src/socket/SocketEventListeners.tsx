@@ -23,18 +23,26 @@ const SocketEventListeners = () => {
       // Add new chat, replace temporary contact id with new chat id in chatHistory global state
       // and send confirmation of message delivered to sender
       socketState.on('first_message_sent', (data: string) => {
-        const { newChat, lastMessage } = JSON.parse(data);
-        markMessageAsDelivered(newChat.chatId, lastMessage.message.id);
-        const chat = { ...newChat, lastMessage };
+        const { newChat, newMessage } = JSON.parse(data);
+        markMessageAsDelivered(newChat.chatId, newMessage.message.id);
+        const chat = { ...newChat, lastMessage: newMessage };
         addChat(chat);
       });
 
       // Update sender chat and send confirmation of message delivered to sender
       socketState.on('message_sent', (data: string) => {
-        const { chat, lastMessage } = JSON.parse(data);
-        markMessageAsDelivered(chat.chatId, lastMessage.message.id);
-        const updatedChat = { ...chat, lastMessage };
+        const { chat, newMessage } = JSON.parse(data);
+        markMessageAsDelivered(chat.chatId, newMessage.message.id);
+        const updatedChat = { ...chat, lastMessage: newMessage };
         updateChat(updatedChat);
+      });
+
+      // Update recipient's chats list and add new message to chat history
+      socketState.on('message_received', (data: string) => {
+        const { chat, newMessage, newTMessage } = JSON.parse(data);
+        const updatedChat = { ...chat, lastMessage: newMessage };
+        updateChat(updatedChat);
+        addMessage(newMessage.chatId, newTMessage);
       });
 
       // Update recipient's chat messages with liked message

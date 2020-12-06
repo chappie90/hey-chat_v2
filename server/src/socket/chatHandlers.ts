@@ -108,7 +108,7 @@ export const onMessage = async (
   // If new message created successfully
   if (newMessage) {
 
-    // Emit events
+    // Emit events and send push notifications
     if (chatType === 'private') {
       // Check if message recipient is online and get socket id
       if (users[recipientId]) {
@@ -116,25 +116,26 @@ export const onMessage = async (
       }
 
       if (isFirstMessage) {
-        const data = { newChat, lastMessage: newMessage };
+        const data = { newChat, newMessage };
 
         // Add new chat and send new message to recipient
         if (recipientSocketId) {
-          io.to(recipientSocketId).emit('first_message_received', {
-
-          });
+          io.to(recipientSocketId).emit('first_message_received', JSON.stringify(data));
         }
         // Add new chat, register chat id and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
+        const data = { chat, newMessage, newTMessage: message };
+
         // Send new message to recipient and update chat
-        const data = { chat, lastMessage: newMessage };
-
+        // If recipient is online, emit socket event with data and send push notification
         if (recipientSocketId) {
-          io.to(recipientSocketId).emit('message_received', {
-
-          });
+          io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
+        } else {
+        // If recipient is offline, send silent push notification with data to update app state
+          
         }
+
         // Send confirmation of message delivered to sender and update chat list
         socket.emit('message_sent', JSON.stringify(data));
       }
@@ -159,7 +160,6 @@ export const onMessage = async (
           },
         });
 
-       console.log(process.env.APP_ID) 
         // notification.body = 'Test message body';
         // notification.title = 'Some title';
         // notification.badge  = 10;
