@@ -89,18 +89,17 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                     color={Colors.purpleDark} 
                   />
                 )}
-              {/* {rowData.item.unreadMessageCount !== 0 && ( */}
+              {chat.unreadMessagesCount !== 0 && (
                 <View style={styles.unreadBadge}>
                   <CustomText 
                     color={Colors.white}
                     fontWeight={Fonts.semiBold} 
                     fontSize={12}
                   >
-                    7
-                    {/* {rowData.item.unreadMessageCount > 99 ? '99+' : rowData.item.unreadMessageCount } */}
+                    {chat.unreadMessagesCount > 99 ? '99+' : chat.unreadMessagesCount }
                   </CustomText>
                 </View>
-              {/* )} */}
+              )}
             </View>
           </View>
           <View style={styles.divider} />
