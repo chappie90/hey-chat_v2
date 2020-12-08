@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import actions from 'redux/actions';
+import actions from 'reduxStore/actions';
 
 type PushNotificationsManagerProps = { children: ReactNode };
 

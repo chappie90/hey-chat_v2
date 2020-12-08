@@ -8,7 +8,7 @@ import thunk from 'redux-thunk';
 import { Provider as ContactsProvider } from 'context/ContactsContext';
 import { Provider as ChatsProvider } from 'context/ChatsContext';
 import { Provider as ProfileProvider } from 'context/ProfileContext';
-import rootReducer from 'redux/reducers';
+import rootReducer from 'reduxStore/reducers';
 import Navigator from 'navigation/Navigator';
 import AppStateManager from 'components/utility/AppStateManager';
 import PushNotificationsManager from 'components/utility/PushNotificationsManager';

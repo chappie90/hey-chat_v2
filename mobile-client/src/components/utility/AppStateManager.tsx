@@ -3,7 +3,7 @@ import { AppState, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { connectToSocket } from 'socket/socketConnection';
-import actions from 'redux/actions';
+import actions from 'reduxStore/actions';
 
 type AppStateManagerProps = { children: ReactNode };
 

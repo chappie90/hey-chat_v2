@@ -4,7 +4,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import actions from 'redux/actions';
+import actions from 'reduxStore/actions';
 import { Context as ProfileContext } from 'context/ProfileContext';
 import { Colors, Headings, Fonts } from 'variables';
 import CustomText from 'components/CustomText';

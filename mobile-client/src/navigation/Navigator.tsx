@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import SplashScreen from 'screens/SplashScreen';
 import AuthenticationFlow from './AuthenticationFlow';
 import MainFlow from './MainFlow';
-import actions from 'redux/actions';
+import actions from 'reduxStore/actions';
 
 const Navigator = () => {
   const [isLoading, setIsLoading] = useState(false);

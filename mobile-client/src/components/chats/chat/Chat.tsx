@@ -22,7 +22,7 @@ import { Colors } from 'variables';
 import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';
-import authActions from 'redux/actions/authActions';
+import authActions from 'reduxStore/actions/authActions';
 
 type ChatProps = {
   chatType: string;
