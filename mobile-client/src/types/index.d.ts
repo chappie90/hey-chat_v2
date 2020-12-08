@@ -110,6 +110,7 @@ type TMessage = {
 type TLastChatMessage = {
   message: { text: string };
   sender: string;
+  read: boolean;
 };
 
 // Camera

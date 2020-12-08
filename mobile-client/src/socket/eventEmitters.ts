@@ -1,5 +1,3 @@
-import io from 'socket.io-client';
-
 export const emitNewMessage = (data: string, socket: any) => {
   socket.emit('message', data);
 };
@@ -14,6 +12,10 @@ export const emitLikeMessage = (data: string, socket: any) => {
 
 export const emitDeleteMessage = (data: string, socket: any) => {
   socket.emit('delete_message', data);
+};
+
+export const emitMarkAllMessagesAsRead = (data: string, socket: any) => {
+  socket.emit('mark_messages_as_read', data);
 };
 
 // socket.on('message', (message: string) => {

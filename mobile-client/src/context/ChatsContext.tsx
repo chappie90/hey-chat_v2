@@ -18,7 +18,9 @@ type ChatsAction =
   | { type: 'like_message'; payload: { chatId: string, messageId: string } }
   | { type: 'mark_message_for_deletion'; payload: { chatId: string, messageId: string } }
   | { type: 'delete_message'; payload: { chatId: string, messageId: string } }
-  | { type: 'mark_message_as_delivered'; payload: { chatId: string, messageId: string } };
+  | { type: 'mark_message_as_delivered'; payload: { chatId: string, messageId: string } }
+  | { type: 'mark_messages_as_read_sender'; payload: { chatId: string } }
+  | { type: 'mark_messages_as_read_recipient'; payload: { chatId: string } };
 
 const chatReducer = (state: ChatsState, action: ChatsAction) => {
   let updatedChats: TChat[];
@@ -36,7 +38,7 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
           chat
       });
 
-      updatedChats = updatedChats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+      updatedChats = updatedChats.sort((a, b) => new Date(b.lastMessage.message.createDate) - new Date(a.lastMessage.message.createDate));
 
       return { 
         ...state, 
@@ -166,26 +168,43 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
             }
           }
         };
+      case 'mark_messages_as_read_sender':
+        if (!state.chatHistory[action.payload.chatId]) return;
 
-      // case 'mark_message_read': 
-      // // if you have more than initial 50 messages loaded it will jump back to first 50...
-      // // if (state.chat[action.payload]) {
-      // //   const markedMessage = state.chat[action.payload].map(item => {
-      // //     return item.read === false ? { ...item, read: true } : item;
-      // //   });
-      // //   return { ...state, chat: { 
-      // //     ...state.chat, 
-      // //     [action.payload]: markedMessage } };
-      // // } else {
-      // //   return state;
-      // // }
-      //  const markedMessage = state.chat[action.payload].map(item => {
-      //     return item.read === false ? { ...item, read: true } : item;
-      //   });
-      //   return { ...state, chat: { 
-      //     ...state.chat, 
-      //     [action.payload]: markedMessage } };
+        updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+          return msg.read === false ?
+            {  ...msg, read: true } :
+            msg
+        });
 
+        return {
+          ...state,
+          chatHistory: {
+            ...state.chatHistory,
+            [action.payload.chatId]: {
+              ...state.chatHistory[action.payload.chatId],
+              messages: updatedMessages
+            }
+          }
+        };
+      case 'mark_messages_as_read_recipient': 
+        updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+          return chat.chatId === action.payload.chatId ?
+            { 
+              ...chat,
+              lastMessage: { 
+                ...chat.lastMessage,
+                read: true 
+              },
+              unreadMessagesCount: 0
+            } :
+            chat
+        });
+    
+        return { 
+          ...state, 
+          chats: updatedChats
+        };  
     default:
       return state;
   }
@@ -196,7 +215,7 @@ const getChats = dispatch => async (userId: number): Promise<TChat[] | void> => 
 
   try {
     const response = await api.get('/chats', { params });
-    const chats: TChat[] = response.data.chats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+    const chats: TChat[] = response.data.chats.sort((a, b) => new Date(b.lastMessage.message.createDate) - new Date(a.lastMessage.message.createDate));
 
     dispatch({ type: 'get_chats', payload: chats });
 
@@ -289,20 +308,13 @@ const markMessageAsDelivered = dispatch => (chatId: string, messageId: string): 
   dispatch({ type: 'mark_message_as_delivered', payload: { chatId, messageId } });
 };
 
-// const markMessageAsRead = dispatch => async (chatId) => {
-//   // try {
-//   //   const response = await chatApi.patch('/message/read', { username, recipient });
+const markMessagesAsReadSender = dispatch => (chatId: string): void => {
+  dispatch({ type: 'mark_messages_as_read_sender', payload: { chatId } });
+};
 
-//   //   if (!response.data.response) {
-//   //     return;
-//   //   }
-
-//   dispatch({ type: 'mark_message_read', payload: chatId });
-//   // } catch (err) {
-//   //   console.log(err);
-//   //   throw err;
-//   // }
-// };
+const markMessagesAsReadRecipient = dispatch => (chatId: string): void => {
+  dispatch({ type: 'mark_messages_as_read_recipient', payload: { chatId } });
+};
 
 export const { Context, Provider } = createDataContext(
   chatReducer,
@@ -316,7 +328,9 @@ export const { Context, Provider } = createDataContext(
     likeMessage,
     markMessageForDeletion,
     deleteMessage,
-    markMessageAsDelivered
+    markMessageAsDelivered,
+    markMessagesAsReadSender,
+    markMessagesAsReadRecipient
   },
   {  
     chats: [],

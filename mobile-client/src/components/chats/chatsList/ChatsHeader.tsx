@@ -24,9 +24,9 @@ const ChatsHeader = ({ openModal }: ChatsHeaderProps) => {
         >
           My Chats
         </CustomText>
-        <TouchableOpacity style={styles.addButton} onPress={openModal}>
+        {/* <TouchableOpacity style={styles.addButton} onPress={openModal}>
           <MaterialIcon name="group-add" size={37} color={Colors.white} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.bottom}></View>
     </View>

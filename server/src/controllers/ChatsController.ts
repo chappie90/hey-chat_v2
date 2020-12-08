@@ -28,12 +28,20 @@ const getChats = async (req: Request, res: Response, next: NextFunction): Promis
 
     chats = user.chats;
 
-    // Get last message to be displayed on each chat
     for (const chat of chats) {
+       // Get last message to be displayed on each chat
       const lastMessage = await Message.find({ chatId: chat.chatId })
         .sort({ 'message.createDate': -1 })
         .limit(1);
       chat.lastMessage = lastMessage[0];
+
+      // Get number of unread messages
+      unreadMessagesCount = await Message.find({
+        chatId: chat.chatId,
+        sender: { $ne: user.username },
+        read: false
+      }).count();
+      chat.unreadMessagesCount = unreadMessagesCount;
     } 
 
     res.status(200).send({ chats });

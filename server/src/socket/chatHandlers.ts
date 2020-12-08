@@ -108,55 +108,68 @@ export const onMessage = async (
   // If new message created successfully
   if (newMessage) {
 
-    // Emit events
+    // Emit events and send push notifications
     if (chatType === 'private') {
       // Check if message recipient is online and get socket id
       if (users[recipientId]) {
         recipientSocketId = users[recipientId].id;
       }
 
+      // Check device OS to use approriate notification provider and get device token
+      const recipient = await User.findOne({ _id: recipientId });
+      const { deviceOS, deviceToken } = recipient;
+
       if (isFirstMessage) {
-        const data = { newChat, lastMessage: newMessage };
+        const data = { newChat, newMessage };
 
         // Add new chat and send new message to recipient
         if (recipientSocketId) {
-          io.to(recipientSocketId).emit('first_message_received', {
-
-          });
+          io.to(recipientSocketId).emit('first_message_received', JSON.stringify(data));
         }
         // Add new chat, register chat id and send confirmation of message delivered to sender
         socket.emit('first_message_sent', JSON.stringify(data));
       } else {
+        const data = { chat, newMessage, newTMessage: message, senderId };
+
         // Send new message to recipient and update chat
-        const data = { chat, lastMessage: newMessage };
-
+        // If recipient is online, emit socket event with data
         if (recipientSocketId) {
-          io.to(recipientSocketId).emit('message_received', {
-
-          });
+          io.to(recipientSocketId).emit('message_received', JSON.stringify(data));
+        } else {
+          // If recipient is offline, send silent push notification with data to update app state
+          if (deviceOS === 'ios') {
+            notification = new apn.Notification({
+              "aps": {
+                "content-available": "1",
+                "alert": ""
+              },
+              "topic": process.env.APP_ID,
+              "payload": {
+                "key_1" : "Value_1",
+                "key_2" : "Value_2",
+                "key_3" : "Value_3"
+              }
+            });
+          }
         }
+
         // Send confirmation of message delivered to sender and update chat list
         socket.emit('message_sent', JSON.stringify(data));
       }
 
       // Send push notification
-      // Check device OS to use approriate notification provider and get device token
-      const recipient = await User.findOne({ _id: recipientId });
-      const { deviceOS, deviceToken } = recipient;
-
-      console.log('chat handler push notifications')
-      console.log(recipient)
-      console.log(deviceOS)
-      console.log(deviceToken)
-      
       if (deviceOS === 'ios') {
-        notification = new apn.Notification();
-        notification.body = 'Test message body';
-        notification.title = 'Some title';
-        notification.badge  = 10;
-        notification.topic = process.env.APP_ID;
-        notification.pushType = 'alert';
-        
+        notification = new apn.Notification({
+          "aps": {
+            "alert": {
+              "title": "New message received",
+              "body": "Hi! How's it going?",
+              "sound": "default"
+            },
+            "badge": 1
+          },
+          "topic": process.env.APP_ID
+        });
         global.apnProvider.send(notification, deviceToken)
           .then( response => {
             // successful device tokens
@@ -167,10 +180,17 @@ export const onMessage = async (
       }
       if (deviceOS === 'android') {
         notification = {
-          "notification": {
-            "title": 'Some title',
-            "body": 'Test message body'
-          },
+          // "notification": {
+          //   "title": 'Some title',
+          //   "body": 'Test message body'
+          // },
+          "android":{
+            "notification":{
+               "body":"Very good news",
+               "title":"Good news",
+               "sound":"default"
+            }
+         },
           "data": {
             "key_1" : "Value_1",
             "key_2" : "Value_2",
@@ -235,9 +255,30 @@ export const onDeleteMessage = async (
 
   // Check if message recipient is online and get socket id
   if (users[recipientId]) {
-    let recipientSocketId = users[recipientId].id;
+    const recipientSocketId = users[recipientId].id;
     // Notify recipient of delete
     const data = { chatId, messageId };
     io.to(recipientSocketId).emit('messaged_deleted', JSON.stringify(data));
+  }
+};
+
+// User reads messages
+export const onMarkAllMessagesAsRead = async (
+  io: Socket,
+  socket: Socket, 
+  users: { [key: string]: Socket },
+  data: string
+): Promise<void> => {
+  const { chatId, senderId } = JSON.parse(data);
+
+  // Mark all messages as read
+  await Message.updateMany({ chatId }, { read: true });
+
+  // Check if message sender is online and get socket id
+  if (users[senderId]) {
+    const senderSocketId = users[senderId].id;
+    // Notify sender all messages have been read
+    const data = { chatId };
+    io.to(senderSocketId).emit('messages_marked_as_read_sender', JSON.stringify(data));
   }
 };

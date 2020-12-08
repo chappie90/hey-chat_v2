@@ -14,6 +14,9 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
+import { Context as AuthContext } from 'context/AuthContext';
+import { Context as ChatsContext } from 'context/ChatsContext';
+import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
 import ChatsFrontItem from './ChatsFrontItem';
@@ -23,7 +26,8 @@ type ChatsListProps = {
 };
 
 const ChatsList = ({ chats }: ChatsListProps) => {
-  const { userId } = useSelector(state => state.auth);
+  const { userId, socketState } = useSelector(state => state.auth);
+  const { markMessagesAsReadRecipient } = useContext(ChatsContext);
   const rowOpenValue = useRef(0);
   const isRowOpen = useRef(false);
   const rowTranslateAnimatedValues = useRef({}).current;
@@ -72,14 +76,15 @@ const ChatsList = ({ chats }: ChatsListProps) => {
   };
 
   const onChatSelect = (chat: TChat, contact?: TContact): void => {
-    // markMessagesAsRead({ username, recipient: rowData.item.contact });
-      // if (rowData.item.type === 'group') {
-      //   getCurrentGroupId(rowData.item.chatId);
-      // }
     let routeParams;
 
     if (chat.type === 'private') {
       if (contact) {
+        // Send signal to sender message has been read and mark recipient's chat as read
+        markMessagesAsReadRecipient(chat.chatId);
+        const eventData = { chatId: chat.chatId, senderId: contact._id };
+        emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+
         routeParams = {
           chatType: chat.type,
           chatId: chat.chatId,

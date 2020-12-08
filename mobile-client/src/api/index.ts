@@ -4,9 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Config from 'react-native-config';
 
 const instance = axios.create({
-  // baseURL: `${Config.RN_API_BASE_URL}/api/` 
-  baseURL: 'http://localhost:3006/api/'
-  // baseURL: 'http://03604765270f.ngrok.io/api/' 
+  baseURL: `${Config.RN_API_BASE_URL}/api/` 
 });
 
 axiosRetry(instance, { retries: 3 });
