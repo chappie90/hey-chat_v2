@@ -169,6 +169,8 @@ const chatReducer = (state: ChatsState, action: ChatsAction) => {
           }
         };
       case 'mark_messages_as_read_sender':
+        if (!state.chatHistory[action.payload.chatId]) return;
+
         updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
           return msg.read === false ?
             {  ...msg, read: true } :
