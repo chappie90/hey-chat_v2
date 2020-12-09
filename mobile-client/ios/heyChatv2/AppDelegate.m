@@ -60,7 +60,11 @@ static void InitializeFlipper(UIApplication *application) {
   
   // Push Notifications - Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-  center.delegate = self;
+  [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert + UNAuthorizationOptionSound + UNAuthorizationOptionBadge)completionHandler:^(BOOL granted, NSError * _Nullable error) {
+    if (granted) {
+      center.delegate = self; 
+    }
+  }];
   [self.window makeKeyAndVisible];
   
   [RNSplashScreen show];

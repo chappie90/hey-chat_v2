@@ -34,6 +34,9 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
     case 'set_socket':
       return { ...state, socketState: action.payload };
     case 'get_current_screen':
+      console.log(action.payload)
+      console.log(state.currentScreen)
+      console.log('get current screen reducer')
       return { ...state, currentScreen: action.payload };
     default: 
       return state;

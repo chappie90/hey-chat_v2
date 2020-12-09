@@ -11,7 +11,7 @@ import actions from 'reduxStore/actions';
 type PushNotificationsManagerProps = { children: ReactNode };
 
 const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) => {
-  const { userId } = useSelector(state => state.auth);
+  const { userId, currentScreen } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   const createNotificationsChannel = (
@@ -64,9 +64,33 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     onNotification: function (notification) {
       console.log('notification received')
 
-      console.log(userId)
+      dispatch(actions.authActions.getCurrentScreen('some screen'));
+
+      console.log('current screen')
+      console.log(currentScreen)
+
+      // console.log(userId)
       console.log(notification)
 
+      // Maybe android
+      // if (!notification.foreground) {
+      //   PushNotification.localNotification({
+      //     title: notification.data.title ?? 'Fallback Title',
+      //     message: notification.data.message ?? 'Fallback message',
+      //   });
+      // }
+
+      // const isClicked = notification.getData().userInteraction === 1;
+
+      // if (isClicked) {
+      //   // Navigate user to another screen
+      // } else {
+      //   // Do something else with push notification
+      // }
+
+      // Get badge number
+      // PushNotification.getApplicationIconBadgeNumber(callback: Function
+      
       notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
     onAction: function (notification) {
