@@ -72,13 +72,13 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       // console.log(userId)
       console.log(notification)
 
-      // Maybe android
-      // if (!notification.foreground) {
-      //   PushNotification.localNotification({
-      //     title: notification.data.title ?? 'Fallback Title',
-      //     message: notification.data.message ?? 'Fallback message',
-      //   });
-      // }
+      // Serve local notification
+      if (!notification.foreground) {
+        PushNotification.localNotification({
+          title: notification.data.title,
+          message: notification.data.message
+        });
+      }
 
       // const isClicked = notification.getData().userInteraction === 1;
 
@@ -94,7 +94,9 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
     onAction: function (notification) {
-      console.log('onAction NOTIFICATION:', notification);
+      console.log("ACTION:", notification.action);
+      console.log("NOTIFICATION:", notification);
+  
     },
 
     onRegistrationError: function (err) {
@@ -106,7 +108,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       badge: true,
       sound: true
     },
-    popInitialNotification: true,
+    // popInitialNotification: true,
     requestPermissions: true
   });
 };
