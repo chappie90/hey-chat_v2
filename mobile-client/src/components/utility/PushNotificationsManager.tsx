@@ -39,6 +39,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     PushNotification.configure({
       // User accepted notification permission - register token
       onRegister: async (tokenData): Promise<void> => {
+        console.log(userId)
+        
         // Save to storage to send to server when user id is available from store
         try {
           await AsyncStorage.setItem('deviceInfo', JSON.stringify(tokenData));
@@ -99,12 +101,12 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             await api.post('/push-notifications/token/save', data);
           } 
         } catch (error) {
-          console.log('Save device info to async storage method error');
+          console.log('Send device info to server method error');
           if (error.response) console.log(error.response.data.message);
           if (error.message) console.log(error.message);
         }
       })();
-    }
+       }
   }, [userId]);
 
   useEffect(() => {

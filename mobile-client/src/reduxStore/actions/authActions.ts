@@ -9,6 +9,7 @@ type AuthState = {
   username: string | null;
   token: string | null;
   socketState: any | null;
+  currentScreen: string | '';
 };
 
 type AuthAction = 
@@ -89,10 +90,13 @@ const signOut = (userId: string, socketInstance: any) => async (dispatch: Dispat
 
 const setSocketState = (socketState: any) => ({ type: 'set_socket', payload: socketState });
 
+const getCurrentScreen = (currentScreen: string) => ({ type: 'get_current_screen', payload: currentScreen });
+
 export default {
   signup,
   signin,
   autoSignin,
   signOut,
-  setSocketState
+  setSocketState,
+  getCurrentScreen
 };  

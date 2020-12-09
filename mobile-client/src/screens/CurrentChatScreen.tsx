@@ -1,21 +1,23 @@
 import React, { useContext, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { useDispatch } from 'react-redux'
 
+import actions from 'reduxStore/actions';
 import { Context as AuthContext } from 'context/AuthContext';
 import Chat from 'components/chats/chat/Chat';
 
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
 
 const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
-  const { getCurrentScreen } = useContext(AuthContext);
   const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getCurrentScreen(route.name);
+    dispatch(actions.authActions.getCurrentScreen(route.name));
 
     return () => {
-      getCurrentScreen(null);
+      dispatch(actions.authActions.getCurrentScreen(''));
     };
   }, []);
 
