@@ -16,7 +16,8 @@ const SocketEventListeners = () => {
     likeMessage,
     deleteMessage,
     markMessageAsDelivered,
-    markMessagesAsReadSender
+    markMessagesAsReadSender,
+    markMessagesAsReadRecipient
   } = useContext(ChatsContext);
   const currentScreenRef = useRef('');
 
@@ -65,6 +66,7 @@ const SocketEventListeners = () => {
         // If recipient is active on current chat screen, send signal to sender message has been read
         // and mark recipient's chat as read
         if (currentScreenRef.current === 'CurrentChat') {
+          markMessagesAsReadRecipient(newMessage.chatId);
           const eventData = { chatId: newMessage.chatId, senderId };
           emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
         }
