@@ -62,15 +62,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
-      console.log('notification received')
-
-      dispatch(actions.authActions.getCurrentScreen('some screen'));
-
-      console.log('current screen')
-      console.log(currentScreen)
-
-      // console.log(userId)
-      console.log(notification)
+      // dispatch(actions.authActions.getCurrentScreen(notification.data.key_1));
 
       // Serve local notification
       if (!notification.foreground) {

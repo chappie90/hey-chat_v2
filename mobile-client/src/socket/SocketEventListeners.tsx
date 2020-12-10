@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Context as ChatsContext } from 'context/ChatsContext';
@@ -18,6 +18,11 @@ const SocketEventListeners = () => {
     markMessageAsDelivered,
     markMessagesAsReadSender
   } = useContext(ChatsContext);
+  const currentScreenRef = useRef('');
+
+  useEffect(() => {
+    currentScreenRef.current = currentScreen;
+  }, [currentScreen]);
 
   useEffect(() => {
     // Add event listeners
@@ -57,11 +62,9 @@ const SocketEventListeners = () => {
           }
         );
 
-        console.log(currentScreen)
-
         // If recipient is active on current chat screen, send signal to sender message has been read
         // and mark recipient's chat as read
-        if (currentScreen && currentScreen === 'CurrentChat') {
+        if (currentScreenRef.current === 'CurrentChat') {
           const eventData = { chatId: newMessage.chatId, senderId };
           emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
         }
@@ -92,6 +95,18 @@ const SocketEventListeners = () => {
         console.log(userId)
         console.log(profileImage)
       });
+
+      // Notify contact when user goes online
+      socketState.on('user_online', (userId: string) => {
+        console.log(userId)
+        console.log('user online')
+      }); 
+
+      // Notify contact when user goes offline
+      socketState.on('user_offline', (userId: string) => {
+        console.log(userId)
+        console.log('user offline')
+      }); 
     }
   }, [socketState]);
 
