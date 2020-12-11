@@ -30,22 +30,17 @@ const ContactsItem = ({ item, onContactSelect }: ContactsItemProps) => {
         </View>                  
         <CustomText 
           style={styles.name}
-          color={Colors.primaryOrange} 
           fontWeight={Fonts.semiBold}
         >
           {item.username}
         </CustomText>
         {item.pending && 
-          <CustomText style={styles.status} color={Colors.grey} fontSize={Headings.headingSmall}>
+          <CustomText style={styles.status} color={Colors.greyLight} fontSize={Headings.headingSmall}>
             Pending...
           </CustomText>
         } 
-        {/* {onlineContacts.includes(rowData.item.username) && (
-          <Badge
-            badgeStyle={styles.badge}
-            containerStyle={styles.badgeContainer}
-          />
-        )}   */}
+        {item.online && <View style={styles.isOnlineBadge} />}
+        <View style={styles.divider} />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -56,17 +51,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', 
     paddingVertical: 6, 
-    paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGrey,
+    paddingHorizontal: 35,
     backgroundColor: Colors.white
   },
   imageContainer: {
     overflow: 'hidden', 
-    backgroundColor: Colors.lightGrey, 
+    backgroundColor: Colors.greyLight, 
     width: 44, 
     height: 44, 
-    borderRadius: 22
+    borderRadius: 15
   },
   image: {
     width: '100%', 
@@ -77,7 +70,26 @@ const styles = StyleSheet.create({
   },
   status: {
     marginLeft: 'auto'
-  }
+  },
+  divider: {
+    position: 'absolute',
+    bottom: 0,
+    left: 30, 
+    right: 30,
+    height: 1,
+    backgroundColor: Colors.greyLight
+  },
+  isOnlineBadge: {
+    backgroundColor: Colors.greenLight, 
+    width: 14, 
+    height: 14, 
+    borderRadius: 7, 
+    borderWidth: 2, 
+    borderColor: Colors.white,
+    position: 'absolute', 
+    bottom: 4, 
+    left: 30
+  },
 });
 
 export default ContactsItem;

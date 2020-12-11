@@ -6,7 +6,6 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Context as ChatsContext } from 'context/ChatsContext';
 import { Colors } from 'variables';
 import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';

@@ -83,7 +83,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
         };
       }
     case 'like_message':
-      if (!state.chatHistory[action.payload.chatId]) return;
+      if (!state.chatHistory[action.payload.chatId]) return state;;
 
       updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
         return msg._id === action.payload.messageId ?
@@ -125,7 +125,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
         }
       };
     case 'delete_message':
-      if (!state.chatHistory[action.payload.chatId]) return;
+      if (!state.chatHistory[action.payload.chatId]) return state;;
 
       updatedMessages = state.chatHistory[action.payload.chatId].messages.filter(
         (msg: TMessage) => msg._id !== action.payload.messageId
@@ -159,7 +159,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           }
         };
       case 'mark_messages_as_read_sender':
-        if (!state.chatHistory[action.payload.chatId]) return;
+        if (!state.chatHistory[action.payload.chatId]) return state;
 
         updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
           return msg.read === false ?

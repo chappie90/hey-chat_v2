@@ -9,8 +9,8 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import Config from 'react-native-config';
+import { useSelector } from 'react-redux';
 
-import { Context as ProfileContext } from 'context/ProfileContext';
 import { Colors } from 'variables';
 import { Images } from 'assets';
 
@@ -21,7 +21,7 @@ type ProfileImageProps = {
 };
 
 const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: ProfileImageProps) => {
-  const { state: { profileImage } } = useContext(ProfileContext);
+  const { profileImage } = useSelector(state => state.profile);
   const opacityAnim = useRef(new Animated.Value(0));
   const pulsateAnim = useRef(new Animated.Value(0));
   const indicatorRef = useRef<AnimatedProgressWheel>(null);

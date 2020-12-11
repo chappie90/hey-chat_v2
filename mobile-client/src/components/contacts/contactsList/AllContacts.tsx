@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   deleteIcon: {
-    backgroundColor: Colors.tertiaryRed,
+    backgroundColor: Colors.red,
     width: 44,
     height: 44,
     borderRadius: 22,

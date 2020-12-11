@@ -8,9 +8,8 @@ import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import actions from 'reduxStore/actions';
 import AddContactScreen from './modals/AddContactScreen';
 import { Colors } from 'variables';
 import ContactsHeader from 'components/contacts/contactsList/ContactsHeader';
@@ -32,11 +31,10 @@ type ContactsScreenProps = {
 
 const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   const { userId } = useSelector(state => state.auth);
-  const { contacts } = useSelector(state => state.contacts);
+  const { contacts, onlineContacts, contactsFetched } = useSelector(state => state.contacts);
   const [showAddContact, setShowAddContact] = useState(false);
   const [showActiveUsers, setShowActiveUsers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const dispatch = useDispatch();
 
   const toggleModal = (): void => {
     setShowAddContact(!showAddContact);
@@ -60,11 +58,8 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   };
 
   useEffect(() => {
-    (async () => {
-      const response = await dispatch(actions.contactsActions.getContacts(userId));
-      if (response) setIsLoading(false);
-    })();
-  }, []);
+    if (contactsFetched) setIsLoading(false);
+  }, [contactsFetched]);
 
   return (
     <View style={styles.container}>
@@ -88,7 +83,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
                 />
                 {showActiveUsers ?
                   <ActiveContacts 
-                    contacts={contacts} 
+                    contacts={onlineContacts} 
                     activeUsersCount={contacts.length} 
                     onContactSelect={onContactSelect}
                   /> :

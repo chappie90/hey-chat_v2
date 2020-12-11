@@ -5,7 +5,7 @@ type AuthState = {
   username: string | null;
   token: string | null;
   socketState: any | null;
-  currentScreen: string | '';
+  currentScreen: string;
 };
 
 const INITIAL_STATE: AuthState = {

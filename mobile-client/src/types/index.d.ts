@@ -61,6 +61,7 @@ type TContact = {
   profile?: TUserProfile;
   chatId?: number;
   pending?: boolean;
+  online: boolean;
 };
 
 type TChat = {

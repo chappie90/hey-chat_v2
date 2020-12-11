@@ -16,6 +16,19 @@ const SocketEventListeners = () => {
   useEffect(() => {
     // Add event listeners
     if (socketState) {
+      // User has successfully connected
+      socketState.on('get_contacts', (data: string) => {
+        const { contacts } = JSON.parse(data);
+        dispatch(actions.contactsActions.getContacts(contacts));
+        dispatch(actions.contactsActions.markContactsAsFetched());
+      });
+
+      // User has successfully connected
+      socketState.on('get_online_contacts', (data: string) => {
+        const { onlineContacts } = JSON.parse(data);
+        dispatch(actions.contactsActions.getOnlineContacts(onlineContacts));
+      });
+
       // Add new chat, replace temporary contact id with new chat id in chatHistory global state
       // and send confirmation of message delivered to sender
       socketState.on('first_message_sent', (data: string) => {
