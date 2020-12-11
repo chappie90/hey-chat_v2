@@ -1,9 +1,18 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import api from 'api';
 
-export const getProfileImage = (dispatch: Dispatch<any>) => async (userId: number): Promise<void> => {
+type ProfileState = {
+  profileImage: string | null;
+};
+
+type ProfileAction =
+  | { type: 'get_image'; payload: string }
+  | { type: 'update_image'; payload: string }
+  | { type: 'delete_image' };
+
+const getProfileImage = (userId: number) => async (dispatch: ThunkDispatch<ProfileState, undefined, ProfileAction>) => {
   const params = { userId };
 
   try {
@@ -17,11 +26,9 @@ export const getProfileImage = (dispatch: Dispatch<any>) => async (userId: numbe
   }
 };
 
-export const updateProfileImage = (dispatch: Dispatch<any>) => (image: string): void => {
-  dispatch({ type: 'update_image', payload: image });
-};
+const updateProfileImage = (image: string) => ({ type: 'update_image', payload: image });
 
-export const deleteProfileImage = (dispatch: Dispatch<any>) => async (userId: number): Promise<void> => {
+const deleteProfileImage = (userId: number) => async (dispatch: ThunkDispatch<ProfileState, undefined, ProfileAction>) => {
   try {
     const response = await api.patch('/image/delete', { userId });
 
@@ -32,3 +39,9 @@ export const deleteProfileImage = (dispatch: Dispatch<any>) => async (userId: nu
     if (error.message) console.log(error.message);
   }
 };
+
+export default {
+  getProfileImage,
+  updateProfileImage,
+  deleteProfileImage
+}

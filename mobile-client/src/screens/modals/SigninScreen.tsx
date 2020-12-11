@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from "react-native-modal";
-import { useSelector } from 'react-redux';
 
 import actions from 'reduxStore/actions';
 import AuthForm from 'components/authentication/AuthForm';
@@ -22,7 +21,6 @@ type SigninScreenProps = {
 };
 
 const SigninScreen = ({ visible, toggleModals, closeModal }: SigninScreenProps) => {
-  const { signin } = useSelector(state => state.auth);
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();

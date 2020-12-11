@@ -12,14 +12,13 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import Octicon from 'react-native-vector-icons/Octicons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { Context as AuthContext } from 'context/AuthContext';
-import { Context as ChatsContext } from 'context/ChatsContext';
 import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
 import ChatsFrontItem from './ChatsFrontItem';
+import actions from 'reduxStore/actions';
 
 type ChatsListProps = {
   chats: TChat[];
@@ -27,12 +26,12 @@ type ChatsListProps = {
 
 const ChatsList = ({ chats }: ChatsListProps) => {
   const { userId, socketState } = useSelector(state => state.auth);
-  const { markMessagesAsReadRecipient } = useContext(ChatsContext);
   const rowOpenValue = useRef(0);
   const isRowOpen = useRef(false);
   const rowTranslateAnimatedValues = useRef({}).current;
   const navigation = useNavigation();
   const screenWidth = useWindowDimensions().width;
+  const dispatch = useDispatch();
 
   const onRowOpen = (rowKey, rowMap, toValue) => {
     const listItem = chats[rowKey];
@@ -81,7 +80,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
     if (chat.type === 'private') {
       if (contact) {
         // Send signal to sender message has been read and mark recipient's chat as read
-        markMessagesAsReadRecipient(chat.chatId);
+        dispatch(actions.chatsActions.markMessagesAsReadRecipient(chat.chatId));
         const eventData = { chatId: chat.chatId, senderId: contact._id };
         emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
 

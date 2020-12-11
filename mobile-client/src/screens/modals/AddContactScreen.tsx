@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   View, 
   StyleSheet,
@@ -7,26 +7,26 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { Context as ContactsContext } from "context/ContactsContext";
 import SearchForm from 'components/contacts/addContact/SearchForm';
 import SearchList from 'components/contacts/addContact/SearchList';
 import SearchIcon from 'components/contacts/addContact/SearchIcon';
 import CustomText from 'components/CustomText';
 import CustomModal from 'components/CustomModal';
 import { Colors, Fonts, Headings } from 'variables';
+import actions from 'reduxStore/actions';
 
 type AddContactScreenProps = { visible: boolean };
 
 const AddContactScreen = ({ visible }: AddContactScreenProps) => {
-  const { searchContacts } = useContext(ContactsContext);
   const { userId, username } = useSelector(state => state.auth);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<TContact[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();
@@ -43,7 +43,7 @@ const AddContactScreen = ({ visible }: AddContactScreenProps) => {
       return;
     } 
 
-    const response: TContact[] = await searchContacts(username, text);
+    const response: TContact[] = await dispatch(actions.contactsActions.searchContacts(username, text));
 
     setSearchResults([ ...response ]);
     setIsLoading(false);

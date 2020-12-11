@@ -4,13 +4,14 @@ import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Context as ChatsContext } from 'context/ChatsContext';
 import { Colors } from 'variables';
 import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
 import ChatsList from 'components/chats/chatsList/ChatsList';
+import actions from 'reduxStore/actions';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -25,9 +26,10 @@ type ChatsScreenProps = {
 
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   const { userId } = useSelector(state => state.auth);
-  const { state: { chats }, getChats } = useContext(ChatsContext);
+  const { chats } = useSelector(state => state.chats);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
   const openModal = (): void => {
     setShowNewGroup(true);
@@ -35,7 +37,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   useEffect(() => {
     (async () => {
-      const response = await getChats(userId);
+      const response = await dispatch(actions.chatsActions.getChats(userId));
       if (response) setIsLoading(false);
     })();
   }, []);

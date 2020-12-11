@@ -11,10 +11,9 @@ import {
 } from 'react-native';
 import uuid from 'react-native-uuid';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from 'socket/eventEmitters';
-import { Context as ChatsContext } from 'context/ChatsContext';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
 import MessageActions from './MessageActions';
@@ -22,7 +21,7 @@ import { Colors } from 'variables';
 import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';
-import authActions from 'reduxStore/actions/authActions';
+import actions from 'reduxStore/actions';
 
 type ChatProps = {
   chatType: string;
@@ -40,15 +39,7 @@ const Chat = ({
   contactProfile 
 }: ChatProps) => {
   const { userId, username, socketState } = useSelector(state => state.auth);
-  const { 
-    state: { chatHistory }, 
-    getMessages, 
-    getMoreMessages,
-    addMessage,
-    likeMessage,
-    markMessageForDeletion,
-    deleteMessage
-  } = useContext(ChatsContext);
+  const { chatHistory } = useSelector(state => state.chats);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
   const [showMsgActions, setShowMsgActions] = useState(true);
@@ -59,6 +50,7 @@ const Chat = ({
   const chatIdRef = useRef<string>(chatId);
   const flatListRef = useRef<any>(null);
   const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
+  const dispatch = useDispatch();
 
   const onGreeting = () => {
     onSendMessage('👋');
@@ -114,12 +106,13 @@ const Chat = ({
       chatId: chatIdRef.current,
       senderId: userId,
       recipientId: contactId,
+      senderName: username,
       message: newMessage,
       isFirstMessage
     };
 
     setMessage('');
-    addMessage(chatIdRef.current, newMessage);
+    dispatch(actions.chatsActions.addMessage(chatIdRef.current, newMessage));
     emitNewMessage(JSON.stringify(data), socketState);
   };
 
@@ -128,7 +121,7 @@ const Chat = ({
       setIsLoading(true);
 
       const newPage = page + 1;
-      const response = await getMoreMessages(username, contactProfile, chatIdRef.current, newPage);
+      const response = await dispatch(actions.chatsActions.getMoreMessages(username, contactProfile, chatIdRef.current, newPage));
 
       if (response) setIsLoading(false);
       if (!chatHistory[chatIdRef.current].allMessagesLoaded) {
@@ -160,7 +153,7 @@ const Chat = ({
   };
 
   const onLikeMessage = (): void => {
-    likeMessage(chatIdRef.current, activeMsg?._id);
+    dispatch(actions.chatsActions.likeMessage(chatIdRef.current, activeMsg?._id));
     
     const data = { 
       chatId: chatIdRef.current, 
@@ -179,7 +172,7 @@ const Chat = ({
 
   const onDeleteMessage = (): void => {
     hideMessageActions();
-    markMessageForDeletion(chatIdRef.current, activeMsg?._id);
+    dispatch(actions.chatsActions.markMessageForDeletion(chatIdRef.current, activeMsg?._id));
 
     const data = { 
       chatId: chatIdRef.current, 
@@ -189,7 +182,7 @@ const Chat = ({
     emitDeleteMessage(JSON.stringify(data), socketState);
 
     setTimeout(() => {
-      deleteMessage(chatIdRef.current, activeMsg?._id);
+      dispatch(actions.chatsActions.deleteMessage(chatIdRef.current, activeMsg?._id));
     }, 350);
   };
 
@@ -203,7 +196,7 @@ const Chat = ({
       // Get messages if no previous chat history loaded
       if (!chatHistory[chatIdRef.current]) {
         setIsLoading(true);
-        const response = await getMessages(username, contactProfile, chatIdRef.current);
+        const response = await dispatch(actions.chatsActions.getMessages(username, contactProfile, chatIdRef.current));
         if (response) setIsLoading(false);
       }
     })();

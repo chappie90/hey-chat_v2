@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
 import actions from 'reduxStore/actions';
-import { Context as ProfileContext } from 'context/ProfileContext';
 import { Colors, Headings, Fonts } from 'variables';
 import CustomText from 'components/CustomText';
 import ProfileHeader from 'components/profile/ProfileHeader';
@@ -19,11 +18,6 @@ type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
   const { username, userId, socketState } = useSelector(state => state.auth);
-  const { 
-    getProfileImage, 
-    updateProfileImage,
-    deleteProfileImage
-  } = useContext(ProfileContext);
   const dispatch = useDispatch();
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -106,7 +100,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
           setUploadFinished(false);
         }, 1200);
 
-        updateProfileImage(response.data.profileImage);
+        dispatch(actions.profileActions.updateProfileImage(response.data.profileImage));
         emitUpdateProfileImage(JSON.stringify({ userId }), socketState);
       }
     })
@@ -118,12 +112,12 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   };
 
   const onDeleteImage = (): void => {
-    deleteProfileImage(userId);
+    dispatch(actions.profileActions.deleteProfileImage(userId));
     hideImageActions();
   };
 
   useEffect(() => {
-    getProfileImage(userId);
+    dispatch(actions.profileActions.getProfileImage(userId));
   }, []);
 
   return (

@@ -8,9 +8,9 @@ import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { Context as ContactsContext } from 'context/ContactsContext';
+import actions from 'reduxStore/actions';
 import AddContactScreen from './modals/AddContactScreen';
 import { Colors } from 'variables';
 import ContactsHeader from 'components/contacts/contactsList/ContactsHeader';
@@ -32,10 +32,11 @@ type ContactsScreenProps = {
 
 const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   const { userId } = useSelector(state => state.auth);
-  const { state: { contacts }, getContacts } = useContext(ContactsContext);
+  const { contacts } = useSelector(state => state.contacts);
   const [showAddContact, setShowAddContact] = useState(false);
   const [showActiveUsers, setShowActiveUsers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
   const toggleModal = (): void => {
     setShowAddContact(!showAddContact);
@@ -50,8 +51,6 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
   };
 
   const onContactSelect = (contact: TContact): void => {
-    console.log(contact)
-
     navigation.navigate('CurrentChat', {
       chatType: 'private',
       chatId: contact.chatId,
@@ -62,7 +61,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
 
   useEffect(() => {
     (async () => {
-      const response = await getContacts(userId);
+      const response = await dispatch(actions.contactsActions.getContacts(userId));
       if (response) setIsLoading(false);
     })();
   }, []);

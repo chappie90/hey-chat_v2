@@ -1,9 +1,30 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import api from 'api';
 
-export const getChats = (dispatch: Dispatch<any>) => async (userId: number): Promise<TChat[] | void> => {
+type ChatsState = {
+  chats: TChat[] | [];
+  chatHistory: { 
+    [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
+  } | {};
+};
+
+type ChatsAction =
+  | { type: 'get_chats'; payload: TChat[] }
+  | { type: 'add_chat'; payload: TChat }
+  | { type: 'update_chat'; payload: TChat }
+  | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
+  | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
+  | { type: 'add_message'; payload: { chatId: string, message: TMessage } }
+  | { type: 'like_message'; payload: { chatId: string, messageId: string } }
+  | { type: 'mark_message_for_deletion'; payload: { chatId: string, messageId: string } }
+  | { type: 'delete_message'; payload: { chatId: string, messageId: string } }
+  | { type: 'mark_message_as_delivered'; payload: { chatId: string, messageId: string } }
+  | { type: 'mark_messages_as_read_sender'; payload: { chatId: string } }
+  | { type: 'mark_messages_as_read_recipient'; payload: { chatId: string } };
+
+const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
 
   try {
@@ -20,19 +41,15 @@ export const getChats = (dispatch: Dispatch<any>) => async (userId: number): Pro
   }
 };
 
-export const addChat = (dispatch: Dispatch<any>) => (chat: TChat): void => {
-  dispatch({ type: 'add_chat', payload: chat });
-};
+const addChat = (chat: TChat) => ({ type: 'add_chat', payload: chat });
 
-export const updateChat = (dispatch: Dispatch<any>) => (chat: TChat): void => {
-  dispatch({ type: 'update_chat', payload: chat });
-};
+const updateChat = (chat: TChat) => ({ type: 'update_chat', payload: chat });
 
-export const getMessages = (dispatch: Dispatch<any>) => async (
+const getMessages = (
   username: string, 
   contactProfile: string, 
   chatId: string
-): Promise<any[] | void> => {
+) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { chatId };
 
   try {
@@ -54,12 +71,12 @@ export const getMessages = (dispatch: Dispatch<any>) => async (
   } 
 };
 
-export const getMoreMessages = (dispatch: Dispatch<any>) => async (
+const getMoreMessages = (
   username: string, 
   contactProfile: string, 
   chatId: string,
   page: number
-): Promise<any[] | void> => {
+  ) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { chatId, page };
 
   try {
@@ -81,25 +98,21 @@ export const getMoreMessages = (dispatch: Dispatch<any>) => async (
   } 
 };
 
-export const addMessage = (dispatch: Dispatch<any>) => (chatId: string, message: TMessage): void => {
-  dispatch({ type: 'add_message', payload: { chatId, message } });
-};
+const addMessage = (chatId: string, message: TMessage) => ({ type: 'add_message', payload: { chatId, message } });
 
-export const likeMessage = (dispatch: Dispatch<any>) => (chatId: string, messageId: string): void => {
-  dispatch({ type: 'like_message', payload: { chatId, messageId } });
-};
+const likeMessage = (chatId: string, messageId: string) => ({ type: 'like_message', payload: { chatId, messageId } });
 
-export const markMessageForDeletion = (dispatch: Dispatch<any>) => (chatId: string, messageId: string): void => {
-  dispatch({ type: 'mark_message_for_deletion', payload: { chatId, messageId } });
-}; 
+const markMessageForDeletion = (chatId: string, messageId: string) => ({ type: 'mark_message_for_deletion', payload: { chatId, messageId } });
 
-export const deleteMessage = (dispatch: Dispatch<any>) => (chatId: string, messageId: string): void => {
-  dispatch({ type: 'delete_message', payload: { chatId, messageId } });
-};
+const deleteMessage = (chatId: string, messageId: string) => ({ type: 'delete_message', payload: { chatId, messageId } });
 
-export const markMessageAsDelivered = (dispatch: Dispatch<any>) => (chatId: string, messageId: string): void => {
-  dispatch({ type: 'mark_message_as_delivered', payload: { chatId, messageId } });
-};
+const markMessageAsDelivered = (chatId: string, messageId: string) => ({ type: 'mark_message_as_delivered', payload: { chatId, messageId } });
+
+const getCurrentScreen = (currentScreen: string) => ({ type: 'get_current_screen', payload: currentScreen });
+
+const markMessagesAsReadSender = (chatId: string) => ({ type: 'mark_messages_as_read_sender', payload: { chatId } });
+
+const markMessagesAsReadRecipient = (chatId: string) => ({ type: 'mark_messages_as_read_recipient', payload: { chatId } });
 
 const transformMessagesArray = (
   messages: any[], 
@@ -147,3 +160,18 @@ const transformMessagesArray = (
     };
   });
 };
+
+export default {
+  getChats,
+  addChat,
+  updateChat,
+  getMessages,
+  getMoreMessages,
+  addMessage,
+  likeMessage,
+  markMessageForDeletion,
+  deleteMessage,
+  markMessageAsDelivered,
+  markMessagesAsReadSender,
+  markMessagesAsReadRecipient
+}

@@ -5,9 +5,6 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
-import { Provider as ContactsProvider } from 'context/ContactsContext';
-import { Provider as ChatsProvider } from 'context/ChatsContext';
-import { Provider as ProfileProvider } from 'context/ProfileContext';
 import rootReducer from 'reduxStore/reducers';
 import Navigator from 'navigation/Navigator';
 import AppStateManager from 'components/utility/AppStateManager';
@@ -28,9 +25,6 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <ChatsProvider>
-        <ContactsProvider>
-          <ProfileProvider>
       <BackgroundTasksManager />
       <SocketEventListeners />
       <AppStateManager>
@@ -40,9 +34,6 @@ const App = () => {
           </SafeAreaView>
         </PushNotificationsManager>
       </AppStateManager>
-      </ProfileProvider>
-        </ContactsProvider>
-      </ChatsProvider>
     </Provider>
   );
 };

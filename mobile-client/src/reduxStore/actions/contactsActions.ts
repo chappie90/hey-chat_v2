@@ -1,9 +1,17 @@
 import { ActionCreator, Dispatch } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import api from 'api';
 
-export const searchContacts = (dispatch: Dispatch<any>) => async (username: string, search: string): Promise<TContact[] | void> => {
+type ContactsState = {
+  contacts: TContact[] | [];
+};
+
+type ContactsAction =
+  | { type: 'new_contact'; payload: TContact }
+  | { type: 'get_contacts'; payload: TContact[] };
+
+const searchContacts = (username: string, search: string) => async (dispatch: ThunkDispatch<ContactsState, undefined, ContactsAction>): Promise<TContact[] | void> => {
   const params = { username, search };
 
   try {
@@ -18,7 +26,7 @@ export const searchContacts = (dispatch: Dispatch<any>) => async (username: stri
   }
 };
 
-export const getContacts = (dispatch: Dispatch<any>) => async (userId: number): Promise<TContact[] | void> => {
+const getContacts = (userId: number) => async (dispatch: ThunkDispatch<ContactsState, undefined, ContactsAction>): Promise<TContact[] | void> => {
   const params = { userId };
 
   try {
@@ -34,3 +42,8 @@ export const getContacts = (dispatch: Dispatch<any>) => async (userId: number): 
     if (error.message) console.log(error.message);
   }
 };
+
+export default {
+  searchContacts,
+  getContacts
+};  

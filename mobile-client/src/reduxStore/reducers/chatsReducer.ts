@@ -28,7 +28,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           chat
       });
 
-      updatedChats = updatedChats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+      updatedChats = updatedChats.sort((a, b) => new Date(b.lastMessage.message.createDate) - new Date(a.lastMessage.message.createDate));
 
       return { 
         ...state, 
@@ -158,26 +158,43 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
             }
           }
         };
+      case 'mark_messages_as_read_sender':
+        if (!state.chatHistory[action.payload.chatId]) return;
 
-      // case 'mark_message_read': 
-      // // if you have more than initial 50 messages loaded it will jump back to first 50...
-      // // if (state.chat[action.payload]) {
-      // //   const markedMessage = state.chat[action.payload].map(item => {
-      // //     return item.read === false ? { ...item, read: true } : item;
-      // //   });
-      // //   return { ...state, chat: { 
-      // //     ...state.chat, 
-      // //     [action.payload]: markedMessage } };
-      // // } else {
-      // //   return state;
-      // // }
-      //  const markedMessage = state.chat[action.payload].map(item => {
-      //     return item.read === false ? { ...item, read: true } : item;
-      //   });
-      //   return { ...state, chat: { 
-      //     ...state.chat, 
-      //     [action.payload]: markedMessage } };
+        updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+          return msg.read === false ?
+            {  ...msg, read: true } :
+            msg
+        });
 
+        return {
+          ...state,
+          chatHistory: {
+            ...state.chatHistory,
+            [action.payload.chatId]: {
+              ...state.chatHistory[action.payload.chatId],
+              messages: updatedMessages
+            }
+          }
+        };
+      case 'mark_messages_as_read_recipient': 
+        updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+          return chat.chatId === action.payload.chatId ?
+            { 
+              ...chat,
+              lastMessage: { 
+                ...chat.lastMessage,
+                read: true 
+              },
+              unreadMessagesCount: 0
+            } :
+            chat
+        });
+    
+        return { 
+          ...state, 
+          chats: updatedChats
+        };  
     default:
       return state;
   }

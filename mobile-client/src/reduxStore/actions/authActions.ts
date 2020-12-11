@@ -17,7 +17,7 @@ type AuthAction =
   | { type: 'sign_out'; }
   | { type: 'set_socket'; payload: any };
 
-const signup = (username: string, password: string) => async (dispatch: Dispatch<any>) => {
+const signup = (username: string, password: string) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
     const response = await api.post('/signup', { username, password });
 
@@ -40,7 +40,7 @@ const signup = (username: string, password: string) => async (dispatch: Dispatch
   }
 };
 
-const signin = (username: string, password: string) => async (dispatch: Dispatch<any>) => {
+const signin = (username: string, password: string) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
     const response = await api.post('/signin', { username, password });
 
@@ -75,7 +75,7 @@ const autoSignin = () => async (dispatch: ThunkDispatch<AuthState, undefined, Au
   }
 };
 
-const signOut = (userId: string, socketInstance: any) => async (dispatch: Dispatch<any>) => {
+const signOut = (userId: string, socketInstance: any) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
     await AsyncStorage.removeItem('user');
     
