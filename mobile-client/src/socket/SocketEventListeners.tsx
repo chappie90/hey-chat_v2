@@ -105,16 +105,27 @@ const SocketEventListeners = () => {
         console.log(profileImage)
       });
 
-      // Notify contact when user goes online
-      socketState.on('user_online', (userId: string) => {
-        console.log(userId)
-        console.log('user online')
+      // Notify user when contact goes online
+      socketState.on('user_online', (data: string) => {
+        const { user } = JSON.parse(data);
+        
+        // If contact pending mark as such
+        const isPending = user.pendingContacts.some((contact: TContact) => contact._id === userId);
+        user.pending = isPending;
+
+        // Get id of chat between user and contact
+        const chats = [ ...user.chats, ...user.archivedChats ];
+        const chatId: string = chats.filter(chat => chat.participants.filter((p: any) => p === userId))[0].chatId;
+        user.chatId = chatId;
+
+        user.online = true;
+
+        dispatch(actions.contactsActions.contactGoesOnline(user));
       }); 
 
-      // Notify contact when user goes offline
+      // Notify user when contact goes offline
       socketState.on('user_offline', (userId: string) => {
-        console.log(userId)
-        console.log('user offline')
+        dispatch(actions.contactsActions.contactGoesOffline(userId));
       }); 
     }
   }, [socketState]);
