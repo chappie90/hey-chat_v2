@@ -108,8 +108,6 @@ const deleteMessage = (chatId: string, messageId: string) => ({ type: 'delete_me
 
 const markMessageAsDelivered = (chatId: string, messageId: string) => ({ type: 'mark_message_as_delivered', payload: { chatId, messageId } });
 
-const getCurrentScreen = (currentScreen: string) => ({ type: 'get_current_screen', payload: currentScreen });
-
 const markMessagesAsReadSender = (chatId: string) => ({ type: 'mark_messages_as_read_sender', payload: { chatId } });
 
 const markMessagesAsReadRecipient = (chatId: string) => ({ type: 'mark_messages_as_read_recipient', payload: { chatId } });

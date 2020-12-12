@@ -1,3 +1,4 @@
+
 export const emitNewMessage = (data: string, socket: any) => {
   socket.emit('message', data);
 };
