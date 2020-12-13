@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useDispatch } from 'react-redux'
 
-import actions from 'reduxStore/actions';
+import { authActions, chatsActions } from 'reduxStore/actions';
 import Chat from 'components/chats/chat/Chat';
 
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
@@ -13,12 +13,12 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.authActions.getCurrentScreen(route.name));
-    dispatch(actions.chatsActions.setActiveContact(contactId.toString()));
+    dispatch(authActions.getCurrentScreen(route.name));
+    dispatch(chatsActions.setActiveContact(contactId.toString()));
 
     return () => {
-      dispatch(actions.authActions.getCurrentScreen(''));
-      dispatch(actions.chatsActions.setActiveContact(''));
+      dispatch(authActions.getCurrentScreen(''));
+      dispatch(chatsActions.setActiveContact(''));
     };
   }, []);
 

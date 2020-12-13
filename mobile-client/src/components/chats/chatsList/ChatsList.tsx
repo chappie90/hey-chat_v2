@@ -18,7 +18,7 @@ import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
 import ChatsFrontItem from './ChatsFrontItem';
-import actions from 'reduxStore/actions';
+import { chatsActions } from 'reduxStore/actions';
 
 type ChatsListProps = {
   chats: TChat[];
@@ -80,7 +80,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
     if (chat.type === 'private') {
       if (contact) {
         // Send signal to sender message has been read and mark recipient's chat as read
-        dispatch(actions.chatsActions.markMessagesAsReadRecipient(chat.chatId));
+        dispatch(chatsActions.markMessagesAsReadRecipient(chat.chatId));
         const eventData = { chatId: chat.chatId, senderId: contact._id };
         emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
 

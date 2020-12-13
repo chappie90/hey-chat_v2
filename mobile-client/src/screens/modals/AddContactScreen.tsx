@@ -15,7 +15,7 @@ import SearchIcon from 'components/contacts/addContact/SearchIcon';
 import CustomText from 'components/CustomText';
 import CustomModal from 'components/CustomModal';
 import { Colors, Fonts, Headings } from 'variables';
-import actions from 'reduxStore/actions';
+import { contactsActions } from 'reduxStore/actions';
 
 type AddContactScreenProps = { visible: boolean };
 
@@ -43,7 +43,7 @@ const AddContactScreen = ({ visible }: AddContactScreenProps) => {
       return;
     } 
 
-    const response: TContact[] = await dispatch(actions.contactsActions.searchContacts(username, text));
+    const response: TContact[] = await dispatch(contactsActions.searchContacts(username, text));
 
     setSearchResults([ ...response ]);
     setIsLoading(false);

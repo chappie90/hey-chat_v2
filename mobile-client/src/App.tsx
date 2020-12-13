@@ -9,7 +9,7 @@ import rootReducer from 'reduxStore/reducers';
 import Navigator from 'navigation/Navigator';
 import AppStateManager from 'components/utility/AppStateManager';
 import PushNotificationsManager from 'components/utility/PushNotificationsManager';
-import SocketEventListeners from 'socket/SocketEventListeners';
+import SocketEventListeners from 'socket/EventListeners';
 import SplashScreen from 'react-native-splash-screen'
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
 

@@ -4,7 +4,7 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import actions from 'reduxStore/actions';
+import { authActions, profileActions } from 'reduxStore/actions';
 import { Colors, Headings, Fonts } from 'variables';
 import CustomText from 'components/CustomText';
 import ProfileHeader from 'components/profile/ProfileHeader';
@@ -26,7 +26,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   const [uploadFinished, setUploadFinished] = useState(false);
 
   const onSignOut = (): void => {
-    dispatch(actions.authActions.signOut(userId, socketState));  
+    dispatch(authActions.signOut(userId, socketState));  
   }; 
 
   const onToggleImageActions = (): void => {
@@ -100,7 +100,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
           setUploadFinished(false);
         }, 1200);
 
-        dispatch(actions.profileActions.updateProfileImage(response.data.profileImage));
+        dispatch(profileActions.updateProfileImage(response.data.profileImage));
         emitUpdateProfileImage(JSON.stringify({ userId }), socketState);
       }
     })
@@ -112,12 +112,12 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   };
 
   const onDeleteImage = (): void => {
-    dispatch(actions.profileActions.deleteProfileImage(userId));
+    dispatch(profileActions.deleteProfileImage(userId));
     hideImageActions();
   };
 
   useEffect(() => {
-    dispatch(actions.profileActions.getProfileImage(userId));
+    dispatch(profileActions.getProfileImage(userId));
   }, []);
 
   return (

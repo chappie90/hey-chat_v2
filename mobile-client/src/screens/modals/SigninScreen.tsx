@@ -10,7 +10,7 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from "react-native-modal";
 
-import actions from 'reduxStore/actions';
+import { authActions } from 'reduxStore/actions';
 import AuthForm from 'components/authentication/AuthForm';
 import { Colors } from 'variables';
 
@@ -50,7 +50,7 @@ const SigninScreen = ({ visible, toggleModals, closeModal }: SigninScreenProps) 
             buttonText="Sign In"
             toggleModalPrompt="Don't have an account yet?"
             toggleModalLink="Sign up here"
-            onSubmitCallback={actions.authActions.signin}
+            onSubmitCallback={authActions.signin}
             toggleModals={toggleModals}
           />
           {Platform.OS === 'ios' && <KeyboardAvoidingView behavior="padding" />}

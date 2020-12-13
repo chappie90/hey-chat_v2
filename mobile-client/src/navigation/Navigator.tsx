@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import SplashScreen from 'screens/SplashScreen';
 import AuthenticationFlow from './AuthenticationFlow';
 import MainFlow from './MainFlow';
-import actions from 'reduxStore/actions';
+import { authActions } from 'reduxStore/actions';
 
 const Navigator = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +13,7 @@ const Navigator = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.authActions.autoSignin());
+    dispatch(authActions.autoSignin());
   }, []);
 
   if (isLoading) return <SplashScreen />;

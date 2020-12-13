@@ -2,8 +2,8 @@ import React, { useEffect, useRef, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { connectToSocket } from 'socket/socketConnection';
-import actions from 'reduxStore/actions';
+import { connectToSocket } from 'socket/connection';
+import { authActions, chatsActions } from 'reduxStore/actions';
 import { emitStopTyping } from 'socket/eventEmitters';
 
 type AppStateManagerProps = { children: ReactNode };
@@ -19,7 +19,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   const createSocketConnection = (): void => {
     if (token && userId) {
       socket.current = connectToSocket(userId);
-      dispatch(actions.authActions.setSocketState(socket.current));
+      dispatch(authActions.setSocketState(socket.current));
     //   // if (Platform.OS === 'ios') {
     //   //   await Notifications.setBadgeNumberAsync(0);
     //   // }
@@ -32,7 +32,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
 
   const destroySocketConnection = (): void => {
     socket.current.disconnect();
-    dispatch(actions.authActions.setSocketState(null));
+    dispatch(authActions.setSocketState(null));
   };
 
   const handleAppStateChange = (nextAppState: string) => {
@@ -47,9 +47,10 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
     // Destroy socket instance on app in background
     if (nextAppState === 'background') {
       if (socket.current) {
-        // Handle typing logic if user typing leaves app before typing timeout has expired
+        // Handle typing logic if either user leaves app before typing timeout has expired
         const data = { senderId: userId, recipientId: activeContactIdRef.current };
         emitStopTyping(JSON.stringify(data), socket.current);
+        dispatch(chatsActions.resetTypingContacts());
 
         destroySocketConnection(); 
       }

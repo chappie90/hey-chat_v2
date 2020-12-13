@@ -10,7 +10,7 @@ import { Colors } from 'variables';
 import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
 import ChatsList from 'components/chats/chatsList/ChatsList';
-import actions from 'reduxStore/actions';
+import { chatsActions } from 'reduxStore/actions';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -36,7 +36,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   useEffect(() => {
     (async () => {
-      const response = await dispatch(actions.chatsActions.getChats(userId));
+      const response = await dispatch(chatsActions.getChats(userId));
       if (response) setIsLoading(false);
     })();
   }, []);

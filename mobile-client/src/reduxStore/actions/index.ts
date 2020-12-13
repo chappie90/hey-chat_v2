@@ -3,7 +3,7 @@ import contactsActions from './contactsActions';
 import chatsActions from './chatsActions';
 import profileActions from './profileActions';
 
-export default {
+export {
   authActions,
   contactsActions,
   chatsActions,

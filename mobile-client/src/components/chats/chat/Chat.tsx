@@ -27,7 +27,7 @@ import { Colors } from 'variables';
 import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';
-import actions from 'reduxStore/actions';
+import { chatsActions } from 'reduxStore/actions';
 
 type ChatProps = {
   chatType: string;
@@ -134,7 +134,7 @@ const Chat = ({
     };
 
     setMessage('');
-    dispatch(actions.chatsActions.addMessage(chatIdRef.current, newMessage));
+    dispatch(chatsActions.addMessage(chatIdRef.current, newMessage));
     emitNewMessage(JSON.stringify(data), socketState);
   };
 
@@ -143,7 +143,7 @@ const Chat = ({
       setIsLoading(true);
 
       const newPage = page + 1;
-      const response = await dispatch(actions.chatsActions.getMoreMessages(username, contactProfile, chatIdRef.current, newPage));
+      const response = await dispatch(chatsActions.getMoreMessages(username, contactProfile, chatIdRef.current, newPage));
 
       if (response) setIsLoading(false);
       if (!chatHistory[chatIdRef.current].allMessagesLoaded) {
@@ -175,7 +175,7 @@ const Chat = ({
   };
 
   const onLikeMessage = (): void => {
-    if (activeMsg) dispatch(actions.chatsActions.likeMessage(chatIdRef.current, activeMsg?._id));
+    if (activeMsg) dispatch(chatsActions.likeMessage(chatIdRef.current, activeMsg?._id));
     
     const data = { 
       chatId: chatIdRef.current, 
@@ -194,7 +194,7 @@ const Chat = ({
 
   const onDeleteMessage = (): void => {
     hideMessageActions();
-    if (activeMsg) dispatch(actions.chatsActions.markMessageForDeletion(chatIdRef.current, activeMsg?._id));
+    if (activeMsg) dispatch(chatsActions.markMessageForDeletion(chatIdRef.current, activeMsg?._id));
 
     const data = { 
       chatId: chatIdRef.current, 
@@ -204,7 +204,7 @@ const Chat = ({
     emitDeleteMessage(JSON.stringify(data), socketState);
 
     setTimeout(() => {
-      if (activeMsg) dispatch(actions.chatsActions.deleteMessage(chatIdRef.current, activeMsg?._id));
+      if (activeMsg) dispatch(chatsActions.deleteMessage(chatIdRef.current, activeMsg?._id));
     }, 350);
   };
 
@@ -218,7 +218,7 @@ const Chat = ({
       // Get messages if no previous chat history loaded
       if (!chatHistory[chatIdRef.current]) {
         setIsLoading(true);
-        const response = await dispatch(actions.chatsActions.getMessages(username, contactProfile, chatIdRef.current));
+        const response = await dispatch(chatsActions.getMessages(username, contactProfile, chatIdRef.current));
         if (response) setIsLoading(false);
       }
     })();
