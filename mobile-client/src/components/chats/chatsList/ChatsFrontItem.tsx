@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import Octicon from 'react-native-vector-icons/Octicons';
 import Config from 'react-native-config';
+import { useSelector } from 'react-redux';
 
 import { Images } from 'assets';
 import CustomText from 'components/CustomText';
@@ -20,22 +21,7 @@ type ChatsFrontItemProps = {
 };
 
 const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) => {
-
-  // const renderLastMessageText = (item) => {
-  //   if (isTyping && typingUser == item.contact) {
-  //     return 'is typing...';
-  //   } else if (item.groupOwner && item.groupOwner === username) {
-  //     return item.text.replace(username, 'You');
-  //   } else if (!item.text) {
-  //       if (item.from === username) {
-  //         return 'You sent a photo'; 
-  //       } else {
-  //         return `${item.from} sent a photo`; 
-  //       }  
-  //   } else {
-  //     return item.text
-  //   }
-  // };
+  const { typingContacts } = useSelector(state => state.chats);
 
   return (
     <TouchableWithoutFeedback onPress={() => onChatSelect(chat, contact)}>
@@ -79,7 +65,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                 fontWeight={chat.lastMessage.read ? Fonts.regular : Fonts.bold}
                 style={styles.messageText}
               >
-                {chat.lastMessage.message.text}
+                {typingContacts.includes(contact?._id) ? 'is typing...' : chat.lastMessage.message.text}
               </CustomText>
                {!chat.muted && (
                   <Octicon 

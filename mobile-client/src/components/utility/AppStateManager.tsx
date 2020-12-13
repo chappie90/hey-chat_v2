@@ -1,17 +1,20 @@
-import React, { useEffect, useRef, useContext, ReactNode } from 'react';
+import React, { useEffect, useRef, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { connectToSocket } from 'socket/socketConnection';
 import actions from 'reduxStore/actions';
+import { emitStopTyping } from 'socket/eventEmitters';
 
 type AppStateManagerProps = { children: ReactNode };
 
 const AppStateManager = ({ children }: AppStateManagerProps) => {
   const { userId, token, socketState } = useSelector(state => state.auth);
+  const { activeContactId } = useSelector(state => state.chats);
   const dispatch = useDispatch();
   const appState = useRef<string>(AppState.currentState);
   const socket = useRef<any>(null);
+  const activeContactIdRef = useRef('');
 
   const createSocketConnection = (): void => {
     if (token && userId) {
@@ -44,6 +47,10 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
     // Destroy socket instance on app in background
     if (nextAppState === 'background') {
       if (socket.current) {
+        // Handle typing logic if user typing leaves app before typing timeout has expired
+        const data = { senderId: userId, recipientId: activeContactIdRef.current };
+        emitStopTyping(JSON.stringify(data), socket.current);
+
         destroySocketConnection(); 
       }
     }
@@ -76,6 +83,10 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
       });
     }
   }, [socketState]);
+
+  useEffect(() => {
+    activeContactIdRef.current = activeContactId;
+  }, [activeContactId]);
 
   return <>{children}</>;
 };

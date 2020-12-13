@@ -127,6 +127,16 @@ const SocketEventListeners = () => {
       socketState.on('user_offline', (userId: string) => {
         dispatch(actions.contactsActions.contactGoesOffline(userId));
       }); 
+
+      // Contact has started typing
+      socketState.on('contact_is_typing', (contactId: string) => {
+        dispatch(actions.chatsActions.contactIsTyping(contactId));
+      }); 
+
+      // Contact has stopped typing
+      socketState.on('contact_stopped_typing', (contactId: string) => {
+        dispatch(actions.chatsActions.contactStoppedTyping(contactId));
+      }); 
     }
   }, [socketState]);
 

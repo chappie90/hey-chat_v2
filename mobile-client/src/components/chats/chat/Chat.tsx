@@ -13,7 +13,13 @@ import uuid from 'react-native-uuid';
 import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { emitNewMessage, emitLikeMessage, emitDeleteMessage } from 'socket/eventEmitters';
+import { 
+  emitNewMessage, 
+  emitLikeMessage, 
+  emitDeleteMessage,
+  emitStartTyping,
+  emitStopTyping
+} from 'socket/eventEmitters';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
 import MessageActions from './MessageActions';
@@ -51,6 +57,7 @@ const Chat = ({
   const flatListRef = useRef<any>(null);
   const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
   const dispatch = useDispatch();
+  const stopTypingTimeoutRef = useRef<any>(null);
 
   const onGreeting = () => {
     onSendMessage('👋');
@@ -72,7 +79,22 @@ const Chat = ({
 
   const onChangeText = (text: string): void => {
     setMessage(text);
+
+    onStartTyping(text);
   };
+
+  const onStartTyping = (text: string) => {
+    const data = { senderId: userId, recipientId: contactId };
+
+    if (text) emitStartTyping(JSON.stringify(data), socketState);
+
+    if (stopTypingTimeoutRef.current) clearTimeout(stopTypingTimeoutRef.current);
+
+    stopTypingTimeoutRef.current = setTimeout(() => {
+      emitStopTyping(JSON.stringify(data), socketState); 
+    }, 3000);
+  };
+
 
   const onSendMessage = (text: string): void => {
     scrollToEnd();
@@ -153,7 +175,7 @@ const Chat = ({
   };
 
   const onLikeMessage = (): void => {
-    dispatch(actions.chatsActions.likeMessage(chatIdRef.current, activeMsg?._id));
+    if (activeMsg) dispatch(actions.chatsActions.likeMessage(chatIdRef.current, activeMsg?._id));
     
     const data = { 
       chatId: chatIdRef.current, 
@@ -172,7 +194,7 @@ const Chat = ({
 
   const onDeleteMessage = (): void => {
     hideMessageActions();
-    dispatch(actions.chatsActions.markMessageForDeletion(chatIdRef.current, activeMsg?._id));
+    if (activeMsg) dispatch(actions.chatsActions.markMessageForDeletion(chatIdRef.current, activeMsg?._id));
 
     const data = { 
       chatId: chatIdRef.current, 
@@ -182,7 +204,7 @@ const Chat = ({
     emitDeleteMessage(JSON.stringify(data), socketState);
 
     setTimeout(() => {
-      dispatch(actions.chatsActions.deleteMessage(chatIdRef.current, activeMsg?._id));
+      if (activeMsg) dispatch(actions.chatsActions.deleteMessage(chatIdRef.current, activeMsg?._id));
     }, 350);
   };
 

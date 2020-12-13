@@ -4,7 +4,6 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useDispatch } from 'react-redux'
 
 import actions from 'reduxStore/actions';
-import { Context as AuthContext } from 'context/AuthContext';
 import Chat from 'components/chats/chat/Chat';
 
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
@@ -15,9 +14,11 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
 
   useEffect(() => {
     dispatch(actions.authActions.getCurrentScreen(route.name));
+    dispatch(actions.chatsActions.setActiveContact(contactId.toString()));
 
     return () => {
       dispatch(actions.authActions.getCurrentScreen(''));
+      dispatch(actions.chatsActions.setActiveContact(''));
     };
   }, []);
 

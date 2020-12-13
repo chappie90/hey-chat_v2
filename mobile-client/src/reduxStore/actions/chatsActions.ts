@@ -2,12 +2,15 @@ import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import api from 'api';
+import { transformMessagesArray } from 'utils/transformMessagesArray';
 
 type ChatsState = {
   chats: TChat[] | [];
   chatHistory: { 
     [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
   } | {};
+  typingContacts: string[] | [];
+  activeContactId: string;
 };
 
 type ChatsAction =
@@ -22,7 +25,10 @@ type ChatsAction =
   | { type: 'delete_message'; payload: { chatId: string, messageId: string } }
   | { type: 'mark_message_as_delivered'; payload: { chatId: string, messageId: string } }
   | { type: 'mark_messages_as_read_sender'; payload: { chatId: string } }
-  | { type: 'mark_messages_as_read_recipient'; payload: { chatId: string } };
+  | { type: 'mark_messages_as_read_recipient'; payload: { chatId: string } }
+  | { type: 'contact_is_typing'; payload: { contactId: string } }
+  | { type: 'contact_stopped_typing'; payload: { contactId: string } }
+  | { type: 'set_active_contact'; payload: { contactId: string } };
 
 const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
@@ -112,52 +118,11 @@ const markMessagesAsReadSender = (chatId: string) => ({ type: 'mark_messages_as_
 
 const markMessagesAsReadRecipient = (chatId: string) => ({ type: 'mark_messages_as_read_recipient', payload: { chatId } });
 
-const transformMessagesArray = (
-  messages: any[], 
-  username: string, 
-  contactProfile: string, 
-  chatId: string
-): TMessage[] => {
-  return messages.map((message: any) => {
-    const { 
-      message: { id, text, createDate }, 
-      sender, 
-      image, 
-      admin, 
-      delivered, 
-      read, 
-      liked, 
-      reply,
-      deleted
-    } = message;
+const contactIsTyping = (contactId: string) => ({ type: 'contact_is_typing', payload: { contactId } });
 
-    return {
-      _id: id,
-      chatId,
-      text,
-      createDate,
-      sender: {
-        _id: sender === username ? 1 : 2,
-        name: sender,
-        avatar: sender === username ? undefined : contactProfile
-      },
-      image: image?.name,
-      admin,
-      delivered,
-      read,
-      liked: {
-        likedByUser: liked.likedByUser,
-        likesCount: liked.likesCount
-      },
-      reply: {
-        origMsgId: reply?.origMsgId,
-        origMsgText: reply?.origMsgText,
-        origMsgSender: reply?.origMsgSender
-      },
-      deleted
-    };
-  });
-};
+const contactStoppedTyping = (contactId: string) => ({ type: 'contact_stopped_typing', payload: { contactId } });
+
+const setActiveContact = (contactId: string) => ({ type: 'set_active_contact', payload: { contactId } });
 
 export default {
   getChats,
@@ -171,5 +136,8 @@ export default {
   deleteMessage,
   markMessageAsDelivered,
   markMessagesAsReadSender,
-  markMessagesAsReadRecipient
+  markMessagesAsReadRecipient,
+  contactIsTyping,
+  contactStoppedTyping,
+  setActiveContact
 }

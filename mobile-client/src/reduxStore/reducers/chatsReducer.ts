@@ -5,11 +5,15 @@ type ChatsState = {
   chatHistory: { 
     [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
   } | {};
+  typingContacts: string[] | [];
+  activeContactId: string;
 };
 
 const INITIAL_STATE: ChatsState = {
   chats: [],
-  chatHistory: {}
+  chatHistory: {},
+  typingContacts: [],
+  activeContactId: ''
 };
 
 export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -141,60 +145,75 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           }
         }
       };
-      case 'mark_message_as_delivered':
-        updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
-          return msg._id === action.payload.messageId ?
-            {  ...msg, delivered: true } :
-            msg
-        });
+    case 'mark_message_as_delivered':
+      updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+        return msg._id === action.payload.messageId ?
+          {  ...msg, delivered: true } :
+          msg
+      });
 
-        return {
-          ...state,
-          chatHistory: {
-            ...state.chatHistory,
-            [action.payload.chatId]: {
-              ...state.chatHistory[action.payload.chatId],
-              messages: updatedMessages
-            }
+      return {
+        ...state,
+        chatHistory: {
+          ...state.chatHistory,
+          [action.payload.chatId]: {
+            ...state.chatHistory[action.payload.chatId],
+            messages: updatedMessages
           }
-        };
-      case 'mark_messages_as_read_sender':
-        if (!state.chatHistory[action.payload.chatId]) return state;
+        }
+      };
+    case 'mark_messages_as_read_sender':
+      if (!state.chatHistory[action.payload.chatId]) return state;
 
-        updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
-          return msg.read === false ?
-            {  ...msg, read: true } :
-            msg
-        });
+      updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+        return msg.read === false ?
+          {  ...msg, read: true } :
+          msg
+      });
 
-        return {
-          ...state,
-          chatHistory: {
-            ...state.chatHistory,
-            [action.payload.chatId]: {
-              ...state.chatHistory[action.payload.chatId],
-              messages: updatedMessages
-            }
+      return {
+        ...state,
+        chatHistory: {
+          ...state.chatHistory,
+          [action.payload.chatId]: {
+            ...state.chatHistory[action.payload.chatId],
+            messages: updatedMessages
           }
-        };
-      case 'mark_messages_as_read_recipient': 
-        updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
-          return chat.chatId === action.payload.chatId ?
-            { 
-              ...chat,
-              lastMessage: { 
-                ...chat.lastMessage,
-                read: true 
-              },
-              unreadMessagesCount: 0
-            } :
-            chat
-        });
-    
-        return { 
-          ...state, 
-          chats: updatedChats
-        };  
+        }
+      };
+    case 'mark_messages_as_read_recipient': 
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return chat.chatId === action.payload.chatId ?
+          { 
+            ...chat,
+            lastMessage: { 
+              ...chat.lastMessage,
+              read: true 
+            },
+            unreadMessagesCount: 0
+          } :
+          chat
+      });
+  
+      return { 
+        ...state, 
+        chats: updatedChats
+      };  
+    case 'contact_is_typing':
+      return {
+        ...state,
+        typingContacts: [ ...state.typingContacts, action.payload.contactId ]
+      };
+    case 'contact_stopped_typing':
+      return {
+        ...state,
+        typingContacts: state.typingContacts.filter((contactId: string) => contactId !== action.payload.contactId)
+      };
+    case 'set_active_contact':
+      return {
+        ...state,
+        activeContactId: action.payload.contactId
+      };
     default:
       return state;
   }

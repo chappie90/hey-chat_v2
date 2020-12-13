@@ -19,6 +19,10 @@ export const emitMarkAllMessagesAsRead = (data: string, socket: any) => {
   socket.emit('mark_messages_as_read', data);
 };
 
-// socket.on('message', (message: string) => {
-//   console.log(message);
-// });
+export const emitStartTyping = (data: string, socket: any) => {
+  socket.emit('start_typing', data);
+};
+
+export const emitStopTyping = (data: string, socket: any) => {
+  socket.emit('stop_typing', data);
+};
