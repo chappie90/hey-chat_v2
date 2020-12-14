@@ -10,7 +10,7 @@ type ChatsState = {
     [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
   } | {};
   typingContacts: string[] | [];
-  activeContactId: string;
+  activeChat: TChat;
 };
 
 type ChatsAction =
@@ -28,7 +28,8 @@ type ChatsAction =
   | { type: 'mark_messages_as_read_recipient'; payload: { chatId: string } }
   | { type: 'contact_is_typing'; payload: { contactId: string } }
   | { type: 'contact_stopped_typing'; payload: { contactId: string } }
-  | { type: 'set_active_contact'; payload: { contactId: string } };
+  | { type: 'reset_typing_contacts' }
+  | { type: 'set_active_chat'; payload: { chat: TChat } };
 
 const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
@@ -122,7 +123,9 @@ const contactIsTyping = (contactId: string) => ({ type: 'contact_is_typing', pay
 
 const contactStoppedTyping = (contactId: string) => ({ type: 'contact_stopped_typing', payload: { contactId } });
 
-const setActiveContact = (contactId: string) => ({ type: 'set_active_contact', payload: { contactId } });
+const resetTypingContacts = () => ({ type: 'reset_typing_contacts' });
+
+const setActiveChat = (chat: TChat | null) => ({ type: 'set_active_chat', payload: { chat } });
 
 export default {
   getChats,
@@ -139,5 +142,6 @@ export default {
   markMessagesAsReadRecipient,
   contactIsTyping,
   contactStoppedTyping,
-  setActiveContact
-}
+  resetTypingContacts,
+  setActiveChat
+};

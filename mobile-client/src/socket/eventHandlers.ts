@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 
-import { contactsActions, chatsActions } from 'reduxStore/actions';
+import { authActions, contactsActions, chatsActions } from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead } from './eventEmitters';
 
 const onGetContacts = (data: string, dispatch: Dispatch) => {
@@ -28,7 +28,14 @@ const onMessageSent = (data: string, dispatch: Dispatch) => {
   dispatch(chatsActions.updateChat(updatedChat));
 };
 
-const onMessageReceived = (data: string, dispatch: Dispatch, socketState = null, currentScreen = '') => {
+const onMessageReceived = async (
+  data: string, 
+  username: string,
+  chatHistory: any,
+  dispatch: Dispatch, 
+  socketState = null, 
+  currentScreen = ''
+) => {
   const { chat, newMessage, newTMessage, senderId, unreadMessagesCount } = JSON.parse(data);
         
   const updatedChat = { 
@@ -37,19 +44,25 @@ const onMessageReceived = (data: string, dispatch: Dispatch, socketState = null,
     unreadMessagesCount: unreadMessagesCount
   };
   dispatch(chatsActions.updateChat(updatedChat));
-  
-  dispatch(chatsActions.addMessage(
-    newMessage.chatId, 
-    {
-      ...newTMessage,
-      sender: {
-        ...newTMessage.sender,
-        _id: 2
-      },
-      delivered: true,
-      read: true
-    }
-  ));
+
+  // Fetch chat messages if not loaded yet
+  if (!chatHistory[chat.chatId]) {
+    await dispatch(chatsActions.getMessages(username, '', chat.chatId));
+  } else {
+    // Append last message if chat loaded
+    dispatch(chatsActions.addMessage(
+      newMessage.chatId, 
+      {
+        ...newTMessage,
+        sender: {
+          ...newTMessage.sender,
+          _id: 2
+        },
+        delivered: true,
+        read: true
+      }
+    ));
+  }
 
   // If recipient is active on current chat screen, send signal to sender message has been read
   // and mark recipient's chat as read
@@ -111,6 +124,10 @@ const onContactStoppedTyping = (contactId: string, dispatch: Dispatch) => {
   dispatch(chatsActions.contactStoppedTyping(contactId));
 };
 
+const onUserConnected = (dispatch: Dispatch) => {
+  dispatch(authActions.setUserConnectionState(true));
+};
+
 export default {
   onGetContacts,
   onGetOnlineContacts,
@@ -124,5 +141,6 @@ export default {
   onContactIsOnline,
   onContactIsOffline,
   onContactIsTyping,
-  onContactStoppedTyping
+  onContactStoppedTyping,
+  onUserConnected
 };

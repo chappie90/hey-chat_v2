@@ -6,14 +6,14 @@ type ChatsState = {
     [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
   } | {};
   typingContacts: string[] | [];
-  activeContactId: string;
+  activeChat: TChat | null;
 };
 
 const INITIAL_STATE: ChatsState = {
   chats: [],
   chatHistory: {},
   typingContacts: [],
-  activeContactId: ''
+  activeChat: null
 };
 
 export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -209,10 +209,15 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state,
         typingContacts: state.typingContacts.filter((contactId: string) => contactId !== action.payload.contactId)
       };
-    case 'set_active_contact':
+    case 'reset_typing_contacts':
       return {
         ...state,
-        activeContactId: action.payload.contactId
+        typingContacts: []
+      };
+    case 'set_active_chat':
+      return {
+        ...state,
+        activeChat: action.payload.chat
       };
     default:
       return state;

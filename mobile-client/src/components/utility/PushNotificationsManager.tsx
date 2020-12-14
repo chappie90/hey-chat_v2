@@ -1,18 +1,19 @@
 import React, { useEffect, useRef, useState, useContext, ReactNode } from 'react';
-import { AppState, Platform } from 'react-native';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import actions from 'reduxStore/actions';
-
+import eventHandlers from 'socket/eventHandlers';
 type PushNotificationsManagerProps = { children: ReactNode };
 
 const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) => {
-  const { userId, currentScreen } = useSelector(state => state.auth);
+  const { userId, username, currentScreen, socketState } = useSelector(state => state.auth);
+  const { chatHistory } = useSelector(state => state.chats);
   const dispatch = useDispatch();
+  const usernameRef = useRef('');
+  const chatHistoryRef = useRef({});
 
   const createNotificationsChannel = (
     channelId: string, 
@@ -62,7 +63,38 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
-      // dispatch(actions.authActions.getCurrentScreen(notification.data.key_1));
+      // Update recipient app state while in background
+      if (notification.data.silent) {
+        switch (notification.data.type) {
+          case 'message_received':
+            // Update recipient's chats list and add new message to chat history
+            eventHandlers.onMessageReceived(
+              notification.data.payload, 
+              usernameRef.current,
+              chatHistoryRef.current,
+              dispatch,
+              socketState,
+              ''
+            );
+            break;
+          case 'message_deleted':
+            // Delete message for recipient
+            eventHandlers.onMessageDeleted(notification.data.payload, dispatch);
+            break;
+          case 'message_liked':
+            // Update recipient's chat messages with liked message
+            eventHandlers.onMessageLiked(notification.data.payload, dispatch);
+            break;
+          case 'messages_marked_as_read_sender':
+            // Mark all sender's chat history messages as read
+            eventHandlers.onMessagesMarkedAsReadSender(notification.data.payload, dispatch);
+            break;
+          default:
+            return;
+        }
+      }
+
+      console.log(notification)
 
       // Serve local notification
       if (!notification.foreground) {
@@ -126,6 +158,11 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       })();
        }
   }, [userId]);
+
+  useEffect(() => {
+    usernameRef.current = username;
+    chatHistoryRef.current = chatHistoryRef;
+  }, [username, chatHistory]);
 
   useEffect(() => {
     configure();

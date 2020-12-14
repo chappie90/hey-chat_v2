@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import eventHandlers from './eventHandlers';
 
 const SocketEventListeners = () => {
-  const { userId, socketState, currentScreen } = useSelector(state => state.auth);
+  const { userId, username, socketState, currentScreen } = useSelector(state => state.auth);
+  const { chatHistory } = useSelector(state => state.chats);
   const currentScreenRef = useRef('');
   const dispatch = useDispatch();
 
@@ -38,7 +39,7 @@ const SocketEventListeners = () => {
 
       // Update recipient's chats list and add new message to chat history
       socketState.on('message_received', (data: string) => {
-        eventHandlers.onMessageReceived(data, dispatch, socketState, currentScreenRef.current);
+        eventHandlers.onMessageReceived(data, username, chatHistory, dispatch, socketState, currentScreenRef.current);
       });
 
       // Mark all sender's chat history messages as read
@@ -80,6 +81,11 @@ const SocketEventListeners = () => {
       socketState.on('contact_stopped_typing', (contactId: string) => {
         eventHandlers.onContactStoppedTyping(contactId, dispatch);
       }); 
+
+      // User has successfully established socket connection
+      socketState.on('user_connected', () => {
+        eventHandlers.onUserConnected(dispatch);
+      });
     }
   }, [socketState]);
 

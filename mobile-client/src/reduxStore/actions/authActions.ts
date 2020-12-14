@@ -10,12 +10,14 @@ type AuthState = {
   token: string | null;
   socketState: any | null;
   currentScreen: string | '';
+  userConnected: boolean;
 };
 
 type AuthAction = 
   | { type: 'signin'; payload: TUser }
   | { type: 'sign_out'; }
-  | { type: 'set_socket'; payload: any };
+  | { type: 'set_socket'; payload: any }
+  | { type: 'set_user_connected'; payload: boolean };
 
 const signup = (username: string, password: string) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
@@ -92,11 +94,14 @@ const setSocketState = (socketState: any) => ({ type: 'set_socket', payload: soc
 
 const getCurrentScreen = (currentScreen: string) => ({ type: 'get_current_screen', payload: currentScreen });
 
+const setUserConnectionState = (state: boolean) => ({ type: 'set_user_connected', payload: state });
+
 export default {
   signup,
   signin,
   autoSignin,
   signOut,
   setSocketState,
-  getCurrentScreen
+  getCurrentScreen,
+  setUserConnectionState
 };  

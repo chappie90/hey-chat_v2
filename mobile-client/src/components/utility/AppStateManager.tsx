@@ -4,17 +4,19 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { connectToSocket } from 'socket/connection';
 import { authActions, chatsActions } from 'reduxStore/actions';
-import { emitStopTyping } from 'socket/eventEmitters';
+import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 
 type AppStateManagerProps = { children: ReactNode };
 
 const AppStateManager = ({ children }: AppStateManagerProps) => {
-  const { userId, token, socketState } = useSelector(state => state.auth);
-  const { activeContactId } = useSelector(state => state.chats);
+  const { userId, token, socketState, currentScreen, userConnected } = useSelector(state => state.auth);
+  const { chats, chatHistory, activeChat } = useSelector(state => state.chats);
   const dispatch = useDispatch();
   const appState = useRef<string>(AppState.currentState);
   const socket = useRef<any>(null);
-  const activeContactIdRef = useRef('');
+  const activeChatRef = useRef<TChat | null>(null);
+  const currentScreenRef = useRef('');
+  const chatsRef = useRef<TChat[] | []>([]);
 
   const createSocketConnection = (): void => {
     if (token && userId) {
@@ -42,17 +44,27 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
       nextAppState === 'active'
     ) {
       createSocketConnection();
+
+      // If app becomes active on CurrentChat screen mark recipient's chat as read
+      if (activeChatRef.current && currentScreenRef.current === 'CurrentChat') {
+        dispatch(chatsActions.markMessagesAsReadRecipient(activeChatRef.current.chatId));
+      }
     }
 
     // Destroy socket instance on app in background
     if (nextAppState === 'background') {
       if (socket.current) {
         // Handle typing logic if either user leaves app before typing timeout has expired
-        const data = { senderId: userId, recipientId: activeContactIdRef.current };
-        emitStopTyping(JSON.stringify(data), socket.current);
-        dispatch(chatsActions.resetTypingContacts());
+        if (activeChatRef.current) {
+          const recipientId = activeChatRef.current.participants.filter(contact => contact._id !== userId)[0]._id;
+          const data = { senderId: userId, recipientId };
+          
+          emitStopTyping(JSON.stringify(data), socket.current);
+          dispatch(chatsActions.resetTypingContacts());
+        }
 
         destroySocketConnection(); 
+        dispatch(authActions.setUserConnectionState(false));
       }
     }
 
@@ -86,8 +98,21 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   }, [socketState]);
 
   useEffect(() => {
-    activeContactIdRef.current = activeContactId;
-  }, [activeContactId]);
+    if (userConnected) {
+      // If app becomes active on CurrentChat screen send signal to sender message has been read
+      if (activeChatRef.current && currentScreenRef.current === 'CurrentChat') {
+        const senderId = activeChatRef.current.participants.filter(contact => contact._id !== userId)[0]._id;
+        const eventData = { chatId: activeChatRef.current.chatId, senderId };
+        emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+      }
+    }
+  }, [userConnected]);
+
+  useEffect(() => {
+    activeChatRef.current = activeChat;
+    currentScreenRef.current = currentScreen;
+    chatsRef.current = chats;
+  }, [activeChat, currentScreen, chats]);
 
   return <>{children}</>;
 };

@@ -77,7 +77,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
               <>
                 <ToggleListTabs 
                   allUsersCount={contacts.length}
-                  activeUsersCount={contacts.length}
+                  activeUsersCount={onlineContacts.length}
                   showActiveUsers={showActiveUsers} 
                   toggleList={toggleList} 
                 />

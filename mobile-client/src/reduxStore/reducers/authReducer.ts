@@ -6,6 +6,7 @@ type AuthState = {
   token: string | null;
   socketState: any | null;
   currentScreen: string;
+  userConnected: boolean;
 };
 
 const INITIAL_STATE: AuthState = {
@@ -13,7 +14,8 @@ const INITIAL_STATE: AuthState = {
   username: null,
   token: null,
   socketState: null,
-  currentScreen: ''
+  currentScreen: '',
+  userConnected: false
 };
 
 export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -35,6 +37,8 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
       return { ...state, socketState: action.payload };
     case 'get_current_screen':
       return { ...state, currentScreen: action.payload };
+    case 'set_user_connected':
+      return { ...state, userConnected: action.payload };
     default: 
       return state;
   }
