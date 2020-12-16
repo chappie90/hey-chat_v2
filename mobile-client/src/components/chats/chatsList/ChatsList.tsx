@@ -7,7 +7,6 @@ import {
   useWindowDimensions,
   Animated,
   Easing,
-  ActionSheetIOS
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Octicon from 'react-native-vector-icons/Octicons';
@@ -33,25 +32,26 @@ const ChatsList = ({ chats }: ChatsListProps) => {
   const navigation = useNavigation();
   const screenWidth = useWindowDimensions().width;
   const dispatch = useDispatch();
+  const openRowRefs: any[] = [];
 
-  const onMuteChat = (chat: TChat) => {
+  const onMuteChat = (chat: TChat, rowKey: number, rowMap: any): void => {
+    openRowRefs.push(rowMap[rowKey]);
     dispatch(chatsActions.muteChat(userId, chat.chatId, !chat.muted));
+    closeAllOpenRows();
   };
 
-  // const muteChatHandler = (rowKey, rowMap, selectedChat) => {
-  //   openRowRefs.push(rowMap[rowKey]);
-  //   toggleMuteChat(username, selectedChat.chatId, selectedChat.type, selectedChat.muted)
-  //     .then(res => {
-  //       // setPinAnimate(true);
-  //       closeAllOpenRows();
-  //     });
-  // };
-
-  const onRowOpen = (rowKey, rowMap, toValue) => {
-    const listItem = chats[rowKey];
+  const onDeleteChat = (chat: TChat, rowKey: number, rowMap: any): void => {
+    dispatch(chatsActions.deleteChat(userId, chat._id, chat.chatId));
+    openRowRefs.push(rowMap[rowKey]);
   };
 
-  const onSwipeValueChange = (swipeData) => {
+  const closeAllOpenRows = (): void => {
+    openRowRefs.forEach(ref => {
+      ref.closeRow && ref.closeRow();
+    });
+  };
+
+  const onSwipeValueChange = (swipeData: any) => {
     const { key, value, isOpen } = swipeData;
 
     rowOpenValue.current = value;
@@ -63,7 +63,8 @@ const ChatsList = ({ chats }: ChatsListProps) => {
         {
           toValue: value,
           duration: 50,
-          easing: Easing.inOut(Easing.ease)
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true
         },
       ).start();
       isRowOpen.current = true;
@@ -75,7 +76,8 @@ const ChatsList = ({ chats }: ChatsListProps) => {
         {
           toValue: Math.abs(value),
           duration: 50,
-          easing: Easing.inOut(Easing.ease)
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true
         },
       ).start();
        isRowOpen.current = true;
@@ -152,7 +154,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
               styles.muteBtnContainer,
               { backgroundColor: data.item.muted ? Colors.greyDark : Colors.greyLight } 
             ]}>
-              <TouchableOpacity style={{ }} onPress={() => onMuteChat(data.item)}>
+              <TouchableOpacity style={{ }} onPress={() => onMuteChat(data.item,  data.index, rowMap)}>
                 <Animated.View style={[
                   styles.rowBackAnimatedView,
                   { transform: [
@@ -188,7 +190,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
                </TouchableOpacity>
             </View>
             <View style={styles.deleteBtnContainer}>
-              <TouchableOpacity style={{ }} onPress={() => {deleteRow(data.index, rowMap, data.item)}}>
+              <TouchableOpacity style={{ }} onPress={() => onDeleteChat(data.item, data.index, rowMap)}>
                 <Animated.View style={[
                   styles.rowBackAnimatedView,
                   { transform: [
@@ -219,7 +221,6 @@ const ChatsList = ({ chats }: ChatsListProps) => {
       stopLeftSwipe={screenWidth / 2}
       stopRightSwipe={-screenWidth / 2}
       onSwipeValueChange={onSwipeValueChange}
-      onRowOpen={onRowOpen}
       tension={30} 
     />
   );

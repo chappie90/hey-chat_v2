@@ -65,6 +65,7 @@ type TContact = {
 };
 
 type TChat = {
+  _id: number;
   chatId: string;
   type: string;
   participants: TContact[],

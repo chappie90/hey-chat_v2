@@ -229,6 +229,10 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           chat;
       });
       return { ...state, chats: updatedChats };
+    case 'delete_chat':
+      updatedChats = state.chats.filter((chat: TChat) => chat.chatId !== action.payload.chatId );
+
+      return { ...state, chats: updatedChats };
     default:
       return state;
   }

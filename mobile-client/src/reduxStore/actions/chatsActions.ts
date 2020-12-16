@@ -30,7 +30,8 @@ type ChatsAction =
   | { type: 'contact_stopped_typing'; payload: { contactId: string } }
   | { type: 'reset_typing_contacts' }
   | { type: 'set_active_chat'; payload: { chat: TChat } }
-  | { type: 'mute_chat'; payload: { chatId: string, newValue: boolean } };
+  | { type: 'mute_chat'; payload: { chatId: string, newValue: boolean } }
+  | { type: 'delete_chat'; payload: { chatId: string } };
 
 const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
@@ -140,6 +141,18 @@ const muteChat = (userId: number, chatId: string, newValue: boolean) => async (d
   }
 };
 
+const deleteChat = (userId: number, _id: number, chatId: string) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => { 
+  try {
+    const response = await api.patch('/chat/delete', { userId, _id });
+
+    dispatch({ type: 'delete_chat', payload: { chatId } });
+  } catch (error) {
+    console.log('Delete chat method error');
+    if (error.response) console.log(error.response.data.message);
+    if (error.message) console.log(error.message);
+  }
+};
+
 export default {
   getChats,
   addChat,
@@ -157,5 +170,6 @@ export default {
   contactStoppedTyping,
   resetTypingContacts,
   setActiveChat,
-  muteChat
+  muteChat,
+  deleteChat
 };
