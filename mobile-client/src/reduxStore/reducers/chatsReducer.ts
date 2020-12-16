@@ -219,6 +219,16 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state,
         activeChat: action.payload.chat
       };
+    case 'mute_chat':
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return chat.chatId === action.payload.chatId ? 
+          { 
+            ...chat, 
+            muted: action.payload.newValue
+          } : 
+          chat;
+      });
+      return { ...state, chats: updatedChats };
     default:
       return state;
   }

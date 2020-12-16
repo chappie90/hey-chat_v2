@@ -67,7 +67,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
               >
                 {typingContacts.includes(contact?._id) ? 'is typing...' : chat.lastMessage.message.text}
               </CustomText>
-               {!chat.muted && (
+               {chat.muted && (
                   <Octicon 
                     style={styles.muteIcon} 
                     name="mute" 

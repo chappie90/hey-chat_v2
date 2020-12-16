@@ -29,7 +29,8 @@ type ChatsAction =
   | { type: 'contact_is_typing'; payload: { contactId: string } }
   | { type: 'contact_stopped_typing'; payload: { contactId: string } }
   | { type: 'reset_typing_contacts' }
-  | { type: 'set_active_chat'; payload: { chat: TChat } };
+  | { type: 'set_active_chat'; payload: { chat: TChat } }
+  | { type: 'mute_chat'; payload: { chatId: string, newValue: boolean } };
 
 const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
@@ -127,6 +128,18 @@ const resetTypingContacts = () => ({ type: 'reset_typing_contacts' });
 
 const setActiveChat = (chat: TChat | null) => ({ type: 'set_active_chat', payload: { chat } });
 
+const muteChat = (userId: number, chatId: string, newValue: boolean) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => { 
+  try {
+    const response = await api.patch('/chat/mute', { userId, chatId, newValue });
+
+    dispatch({ type: 'mute_chat', payload: { chatId, newValue } });
+  } catch (error) {
+    console.log('Mute chat method error');
+    if (error.response) console.log(error.response.data.message);
+    if (error.message) console.log(error.message);
+  }
+};
+
 export default {
   getChats,
   addChat,
@@ -143,5 +156,6 @@ export default {
   contactIsTyping,
   contactStoppedTyping,
   resetTypingContacts,
-  setActiveChat
+  setActiveChat,
+  muteChat
 };

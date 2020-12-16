@@ -6,7 +6,8 @@ import {
   RefreshControl,
   useWindowDimensions,
   Animated,
-  Easing
+  Easing,
+  ActionSheetIOS
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Octicon from 'react-native-vector-icons/Octicons';
@@ -32,6 +33,19 @@ const ChatsList = ({ chats }: ChatsListProps) => {
   const navigation = useNavigation();
   const screenWidth = useWindowDimensions().width;
   const dispatch = useDispatch();
+
+  const onMuteChat = (chat: TChat) => {
+    dispatch(chatsActions.muteChat(userId, chat.chatId, !chat.muted));
+  };
+
+  // const muteChatHandler = (rowKey, rowMap, selectedChat) => {
+  //   openRowRefs.push(rowMap[rowKey]);
+  //   toggleMuteChat(username, selectedChat.chatId, selectedChat.type, selectedChat.muted)
+  //     .then(res => {
+  //       // setPinAnimate(true);
+  //       closeAllOpenRows();
+  //     });
+  // };
 
   const onRowOpen = (rowKey, rowMap, toValue) => {
     const listItem = chats[rowKey];
@@ -138,7 +152,7 @@ const ChatsList = ({ chats }: ChatsListProps) => {
               styles.muteBtnContainer,
               { backgroundColor: data.item.muted ? Colors.greyDark : Colors.greyLight } 
             ]}>
-              <TouchableOpacity style={{ }} onPress={() => muteChatHandler(data.index, rowMap, data.item)}>
+              <TouchableOpacity style={{ }} onPress={() => onMuteChat(data.item)}>
                 <Animated.View style={[
                   styles.rowBackAnimatedView,
                   { transform: [
