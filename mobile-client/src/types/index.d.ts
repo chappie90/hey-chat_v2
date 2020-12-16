@@ -70,7 +70,7 @@ type TChat = {
   participants: TContact[],
   createDate: Date; 
   requestAccepted?: boolean;
-  muted: false;
+  muted: boolean;
   lastMessage: TLastChatMessage;
   unreadMessagesCount: number;
 };

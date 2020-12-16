@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { event } from 'react-native-reanimated';
 import { useSelector, useDispatch } from 'react-redux';
 
 import eventHandlers from './eventHandlers';
@@ -30,6 +31,11 @@ const SocketEventListeners = () => {
       // and send confirmation of message delivered to sender
       socketState.on('first_message_sent', (data: string) => {
         eventHandlers.onFirstMessageSent(data, dispatch);
+      });
+
+      // 
+      socketState.on('first_message_received', (data: string) => {
+        eventHandlers.onFirstMessageReceived(data, dispatch);
       });
 
       // Update sender chat and send confirmation of message delivered to sender

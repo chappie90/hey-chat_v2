@@ -21,6 +21,12 @@ const onFirstMessageSent = (data: string, dispatch: Dispatch) => {
   dispatch(chatsActions.addChat(chat));
 };
 
+const onFirstMessageReceived = (data: string, dispatch: Dispatch) => {
+  const { newChat, newMessage } = JSON.parse(data);
+  const chat = { ...newChat, lastMessage: newMessage };
+  dispatch(chatsActions.addChat(chat));
+};
+
 const onMessageSent = (data: string, dispatch: Dispatch) => {
   const { chat, newMessage } = JSON.parse(data);
   dispatch(chatsActions.markMessageAsDelivered(chat.chatId, newMessage.message.id));
@@ -44,6 +50,7 @@ const onMessageReceived = async (
     unreadMessagesCount: unreadMessagesCount
   };
   dispatch(chatsActions.updateChat(updatedChat));
+  dispatch(chatsActions.contactStoppedTyping(senderId));
 
   // Fetch chat messages if not loaded yet
   if (!chatHistory[chat.chatId]) {
@@ -103,7 +110,7 @@ const onContactIsOnline = (data: string, userId: number, dispatch: Dispatch) => 
   user.pending = isPending;
 
   // Get id of chat between user and contact
-  const chats = [ ...user.chats, ...user.archivedChats ];
+  const chats = [ ...user.chats, ...user.deletedChats ];
   const chatId: string = chats.filter(chat => chat.participants.filter((p: any) => p === userId))[0].chatId;
   user.chatId = chatId;
 
@@ -132,6 +139,7 @@ export default {
   onGetContacts,
   onGetOnlineContacts,
   onFirstMessageSent,
+  onFirstMessageReceived,
   onMessageSent,
   onMessageReceived,
   onMessagesMarkedAsReadSender,
