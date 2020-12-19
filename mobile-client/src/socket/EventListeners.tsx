@@ -27,13 +27,15 @@ const SocketEventListeners = () => {
         eventHandlers.onGetOnlineContacts(data, dispatch);
       });
 
-      // Add new chat, replace temporary contact id with new chat id in chatHistory global state
-      // and send confirmation of message delivered to sender
+      // Add new chat to sender's chats list
+      // replace temporary contact id with new chat id in chatHistory global state
+      // send confirmation of message delivered to sender
+      // and add new pending contact to sender's contacts list
       socketState.on('first_message_sent', (data: string) => {
         eventHandlers.onFirstMessageSent(data, dispatch);
       });
 
-      // 
+      // Add new chat to recipient's chats list
       socketState.on('first_message_received', (data: string) => {
         eventHandlers.onFirstMessageReceived(data, dispatch);
       });
@@ -92,6 +94,13 @@ const SocketEventListeners = () => {
       socketState.on('user_connected', () => {
         eventHandlers.onUserConnected(dispatch);
       });
+
+      // User has sent message after deleting chat
+      // Restore chat
+      socketState.on('chat_restored', (data: string) => {
+        eventHandlers.onChatRestored(data, dispatch);
+      });
+
     }
   }, [socketState]);
 

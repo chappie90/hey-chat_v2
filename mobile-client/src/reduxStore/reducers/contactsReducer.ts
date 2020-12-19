@@ -17,8 +17,11 @@ export const contactsReducer: Reducer = (state = INITIAL_STATE, action) => {
   let updatedOnlineContacts: TContact[];
 
   switch (action.type) {
-    case 'new_contact':
-      return { ...state, contacts: [ ...state.contacts, action.payload ] };
+    case 'add_pending_contact':
+      return  {
+        ...state, 
+        contacts: [ ...state.contacts, action.payload ]
+      };
     case 'get_contacts':
       return { ...state, contacts: action.payload };
     case 'get_online_contacts':

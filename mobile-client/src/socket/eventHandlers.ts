@@ -15,10 +15,11 @@ const onGetOnlineContacts = (data: string, dispatch: Dispatch) => {
 };
 
 const onFirstMessageSent = (data: string, dispatch: Dispatch) => {
-  const { newChat, newMessage } = JSON.parse(data);
+  const { newChat, newMessage, pendingContact } = JSON.parse(data);
   dispatch(chatsActions.markMessageAsDelivered(newChat.chatId, newMessage.message.id));
   const chat = { ...newChat, lastMessage: newMessage };
   dispatch(chatsActions.addChat(chat));
+  dispatch(contactsActions.addPendingContact(pendingContact));
 };
 
 const onFirstMessageReceived = (data: string, dispatch: Dispatch) => {
@@ -135,6 +136,12 @@ const onUserConnected = (dispatch: Dispatch) => {
   dispatch(authActions.setUserConnectionState(true));
 };
 
+const onChatRestored = (data: string, dispatch: Dispatch) => {
+  const { chat, newMessage } = JSON.parse(data);
+  const restoredChat = { ...chat, lastMessage: newMessage };
+  dispatch(chatsActions.addChat(restoredChat));
+};
+
 export default {
   onGetContacts,
   onGetOnlineContacts,
@@ -150,5 +157,6 @@ export default {
   onContactIsOffline,
   onContactIsTyping,
   onContactStoppedTyping,
-  onUserConnected
+  onUserConnected,
+  onChatRestored
 };

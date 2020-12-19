@@ -10,7 +10,7 @@ type ContactsState = {
 };
 
 type ContactsAction =
-  | { type: 'new_contact'; payload: TContact }
+  | { type: 'add_pending_contact'; payload: TContact }
   | { type: 'get_contacts'; payload: TContact[] }
   | { type: 'get_online_contacts'; payload: TContact[] }
   | { type: 'mark_contacts_as_fetched' }
@@ -32,6 +32,8 @@ const searchContacts = (username: string, search: string) => async (dispatch: Th
   }
 };
 
+const addPendingContact = (contact: TContact) => ({ type: 'add_pending_contact', payload: contact });
+
 const getContacts = (contacts: TContact[]) => ({ type: 'get_contacts', payload: contacts });
 
 const getOnlineContacts = (onlineContacts: TContact[]) => ({ type: 'get_online_contacts', payload: onlineContacts });
@@ -44,6 +46,7 @@ const contactGoesOffline = (contactId: string) => ({ type: 'contact_goes_offline
 
 export default {
   searchContacts,
+  addPendingContact,
   getContacts,
   getOnlineContacts,
   markContactsAsFetched,
