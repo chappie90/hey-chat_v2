@@ -1,10 +1,10 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Config from 'react-native-config';
+import config from 'react-native-config';
 
 const instance = axios.create({
-  baseURL: `${Config.RN_API_BASE_URL}/api/` 
+  baseURL: `${config.RN_API_BASE_URL}/api/` 
 });
 
 axiosRetry(instance, { retries: 3 });

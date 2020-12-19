@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext, ReactNode } from 'react';
+import React, { useEffect, useRef, ReactNode } from 'react';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,6 +6,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
 import eventHandlers from 'socket/eventHandlers';
+import { navigate } from 'navigation/NavigationRef';
+import { chatsActions } from 'reduxStore/actions';
+import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
+import { Platform } from 'react-native';
+
 type PushNotificationsManagerProps = { children: ReactNode };
 
 const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) => {
@@ -14,6 +19,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   const dispatch = useDispatch();
   const usernameRef = useRef('');
   const chatHistoryRef = useRef({});
+  const currentScreenRef = useRef('');
 
   const createNotificationsChannel = (
     channelId: string, 
@@ -36,12 +42,22 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
    );
   };
 
+  const sendLocalPushNotification = (
+    channelId: string,
+    title: string,
+    body: string
+  ): void => {
+    PushNotification.localNotification({
+      channelId,
+      title,
+      message: body
+    });
+  };
+
   const configure = (): void => {
     PushNotification.configure({
       // User accepted notification permission - register token
       onRegister: async (tokenData): Promise<void> => {
-        console.log(userId)
-        
         // Save to storage to send to server when user id is available from store
         try {
           await AsyncStorage.setItem('deviceInfo', JSON.stringify(tokenData));
@@ -63,6 +79,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
+      console.log(notification)
+
       // Update recipient app state while in background
       if (notification.data.silent) {
         switch (notification.data.type) {
@@ -77,6 +95,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
               ''
             );
             break;
+          case 'first_message_received':
+            eventHandlers.onFirstMessageReceived(notification.data.payload, dispatch);
           case 'message_deleted':
             // Delete message for recipient
             eventHandlers.onMessageDeleted(notification.data.payload, dispatch);
@@ -94,7 +114,38 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
         }
       }
 
-      console.log(notification)
+      // Send local notification Android foreground
+      if (Platform.OS === 'android' && currentScreenRef.current !== 'CurrentChat') {
+        sendLocalPushNotification("hey-chat-id-1", notification.title, notification.message);
+      }
+
+      // Handle user tap on notification
+      if (notification.userInteraction) { 
+        const { chat, senderId } = JSON.parse(notification.data.payload);
+
+        console.log(notification.data.payload)
+
+        console.log(chat)
+        console.log(senderId)
+        
+        if (chat.chatType === 'private') {
+          console.log('private chat')
+          // Send signal to sender message has been read and mark recipient's chat as read
+          dispatch(chatsActions.markMessagesAsReadRecipient(chat.chatId));
+          const eventData = { chatId: chat.chatId, senderId };
+          emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+    
+          // Navigate to current chat screen
+          const contactName: string = chat.participants.filter((p: any) => p !== senderId)[0].username;
+          const routeParams = {
+            chatType: chat.type,
+            chatId: chat.chatId,
+            contactName,
+            contactId: senderId
+          };
+          navigate('CurrentChat', routeParams);
+        }
+      }
 
       // Serve local notification
       if (!notification.foreground) {
@@ -118,9 +169,9 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
     onAction: function (notification) {
-      console.log("ACTION:", notification.action);
-      console.log("NOTIFICATION:", notification);
-  
+      // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
+      // console.log("ACTION:", notification.action);
+      // console.log("NOTIFICATION:", notification);
     },
 
     onRegistrationError: function (err) {
@@ -162,7 +213,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   useEffect(() => {
     usernameRef.current = username;
     chatHistoryRef.current = chatHistoryRef;
-  }, [username, chatHistory]);
+    currentScreenRef.current = currentScreen;
+  }, [username, chatHistory, currentScreen]);
 
   useEffect(() => {
     configure();
