@@ -1,4 +1,5 @@
 import React from 'react';
+import { View, Text, Button } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -35,7 +36,7 @@ const ChatsStackNavigator = () => {
       <ChatsStack.Screen 
         name="CurrentChat" 
         component={CurrentChatScreen} 
-        options={({ route }) => ({ title: route.params.contactName })}
+        options={{ headerShown: false }}
       />
     </ChatsStack.Navigator>
   );
@@ -91,7 +92,7 @@ const MainFlow = () => {
         options={({ route }) => ({
           tabBarVisible: hideTabBar(route),
           tabBarIcon: ({ size, focused }) => (
-            <FontAwesome5 name="user-friends" size={size} color={focused ? Colors.white : Colors.darkGrey} />
+            <FontAwesome5 name="user-friends" size={size} color={focused ? Colors.white : Colors.greyDark} />
           )
         })}
       />

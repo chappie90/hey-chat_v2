@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { authActions, chatsActions } from 'reduxStore/actions';
 import Chat from 'components/chats/chat/Chat';
+import ChatHeader from 'components/chats/chat/ChatHeader';
+import { Colors } from 'variables';
 
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
 
@@ -26,6 +28,11 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
 
   return (
     <View style={styles.container}>
+      <ChatHeader 
+        chatType={chatType}
+        contactName={contactName} 
+        contactProfile={contactProfile} 
+      />
       <Chat 
         chatType={chatType} 
         chatId={chatId} 
@@ -39,7 +46,8 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: Colors.white
   }
 });
 
