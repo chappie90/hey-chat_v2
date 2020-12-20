@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import config from 'react-native-config';
+import { useSelector } from 'react-redux';
 
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
@@ -10,11 +11,13 @@ import { Colors, Fonts } from 'variables';
 
 type ChatHeaderProps = {
   chatType: string;
+  contactId: number;
   contactName: string;
   contactProfile: string | undefined;
 };
 
-const ChatHeader = ({ chatType, contactName, contactProfile }: ChatHeaderProps) => {
+const ChatHeader = ({ chatType, contactId, contactName, contactProfile }: ChatHeaderProps) => {
+  const { typingContacts } = useSelector(state => state.chats);
   const navigation = useNavigation();
 
   return (
@@ -37,7 +40,10 @@ const ChatHeader = ({ chatType, contactName, contactProfile }: ChatHeaderProps) 
               style={styles.image} />
           )}
         </View>
-        <CustomText fontWeight={Fonts.semiBold}>{contactName}</CustomText>
+        <CustomText fontWeight={Fonts.semiBold}>
+          {contactName}
+          {typingContacts.includes(contactId) && ' is typing...'}
+        </CustomText>
       </View>
       <View style={styles.bottom}></View>
     </View>
@@ -60,7 +66,7 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: Colors.white,
     borderTopLeftRadius: 35,
-    borderTopRightRadius: 35
+    borderTopRightRadius: 35,
   },
   backButton: {
     marginLeft: 20,

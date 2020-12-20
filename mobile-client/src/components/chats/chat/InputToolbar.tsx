@@ -100,9 +100,7 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     alignItems: 'flex-end',
     paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderTopWidth: 1, 
-    borderTopColor: Colors.greyLight
+    paddingHorizontal: 10
   },
   plusIcon: {
     justifyContent: 'center',
