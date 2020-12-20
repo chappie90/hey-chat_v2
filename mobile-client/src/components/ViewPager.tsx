@@ -3,10 +3,11 @@ import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import ViewPager from '@react-native-community/viewpager';
 import LottieView from 'lottie-react-native';
 
-import { Images, Animations } from 'assets';
+import { Animations } from 'assets';
 import CustomText from './CustomText';
 import ScaleImageAnim from 'components/animations/ScaleImageAnim';
 import TranslateFadeViewAnim from 'components/animations/TranslateFadeViewAnim';
+import { Colors, Fonts, Headings } from 'variables';
 
 
 type StarterPagerProps = {
@@ -27,72 +28,52 @@ const StarterPager = ({ onPageChange }: StarterPagerProps) => {
       onPageScroll={(e) => onPageChange(e.nativeEvent.position)}
     >
       <View style={styles.page} key="1">
-        <LottieView 
-          source={ Animations.starterAnimChat } 
-          autoPlay 
-          loop 
-        />
         <TranslateFadeViewAnim style={styles.textContainer}>
           <CustomText style={styles.text}>
             Stay in touch with the people you love
           </CustomText>
         </TranslateFadeViewAnim>
-        {/* <ScaleImageAnim 
-          source={ Images.starterChat } 
-          style={ imageDimensions } 
-        />
-         */}
-      </View>
-      <View style={styles.page} key="2">
         <LottieView 
-          source={ Animations.starterAnimActive } 
+          source={ Animations.starterAnimChat } 
           autoPlay 
           loop 
         />
+      </View>
+      <View style={styles.page} key="2">
         <TranslateFadeViewAnim style={styles.textContainer}>
           <CustomText style={styles.text}>
             Always know what your friends are up to
           </CustomText>
         </TranslateFadeViewAnim>
-        {/* <Image 
-          source={ Images.starterActive } 
-          style={ imageDimensions }  
-        />
-      */}
-      </View>
-      <View style={styles.page} key="3">
         <LottieView 
-          source={ Animations.starterAnimYoutube } 
+          source={ Animations.starterAnimActive } 
           autoPlay 
           loop 
         />
+      </View>
+      <View style={styles.page} key="3">
         <TranslateFadeViewAnim style={styles.textContainer}>
           <CustomText style={styles.text}>
             Watch your favourite videos while chatting with your friends
           </CustomText>
         </TranslateFadeViewAnim>
-        {/* <Image 
-          source={ Images.starterYoutube } 
-          style={ imageDimensions }  
-        />
-       */}
-      </View>
-      <View style={styles.page} key="4">
         <LottieView 
-          source={ Animations.starterAnimGroup } 
+          source={ Animations.starterAnimYoutube } 
           autoPlay 
           loop 
         />
+      </View>
+      <View style={styles.page} key="4">
         <TranslateFadeViewAnim style={styles.textContainer}>
           <CustomText style={styles.text}>
             Create groups based on shared interests
           </CustomText>
         </TranslateFadeViewAnim>
-        {/* <Image 
-          source={ Images.starterGroup } 
-          style={ imageDimensions } 
+        <LottieView 
+          source={ Animations.starterAnimGroup } 
+          autoPlay 
+          loop 
         />
-       */}
       </View>
     </ViewPager>
   );
@@ -113,10 +94,11 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     position: 'absolute',
-    top: '74%'
+    top: 140,
+    zIndex: 2
   },
   text: {
-    textAlign: 'center' 
+    textAlign: 'center'
   }
 });
 

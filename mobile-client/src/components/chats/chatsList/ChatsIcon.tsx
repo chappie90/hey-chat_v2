@@ -1,15 +1,25 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import LottieView from 'lottie-react-native';
 
-import ScaleImageAnim from 'components/animations/ScaleImageAnim';
 import TranslateFadeViewAnim from 'components/animations/TranslateFadeViewAnim';
 import CustomText from 'components/CustomText';
-import { Images } from 'assets';
+import { Animations } from 'assets';
 
 const ChatsIcon = () => {
+  const { width: windowWidth } = useWindowDimensions();
+
   return (
     <View style={styles.imageContainer}>
-      <ScaleImageAnim style={styles.image} source={ Images.chatsBig } />
+      <LottieView 
+        source={ Animations.myChats } 
+        style={{
+          width: windowWidth / 1.7,
+          height: windowWidth / 1.7
+        }}
+        autoPlay 
+        loop={false}
+      />
       <TranslateFadeViewAnim>
         <CustomText style={styles.imageCaption}>Stay in touch with your loved ones</CustomText>
       </TranslateFadeViewAnim>
@@ -23,10 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: '10%'
-  },
-  image: {
-    width: 100,
-    height: 100
   },
   imageCaption: {
     textAlign: 'center',

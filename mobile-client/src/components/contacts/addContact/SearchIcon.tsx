@@ -2,7 +2,8 @@ import React from 'react';
 import { 
   View, 
   StyleSheet,
-  Image
+  Image,
+  useWindowDimensions
 } from 'react-native';
 
 import ScaleImageAnim from 'components/animations/ScaleImageAnim';
@@ -15,10 +16,20 @@ type SearchIconProps = {
 };
 
 const SearchIcon = ({ isFirstRender }: SearchIconProps) => {
+  const { width: windowWidth } = useWindowDimensions();
+  const imageWidth = windowWidth - 120;
+  const imageHeight = (windowWidth - 120 ) / 1.4;
+
   if (isFirstRender) {
     return (
       <View style={styles.imageContainer}>
-        <ScaleImageAnim style={styles.image} source={ Images.searchGreenBig } />
+        <ScaleImageAnim 
+          style={{
+            width: imageWidth,
+            height: imageHeight
+          }} 
+          source={ Images.findContacts } 
+        />
         <TranslateFadeViewAnim>
           <CustomText style={styles.imageCaption}>Stay in touch with your loved ones</CustomText>
         </TranslateFadeViewAnim>
@@ -28,7 +39,13 @@ const SearchIcon = ({ isFirstRender }: SearchIconProps) => {
   
   return (
     <View style={styles.imageContainer}>
-      <Image style={styles.image} source={ Images.searchGreenBig } />
+      <Image 
+        style={{
+          width: imageWidth,
+          height: imageHeight
+        }}  
+        source={ Images.findContacts } 
+      />
       <View>
         <CustomText style={styles.imageCaption}>Stay in touch with your loved ones</CustomText>
       </View>
@@ -42,10 +59,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: '10%'
-  },
-  image: {
-    width: 100,
-    height: 100
   },
   imageCaption: {
     textAlign: 'center',

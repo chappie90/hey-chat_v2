@@ -9,6 +9,7 @@ import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
+import LottieView from 'lottie-react-native';
 
 import AddContactScreen from './modals/AddContactScreen';
 import { Colors } from 'variables';
@@ -17,6 +18,7 @@ import ToggleListTabs from 'components/contacts/contactsList/toggleListTabs';
 import AllContacts from 'components/contacts/contactsList/AllContacts';
 import ActiveContacts from 'components/contacts/contactsList/ActiveContacts';
 import ContactsIcon from 'components/contacts/contactsList/ContactsIcon';
+import { Animations } from 'assets';
 
 type ContactsScreenRouteProp = RouteProp<MainStackParams, 'Contacts'>;
 type ContactsScreenNavigationProp = CompositeNavigationProp<
