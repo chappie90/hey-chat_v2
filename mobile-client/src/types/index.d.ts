@@ -84,9 +84,9 @@ type TSender = {
 };
 
 type TReply = {
-  origMsgId: number;
-  origMsgText: string;
-  origMsgSender: string;
+  origMsgId?: string;
+  origMsgText?: string;
+  origMsgSender?: string;
 };
 
 type TLike = {

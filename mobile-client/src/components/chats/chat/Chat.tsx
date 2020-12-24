@@ -120,7 +120,12 @@ const Chat = ({
         likesCount: 0
       },
       delivered: false,
-      read: false
+      read: false,
+      reply: {
+        origMsgId: activeMsg?._id,
+        origMsgText: activeMsg?.text,
+        origMsgSender: activeMsg?.sender.name
+      }
     };
 
     const data = {
@@ -136,6 +141,11 @@ const Chat = ({
     setMessage('');
     dispatch(chatsActions.addMessage(chatIdRef.current, newMessage));
     emitNewMessage(JSON.stringify(data), socketState);
+
+    if (showReplyBox) {
+      setShowReplyBox(false);
+      setActiveMsg(null);
+    }  
   };
 
   const onEndReached = async (): Promise<void> => {
@@ -184,16 +194,19 @@ const Chat = ({
     };
     emitLikeMessage(JSON.stringify(data), socketState);
 
-    hideMessageActions();
+    setShowMsgActions(false);
+    setActiveMsg(null);
   };
 
   const onShowReplyBox = (): void => {
     setShowReplyBox(true);  
-    hideMessageActions();
+    setShowMsgActions(false);
   };
 
   const onDeleteMessage = (): void => {
-    hideMessageActions();
+    setShowMsgActions(false);
+    setActiveMsg(null);
+
     if (activeMsg) dispatch(chatsActions.markMessageForDeletion(chatIdRef.current, activeMsg?._id));
 
     const data = { 
