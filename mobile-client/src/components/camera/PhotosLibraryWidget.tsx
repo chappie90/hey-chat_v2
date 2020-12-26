@@ -18,11 +18,17 @@ import CustomText from 'components/CustomText';
 
 type CameraWidgetProps = {
   isVisible: boolean;
+  selectPhotoBtnText?: string;
   onSelectPhoto: (photoData: TCameraPhoto) => void;
   onHideLibrary: () => void; 
  };
 
-const CameraWidget = ({ isVisible, onSelectPhoto, onHideLibrary }: CameraWidgetProps) => {
+const CameraWidget = ({ 
+  isVisible, 
+  selectPhotoBtnText,
+  onSelectPhoto, 
+  onHideLibrary 
+}: CameraWidgetProps) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const opacityAnim = useRef(new Animated.Value(0));
   const opacitySelectPhotoAnim = useRef(new Animated.Value(0));
@@ -176,7 +182,9 @@ const CameraWidget = ({ isVisible, onSelectPhoto, onHideLibrary }: CameraWidgetP
           >
             <TouchableOpacity activeOpacity={0.5} onPress={() => onChoosePhoto()}>
               <View style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
-                <CustomText color={Colors.white}>Choose</CustomText>
+                <CustomText color={Colors.white}>
+                  {selectPhotoBtnText ? selectPhotoBtnText : 'Choose'}
+                </CustomText>
               </View>
             </TouchableOpacity>
           </View>

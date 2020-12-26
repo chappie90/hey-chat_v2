@@ -28,6 +28,7 @@ import ContactInvitation from './ContactInvitation';
 import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';
 import { chatsActions } from 'reduxStore/actions';
+import api from 'api';
 
 type ChatProps = {
   chatType: string;
@@ -35,6 +36,12 @@ type ChatProps = {
   contactId?: number;
   contactName?: string;
   contactProfile?: string;
+  showCamera: () => void;
+  hideCamera: () => void;
+  showLibrary: () => void;
+  hideLibrary: () => void;
+  messageImageData: TCameraPhoto | null;
+  clearMessageImageData: () => void;
 };
 
 const Chat = ({ 
@@ -42,7 +49,13 @@ const Chat = ({
   chatId, 
   contactId, 
   contactName, 
-  contactProfile 
+  contactProfile,
+  showCamera,
+  hideCamera,
+  showLibrary,
+  hideLibrary,
+  messageImageData,
+  clearMessageImageData
 }: ChatProps) => {
   const { userId, username, socketState } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
@@ -58,6 +71,7 @@ const Chat = ({
   const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
   const dispatch = useDispatch();
   const stopTypingTimeoutRef = useRef<any>(null);
+  const [showInputActions, setShowInputActions] = useState(false);
 
   const onGreeting = () => {
     onSendMessage('👋');
@@ -96,7 +110,7 @@ const Chat = ({
   };
 
 
-  const onSendMessage = (text: string): void => {
+  const onSendMessage = async (text: string, image?: string): Promise<void> => {
     scrollToEnd();
     
     let isFirstMessage: boolean = false;
@@ -115,6 +129,7 @@ const Chat = ({
         _id: 1,
         name: username
       },
+      image: image,
       liked: {
         likedByUser: false,
         likesCount: 0
@@ -140,6 +155,16 @@ const Chat = ({
 
     setMessage('');
     dispatch(chatsActions.addMessage(chatIdRef.current, newMessage));
+
+    // Upload message image to server
+    if (messageImageData) {
+      const imageName = await uploadMessageImage(newMessage._id, messageImageData);
+      // Update message image source
+      data.message.image = imageName;
+      dispatch(chatsActions.updateMessageImageSrc(chatIdRef.current, data.message._id, imageName));
+      clearMessageImageData();
+    }
+
     emitNewMessage(JSON.stringify(data), socketState);
 
     if (showReplyBox) {
@@ -226,6 +251,66 @@ const Chat = ({
     setActiveMsg(null);
   };
 
+  const hideInputToolbarActions = (): void => {
+    setShowInputActions(false);
+  };
+
+  const toggleInputToolbarActions = (): void => {
+    setShowInputActions(!showInputActions);
+  };
+
+  const uploadMessageImage = async (messageId: string, imageData: TCameraPhoto): Promise<string> => {
+    let imageUri: string,
+        imageName = '';
+
+    if (imageData.filename) {
+      imageUri = `${imageData.uri}/${imageData.filename}}`;
+    } else {
+      imageUri = imageData.uri;
+    }
+
+    const uriParts = imageUri.split('.');
+    const fileType = uriParts[uriParts.length - 1].toLowerCase();
+
+    let data = new FormData();
+    data.append('messageImage',{
+      uri: imageUri,
+      name: chatId,
+      type: `image/${fileType}`
+    });
+
+    await api.post('/message/image/upload', data, {
+      onUploadProgress: progressEvent => {
+        const totalLength = progressEvent.lengthComputable ? 
+          progressEvent.total : 
+          progressEvent.target.getResponseHeader('content-length') || 
+          progressEvent.target.getResponseHeader('x-decompressed-content-length');
+
+        if (totalLength !== null) {
+          dispatch(chatsActions.messageImageIsUploading(
+            chatIdRef.current,
+            messageId,
+            Math.round(((progressEvent.loaded * 100) / totalLength) * 0.85),
+            false
+          ));
+        }  
+      }
+    })
+    .then(response => {
+      if (response.data) {  
+        dispatch(chatsActions.messageImageIsUploading(chatIdRef.current, messageId, 100, true));
+        imageName = response.data.imageName;
+      }
+    })
+    .catch(error => {
+      console.log('Upload message image method error');
+      if (error.response) console.log(error.response.data.message);
+      if (error.message) console.log(error.message);
+    });
+
+    return imageName;
+  };
+
   useEffect(() => {
     (async () => {
       // Get messages if no previous chat history loaded
@@ -236,6 +321,14 @@ const Chat = ({
       }
     })();
   }, []);
+  
+  useEffect(() => {
+    // Add new image as message to chat
+    if (messageImageData) {
+      setShowInputActions(false);
+      onSendMessage('', messageImageData.uri);
+    }
+  }, [messageImageData]);
 
   return (
     <KeyboardAvoidingView 
@@ -315,6 +408,10 @@ const Chat = ({
             message={message} 
             onChangeText={onChangeText} 
             onSendMessage={onSendMessage}
+            showActions={showInputActions}
+            toggleActions={toggleInputToolbarActions}
+            showCamera={showCamera}
+            showLibrary={showLibrary}
           />
         </View>
       </TouchableWithoutFeedback>

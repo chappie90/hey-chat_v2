@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -6,12 +6,17 @@ import {
   TouchableWithoutFeedback, 
   useWindowDimensions,
   GestureResponderEvent, 
-  Keyboard
+  Keyboard,
+  Animated,
+  Easing
 } from 'react-native';
+import config from 'react-native-config';
+import { useSelector, useDispatch } from 'react-redux';
 
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
 import { Colors, Fonts, Headings } from 'variables';
+import { chatsActions } from 'reduxStore/actions';
 
 type MessageBubbleProps = {
   index: number;
@@ -34,8 +39,19 @@ const MessageBubble = ({
   hideMessageActions,
   onCloseReplyBox
 }: MessageBubbleProps) => {
-  const { text, reply, sender } = content;
+  const { _id: messageId, text, reply, sender, image } = content;
+  const { 
+    activeChat, 
+    activeMessage, 
+    msgImgUploadProgress, 
+    msgImgUploadFinished 
+  } = useSelector(state => state.chats);
   const windowWidth = useWindowDimensions().width;
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/chat/${activeChat.chatId}`;
+  const widthAnim = useRef(new Animated.Value(0));
+  const dispatch = useDispatch();
+  const [updateImage, setUpdateImage] = useState(false);
+  const [activeMsgId, setActiveMsgId] = useState('');
 
   const onLongPress = (event: GestureResponderEvent) => {
     onCloseReplyBox();
@@ -43,6 +59,48 @@ const MessageBubble = ({
     const pageX = userId === 1 ? windowWidth - 260 : 40;
     onShowMessageActions(content, [pageX, pageY > 180 ? pageY : 180]);
   };
+
+  useEffect(() => {
+    if (msgImgUploadFinished) {
+      setUpdateImage(true);
+      setActiveMsgId(activeMessage._id);
+
+      Animated.timing(
+        widthAnim.current, {
+          duration: 2000,
+          toValue: 1,
+          easing: Easing.quad,
+          useNativeDriver: false
+        },
+      ).start();
+
+      setTimeout(function() {
+        Animated.timing(
+          widthAnim.current, {
+            duration: 400,
+            toValue: 0,
+            easing: Easing.quad,
+            useNativeDriver: false
+          },
+        ).start();
+        setTimeout(() => {
+          dispatch(chatsActions.messageImageIsUploading(activeChat.chatId, activeMessage._id, 0, null));
+        }, 1200);
+      }, 2000);
+    }
+      
+    if (msgImgUploadProgress > 0) {
+      Animated.timing(
+          widthAnim.current, {
+            duration: 4000,
+            toValue: msgImgUploadProgress,
+            easing: Easing.quad,
+            useNativeDriver: false
+          },
+        ).start();
+    } 
+  }, [msgImgUploadProgress, msgImgUploadFinished]);
+
 
   return (
     <TouchableWithoutFeedback
@@ -79,7 +137,7 @@ const MessageBubble = ({
         }
         <View 
           style={[
-            styles.bubble,
+            image ? styles.imageBubble : styles.bubble,
             userId === 1 ? styles.rightBubble : styles.leftBubble,
             userId === 1 && sameSenderPrevMsg && styles.rightBubblePrevMsg,
             userId === 1 && sameSenderNextMsg && styles.rightBubbleNextMsg,
@@ -87,12 +145,46 @@ const MessageBubble = ({
             userId === 2 && sameSenderNextMsg && styles.leftBubbleNextMsg
           ]}
         >
-          <CustomText 
-            color={userId === 1 ? Colors.white : Colors.greyDark}
-            fontSize={Headings.headingSmall}
-          >
-            {text}
-          </CustomText>
+          {activeChat.chatId && image ? 
+            ( 
+              <View style={[
+                styles.messageImageContainer,
+                userId === 1 && sameSenderPrevMsg && styles.rightImagePrevMsg,
+                userId === 1 && sameSenderNextMsg && styles.rightImageNextMsg,
+                userId === 2 && sameSenderPrevMsg && styles.leftImagePrevMsg,
+                userId === 2 && sameSenderNextMsg && styles.leftImageNextMsg
+              ]}>
+                <Image 
+                  key={messageId === activeMsgId && updateImage ? 'true' : 'false'}
+                  style={styles.image} 
+                  source={image.includes(activeChat.chatId) ? 
+                    { uri: `${S3_BUCKET_PATH}/${image}` } :
+                    { uri: image }
+                  } 
+                  resizeMethod="scale" 
+                />
+                {activeMessage && messageId === activeMessage._id &&
+                  <Animated.View style={[
+                    styles.progressIndicator,
+                    { 
+                      width: widthAnim.current.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0%', '100%'],
+                      }) 
+                    }
+                  ]} />
+                }
+              </View>
+            ) :
+            (
+              <CustomText 
+                color={userId === 1 ? Colors.white : Colors.greyDark}
+                fontSize={Headings.headingSmall}
+              >
+                {text}
+              </CustomText>
+            )
+          }
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -104,6 +196,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 22,
     borderRadius: 35
+  },
+  imageBubble: {
+    borderRadius: 35,
+    padding: 2
   },
   leftBubble: {
     backgroundColor: Colors.yellowLight,
@@ -160,6 +256,31 @@ const styles = StyleSheet.create({
   },
   replyDetailsContainer: {
     flexShrink: 1
+  },
+  messageImageContainer: {
+    overflow: 'hidden',
+    width: 200,
+    height: 200,
+    borderRadius: 35
+  },
+  leftImagePrevMsg: {
+    borderTopLeftRadius: 4
+  },
+  leftImageNextMsg: {
+    borderBottomLeftRadius: 4
+  },
+  rightImagePrevMsg: {
+    borderTopRightRadius: 4
+  },
+  rightImageNextMsg: {
+    borderBottomRightRadius: 4
+  },
+  progressIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    height: 6,
+    backgroundColor: Colors.purpleDark
   }
 });
 

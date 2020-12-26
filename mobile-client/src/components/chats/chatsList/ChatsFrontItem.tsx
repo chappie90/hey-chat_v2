@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import Octicon from 'react-native-vector-icons/Octicons';
-import Config from 'react-native-config';
+import config from 'react-native-config';
 import { useSelector } from 'react-redux';
 
 import { Images } from 'assets';
@@ -22,15 +22,16 @@ type ChatsFrontItemProps = {
 
 const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) => {
   const { typingContacts } = useSelector(state => state.chats);
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
   return (
     <TouchableWithoutFeedback onPress={() => onChatSelect(chat, contact)}>
       <View>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
-            {contact?.profile?.image?.small.path ? (
+            {contact?.profile?.image?.small.name ? (
               <Image 
-                source={{ uri: `${Config.RN_API_BASE_URL}/${contact.profile.image.small.path}` }} 
+                source={{ uri: `${S3_BUCKET_PATH}/${contact.profile.image.small.name}` }} 
                 style={styles.image} 
               />
             ) : (

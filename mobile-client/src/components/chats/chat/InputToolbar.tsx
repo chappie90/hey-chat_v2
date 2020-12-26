@@ -17,15 +17,26 @@ type InputToolbarProps = {
   message: string;
   onChangeText: (text: string) => void;
   onSendMessage: (text: string) => void;
+  showActions: boolean;
+  toggleActions: () => void;
+  showCamera: () => void;
+  showLibrary: () => void;
 };
 
-const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProps) => {
-  const [showActions, setShowActions] = useState(false);
+const InputToolbar = ({ 
+  message, 
+  onChangeText, 
+  onSendMessage,
+  showActions,
+  toggleActions,
+  showCamera,
+  showLibrary
+}: InputToolbarProps) => {
   const backgroundColorAnim = useRef(new Animated.Value(0));
   const rotateAnim = useRef(new Animated.Value(0));
 
   const onToggleActions = (): void => {
-    setShowActions(!showActions);
+    toggleActions();
 
     Animated.timing(
       backgroundColorAnim.current, { 
@@ -45,7 +56,11 @@ const InputToolbar = ({ message, onChangeText, onSendMessage }: InputToolbarProp
 
   return (
     <View style={styles.container}>
-      <ToolbarActions isVisible={showActions} />
+      <ToolbarActions 
+        isVisible={showActions} 
+        showCamera={showCamera}
+        showLibrary={showLibrary}
+      />
       <TouchableWithoutFeedback onPress={onToggleActions}>
         <Animated.View 
           style={[

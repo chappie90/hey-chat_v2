@@ -18,6 +18,10 @@ type ChatsStackParams = {
     contactName?: string;
     contactProfile?: string;
   };
+  Call: {
+    contactId: number;
+    contactName: string;
+  };
 };
 
 type ContactsStackParams = {

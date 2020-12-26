@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, SafeAreaView, StatusBar, Text } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -12,6 +12,7 @@ import PushNotificationsManager from 'components/utility/PushNotificationsManage
 import SocketEventListeners from 'socket/EventListeners';
 import SplashScreen from 'react-native-splash-screen'
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
+import Notification from 'components/common/Notification';
 
 declare const global: {HermesInternal: null | {}};
 
@@ -32,6 +33,7 @@ const App = () => {
           <SafeAreaView style={styles.container}>
             <StatusBar barStyle='dark-content' />
             <Navigator />
+            <Notification />
           </SafeAreaView>
         </PushNotificationsManager>
       </AppStateManager>

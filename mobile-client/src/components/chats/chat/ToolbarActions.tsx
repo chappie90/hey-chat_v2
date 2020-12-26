@@ -5,9 +5,17 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 
 import { Colors } from 'variables';
 
-type ToolbarActionsProps = { isVisible: boolean };
+type ToolbarActionsProps = { 
+  isVisible: boolean,
+  showCamera: () => void;
+  showLibrary: () => void;
+};
 
-const ToolbarActions = ({ isVisible }: ToolbarActionsProps) => {
+const ToolbarActions = ({ 
+  isVisible,
+  showCamera,
+  showLibrary
+}: ToolbarActionsProps) => {
    // Camera icon animations
    const bottomPosCamAnim = useRef(new Animated.Value(0));
    const leftPosCamAnim = useRef(new Animated.Value(0));
@@ -20,14 +28,6 @@ const ToolbarActions = ({ isVisible }: ToolbarActionsProps) => {
    const widthImgAnim = useRef(new Animated.Value(0));
    const heightImgAnim = useRef(new Animated.Value(0));
    const opacityImgAnim = useRef(new Animated.Value(0));
-
-   const takePhotoHandler = () => {
-
-  };
-
-  const choosePhotoHandler = () => {
-
-  };
 
   useEffect(() => {
     // Camera icon animations
@@ -112,7 +112,7 @@ const ToolbarActions = ({ isVisible }: ToolbarActionsProps) => {
   
   return (
     <>
-      <TouchableWithoutFeedback onPress={takePhotoHandler}>
+      <TouchableWithoutFeedback onPress={showCamera}>
         <Animated.View 
           style={[
             styles.button,
@@ -128,7 +128,7 @@ const ToolbarActions = ({ isVisible }: ToolbarActionsProps) => {
           <MaterialIcon color={Colors.purpleDark} name="camera-alt" size={37} />
         </Animated.View>
       </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={choosePhotoHandler}>
+      <TouchableWithoutFeedback onPress={showLibrary}>
         <Animated.View 
           style={[
             styles.button,

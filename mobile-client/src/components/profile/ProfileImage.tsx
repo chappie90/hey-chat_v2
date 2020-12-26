@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
-import Config from 'react-native-config';
+import config from 'react-native-config';
 import { useSelector } from 'react-redux';
 
 import { Colors } from 'variables';
@@ -25,7 +25,8 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
   const opacityAnim = useRef(new Animated.Value(0));
   const pulsateAnim = useRef(new Animated.Value(0));
   const indicatorRef = useRef<AnimatedProgressWheel>(null);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('');
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/medium`;
   const pulsateLoopRef = useRef(
     Animated.loop(
       Animated.sequence([
@@ -112,8 +113,8 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
         <View style={styles.imageContainer}>
           {profileImage ?
             <Animated.Image 
-              key={`${Config.RN_API_BASE_URL}/${image}`}
-              source={{ uri: `${Config.RN_API_BASE_URL}/${image}` }}
+              key={image}
+              source={{ uri: `${S3_BUCKET_PATH}/${image}` }}
               style={[
                 styles.image,
                 { opacity: opacityAnim.current }

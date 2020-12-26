@@ -11,6 +11,9 @@ type ChatsState = {
   } | {};
   typingContacts: string[] | [];
   activeChat: TChat;
+  activeMessage: TMessage | null;
+  msgImgUploadProgress: number;
+  msgImgUploadFinished: boolean | null;
 };
 
 type ChatsAction =
@@ -31,7 +34,8 @@ type ChatsAction =
   | { type: 'reset_typing_contacts' }
   | { type: 'set_active_chat'; payload: { chat: TChat } }
   | { type: 'mute_chat'; payload: { chatId: string, newValue: boolean } }
-  | { type: 'delete_chat'; payload: { chatId: string } };
+  | { type: 'delete_chat'; payload: { chatId: string } }
+  | { type: 'update_message_image_source'; payload: { chatId: string, messageId: string, imageSource: string } };
 
 const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
@@ -153,6 +157,20 @@ const deleteChat = (userId: number, _id: number, chatId: string) => async (dispa
   }
 };
 
+const messageImageIsUploading = (
+  chatId: string, 
+  messageId: string, 
+  uploadProgress: number, 
+  uploadFinished: boolean | null
+) => {
+  return { 
+    type: 'message_image_is_uploading', 
+    payload: { chatId, messageId, uploadProgress, uploadFinished }
+  };
+};
+
+const updateMessageImageSrc = (chatId: string, messageId: string, imageName: string) => ({ type: 'update_message_image_source', payload: { chatId, messageId, imageName } });
+
 export default {
   getChats,
   addChat,
@@ -171,5 +189,7 @@ export default {
   resetTypingContacts,
   setActiveChat,
   muteChat,
-  deleteChat
+  deleteChat,
+  messageImageIsUploading,
+  updateMessageImageSrc
 };

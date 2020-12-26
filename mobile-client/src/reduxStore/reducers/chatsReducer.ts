@@ -7,13 +7,19 @@ type ChatsState = {
   } | {};
   typingContacts: string[] | [];
   activeChat: TChat | null;
+  activeMessage: TMessage | null;
+  msgImgUploadProgress: number;
+  msgImgUploadFinished: boolean | null;
 };
 
 const INITIAL_STATE: ChatsState = {
   chats: [],
   chatHistory: {},
   typingContacts: [],
-  activeChat: null
+  activeChat: null,
+  activeMessage: null,
+  msgImgUploadProgress: 0,
+  msgImgUploadFinished: null
 };
 
 export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -233,6 +239,36 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
       updatedChats = state.chats.filter((chat: TChat) => chat.chatId !== action.payload.chatId );
 
       return { ...state, chats: updatedChats };
+    case 'message_image_is_uploading':
+      const activeMessage = action.payload.uploadFinished === null ?
+        null :
+        state.chatHistory[action.payload.chatId].messages.filter(
+          (msg: TMessage) => msg._id === action.payload.messageId
+      )[0];
+
+      return {
+        ...state,
+        activeMessage,
+        msgImgUploadProgress: action.payload.uploadProgress,
+        msgImgUploadFinished: action.payload.uploadFinished
+      };
+    case 'update_message_image_source':
+      updatedMessages = state.chatHistory[action.payload.chatId].messages.map((msg: TMessage) => {
+        return msg._id === action.payload.messageId ?
+          {  ...msg, image: action.payload.imageName } :
+          msg
+      });
+
+      return {
+        ...state,
+        chatHistory: {
+          ...state.chatHistory,
+          [action.payload.chatId]: {
+            ...state.chatHistory[action.payload.chatId],
+            messages: updatedMessages
+          }
+        }
+      };
     default:
       return state;
   }
