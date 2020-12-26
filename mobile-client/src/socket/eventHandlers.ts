@@ -1,7 +1,14 @@
 import { Dispatch } from 'redux';
+import { showMessage } from "react-native-flash-message";
 
-import { authActions, contactsActions, chatsActions } from 'reduxStore/actions';
+import { 
+  authActions, 
+  contactsActions, 
+  chatsActions,
+  videoCallActions 
+} from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead } from './eventEmitters';
+import { Colors, Fonts, Headings } from 'variables';
 
 const onGetContacts = (data: string, dispatch: Dispatch) => {
   const { contacts } = JSON.parse(data);
@@ -142,6 +149,19 @@ const onChatRestored = (data: string, dispatch: Dispatch) => {
   dispatch(chatsActions.addChat(restoredChat));
 };
 
+const onIncomingVideoCallReceived = (data: string, dispatch: Dispatch) => {
+  const { callerId, callerName, offer } = JSON.parse(data);
+  dispatch(videoCallActions.receiveIncomingCall(callerId, callerName, offer));
+  showMessage({ 
+    message: '',
+    style: { borderRadius: 24 },
+    backgroundColor: Colors.purpleDark,
+    autoHide: false,
+    floating: true,
+    icon: 'auto'
+  });
+};
+
 export default {
   onGetContacts,
   onGetOnlineContacts,
@@ -158,5 +178,6 @@ export default {
   onContactIsTyping,
   onContactStoppedTyping,
   onUserConnected,
-  onChatRestored
+  onChatRestored,
+  onIncomingVideoCallReceived
 };

@@ -95,6 +95,11 @@ const SocketEventListeners = () => {
         eventHandlers.onUserConnected(dispatch);
       });
 
+      // User has received video call offer
+      socketState.on('incoming_video_call_received', (data: string) => {
+        eventHandlers.onIncomingVideoCallReceived(data, dispatch);
+      });
+
       // User has sent message after deleting chat
       // Restore chat
       socketState.on('chat_restored', (data: string) => {

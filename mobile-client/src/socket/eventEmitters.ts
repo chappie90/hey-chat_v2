@@ -26,3 +26,7 @@ export const emitStartTyping = (data: string, socket: any) => {
 export const emitStopTyping = (data: string, socket: any) => {
   socket.emit('stop_typing', data);
 };
+
+export const emitMakeOutgoingVideoCall = (data: string, socket: any) => {
+  socket.emit('make_outgoing_video_call', data);
+};

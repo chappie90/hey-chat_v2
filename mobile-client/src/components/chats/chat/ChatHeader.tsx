@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import config from 'react-native-config';
 import { useSelector } from 'react-redux';
@@ -19,6 +20,12 @@ type ChatHeaderProps = {
 const ChatHeader = ({ chatType, contactId, contactName, contactProfile }: ChatHeaderProps) => {
   const { typingContacts } = useSelector(state => state.chats);
   const navigation = useNavigation();
+
+  const onCallConctact = (): void => {
+    const routeParams = { contactName, contactId };
+
+    navigation.navigate('Call', routeParams);
+  };
 
   return (
     <View style={styles.container}>
@@ -44,6 +51,11 @@ const ChatHeader = ({ chatType, contactId, contactName, contactProfile }: ChatHe
           {contactName}
           {typingContacts.includes(contactId) && ' is typing...'}
         </CustomText>
+        <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={onCallConctact}>
+          <View style={styles.callButton}>
+            <MaterialIcon name="call" size={32} color={Colors.yellowDark} /> 
+          </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.bottom}></View>
     </View>
@@ -60,7 +72,8 @@ const styles = StyleSheet.create({
   top: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8
+    paddingVertical: 8,
+    paddingHorizontal: 20
   },
   bottom: {
     height: 60,
@@ -69,7 +82,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 35,
   },
   backButton: {
-    marginLeft: 20,
     marginRight: 10
   },
   imageContainer: {
@@ -84,6 +96,8 @@ const styles = StyleSheet.create({
     width: '100%', 
     height: '100%'
   },
+  callButton: {
+  }
 });
 
 export default ChatHeader;

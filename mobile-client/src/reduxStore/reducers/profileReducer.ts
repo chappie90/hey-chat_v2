@@ -1,11 +1,11 @@
 import { Reducer } from 'redux';
 
 type ProfileState = {
-  profileImage: string | null;
+  profileImage: string;
 };
 
 const INITIAL_STATE: ProfileState = {
-  profileImage: null
+  profileImage: ''
 };
 
 export const profileReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -16,7 +16,7 @@ export const profileReducer: Reducer = (state = INITIAL_STATE, action) => {
       return { ...state, profileImage: action.payload };
     case 'delete_image':
       return {
-        profileImage: null
+        profileImage: ''
       };
     default:
       return state;

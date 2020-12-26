@@ -8,6 +8,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import ChatsScreen from 'screens/ChatsScreen';
 import CurrentChatScreen from 'screens/CurrentChatScreen';
+import CallScreen from 'screens/CallScreen';
 import ContactsScreen from 'screens/ContactsScreen';
 import ProfileScreen from 'screens/ProfileScreen';
 import CustomTabBar from './CustomTabBar';
@@ -37,6 +38,10 @@ const ChatsStackNavigator = () => {
         name="CurrentChat" 
         component={CurrentChatScreen} 
         options={{ headerShown: false }}
+      />
+      <ChatsStack.Screen 
+        name="Call" 
+        component={CallScreen} 
       />
     </ChatsStack.Navigator>
   );

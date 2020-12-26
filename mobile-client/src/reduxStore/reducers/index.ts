@@ -3,10 +3,12 @@ import { authReducer } from './authReducer';
 import { contactsReducer } from './contactsReducer';
 import { chatsReducer } from './chatsReducer';
 import { profileReducer } from './profileReducer';
+import { videoCallReducer } from './videoCallReducer';
 
 export default combineReducers({
     auth: authReducer,
     contacts: contactsReducer,
     chats: chatsReducer,
-    profile: profileReducer
+    profile: profileReducer,
+    video: videoCallReducer
 });

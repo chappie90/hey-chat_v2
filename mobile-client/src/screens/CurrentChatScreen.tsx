@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux'
@@ -7,6 +7,8 @@ import { authActions, chatsActions } from 'reduxStore/actions';
 import Chat from 'components/chats/chat/Chat';
 import ChatHeader from 'components/chats/chat/ChatHeader';
 import { Colors } from 'variables';
+import CameraWidget from 'components/camera/CameraWidget';
+import PhotosLibraryWidget from 'components/camera/PhotosLibraryWidget';
 
 type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat'>;
 
@@ -14,6 +16,21 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
   const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
   const { chats } = useSelector(state => state.chats);
   const dispatch = useDispatch();
+  const [isVisibleCamera, setIsVisibleCamera] = useState(false);
+  const [isVisibleLibrary, setIsVisibleLibrary] = useState(false);
+  const [messageImageData, setMessageImageData] = useState<TCameraPhoto | null>(null);
+
+  const showCamera = (): void => setIsVisibleCamera(true);
+
+  const hideCamera = (): void => setIsVisibleCamera(false);
+
+  const showLibrary = (): void => setIsVisibleLibrary(true);
+
+  const hideLibrary = (): void => setIsVisibleLibrary(false);
+
+  const clearMessageImageData = (): void => setMessageImageData(false);
+
+  const onSelectPhoto = (photoData: TCameraPhoto): void => setMessageImageData(photoData);
 
   useEffect(() => {
     dispatch(authActions.getCurrentScreen(route.name));
@@ -40,6 +57,24 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
         contactId={contactId}
         contactName={contactName} 
         contactProfile={contactProfile} 
+        showCamera={showCamera}
+        hideCamera={hideCamera}
+        showLibrary={showLibrary}  
+        hideLibrary={hideLibrary}
+        messageImageData={messageImageData}
+        clearMessageImageData={clearMessageImageData}
+      />
+      <CameraWidget 
+        isVisible={isVisibleCamera}
+        selectPhotoBtnText='Send'
+        onSelectPhoto={onSelectPhoto} 
+        onHideCamera={hideCamera}
+      />
+      <PhotosLibraryWidget 
+        isVisible={isVisibleLibrary} 
+        selectPhotoBtnText='Send'
+        onSelectPhoto={onSelectPhoto}
+        onHideLibrary={hideLibrary}
       />
     </View>
   );
