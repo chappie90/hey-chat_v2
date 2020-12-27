@@ -30,22 +30,33 @@ type CallScreenProps = StackScreenProps<ChatsStackParams, 'Call'>;
 const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { contactId, contactName } = route.params;
   const { userId, username, socketState } = useSelector(state => state.auth);
-  const { RTCPeerConnection } = useSelector(state => state.video);
   const dispatch = useDispatch();
   const [calling, setCalling] = useState(false);
   const [localStream, setLocalStream] = useState({toURL: () => null});
   const [remoteStream, setRemoteStream] = useState({toURL: () => null});
-
   const [offer, setOffer] = useState(null);
-
   const [callToUsername, setCallToUsername] = useState(null);
+  const [RTCConnection, setRTCConnection] = useState(
+    new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: 'stun:stun.l.google.com:19302',  
+        }, {
+          urls: 'stun:stun1.l.google.com:19302',    
+        }, {
+          urls: 'stun:stun2.l.google.com:19302',    
+        }
+
+      ],
+    })
+  );
 
   const onCallContact = () => {
     setCalling(true);
 
     // Create an offer
-    RTCPeerConnection.createOffer().then((offer: any) => {
-      RTCPeerConnection.setLocalDescription(offer).then(() => {
+    RTCConnection.createOffer().then((offer: any) => {
+      RTCConnection.setLocalDescription(offer).then(() => {
         // Check if contact online. Emit event if online, do some Push Kit magic if not?
         const data = { callerId: userId, callerName: username, recipientId: contactId, offer };
         emitMakeOutgoingVideoCall(JSON.stringify(data), socketState);
@@ -53,28 +64,13 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     });
   };
 
-  const createRTCPeerConnection = (): any => {
-    return new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: ['stun:stun.l.google.com:19302'],  
-        }, {
-          urls: ['stun:stun1.l.google.com:19302'],    
-        }, {
-          urls: ['stun:stun2.l.google.com:19302'],    
-        }
-
-      ],
-    });
-  };
+  useEffect(() => {
+    if (RTCConnection) dispatch(videoCallActions.setRTCPeerConnection(RTCConnection));
+  }, [RTCConnection]);
 
   useEffect(() => {
-    dispatch(videoCallActions.setRTCPeerConnection(createRTCPeerConnection()));
-  }, []);
-
-  useEffect(() => {
-    if (RTCPeerConnection) onCallContact();
-  }, [RTCPeerConnection]);
+    if (RTCConnection) onCallContact();
+  }, [RTCConnection]);
 
   // useEffect(() => {
   //   if (socketState && userId) {

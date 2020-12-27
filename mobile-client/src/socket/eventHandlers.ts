@@ -1,5 +1,4 @@
 import { Dispatch } from 'redux';
-import { showMessage } from "react-native-flash-message";
 
 import { 
   authActions, 
@@ -9,6 +8,8 @@ import {
 } from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead } from './eventEmitters';
 import { Colors, Fonts, Headings } from 'variables';
+import { RTCSessionDescription } from 'react-native-webrtc';
+import { useNavigation } from '@react-navigation/native';
 
 const onGetContacts = (data: string, dispatch: Dispatch) => {
   const { contacts } = JSON.parse(data);
@@ -152,14 +153,17 @@ const onChatRestored = (data: string, dispatch: Dispatch) => {
 const onIncomingVideoCallReceived = (data: string, dispatch: Dispatch) => {
   const { callerId, callerName, offer } = JSON.parse(data);
   dispatch(videoCallActions.receiveIncomingCall(callerId, callerName, offer));
-  showMessage({ 
-    message: '',
-    style: { borderRadius: 24 },
-    backgroundColor: Colors.purpleDark,
-    autoHide: false,
-    floating: true,
-    icon: 'auto'
-  });
+};
+
+const onVideoCallAccepted = (data: string, RTCPeerConnection: any) => {
+  const { answer } = JSON.parse(data);
+  RTCPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+};
+
+const onVideoCallRejected = (dispatch: Dispatch) => {
+  dispatch(videoCallActions.setRTCPeerConnection(null));
+  const navigation = useNavigation();
+  navigation.goBack();
 };
 
 export default {
@@ -179,5 +183,7 @@ export default {
   onContactStoppedTyping,
   onUserConnected,
   onChatRestored,
-  onIncomingVideoCallReceived
+  onIncomingVideoCallReceived,
+  onVideoCallAccepted,
+  onVideoCallRejected
 };

@@ -12,14 +12,12 @@ import PushNotificationsManager from 'components/utility/PushNotificationsManage
 import SocketEventListeners from 'socket/EventListeners';
 import SplashScreen from 'react-native-splash-screen'
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
-import Notification from 'components/common/Notification';
 
 declare const global: {HermesInternal: null | {}};
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const App = () => {
-
   useEffect(() => {
     SplashScreen.hide();
   }, [])
@@ -33,7 +31,6 @@ const App = () => {
           <SafeAreaView style={styles.container}>
             <StatusBar barStyle='dark-content' />
             <Navigator />
-            <Notification />
           </SafeAreaView>
         </PushNotificationsManager>
       </AppStateManager>

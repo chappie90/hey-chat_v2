@@ -7,6 +7,7 @@ import eventHandlers from './eventHandlers';
 const SocketEventListeners = () => {
   const { userId, username, socketState, currentScreen } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
+  const { RTCPeerConnection } = useSelector(state => state.video);
   const currentScreenRef = useRef('');
   const dispatch = useDispatch();
 
@@ -95,16 +96,27 @@ const SocketEventListeners = () => {
         eventHandlers.onUserConnected(dispatch);
       });
 
-      // User has received video call offer
-      socketState.on('incoming_video_call_received', (data: string) => {
-        eventHandlers.onIncomingVideoCallReceived(data, dispatch);
-      });
-
       // User has sent message after deleting chat
       // Restore chat
       socketState.on('chat_restored', (data: string) => {
         eventHandlers.onChatRestored(data, dispatch);
       });
+
+      // User has received video call offer
+      socketState.on('incoming_video_call_received', (data: string) => {
+        eventHandlers.onIncomingVideoCallReceived(data, dispatch);
+      });
+
+      // User has accepted video call
+      socketState.on('video_call_accepted', (data: string) => {
+        eventHandlers.onVideoCallAccepted(data, RTCPeerConnection);
+      });
+
+      // User has rejected video call
+      socketState.on('video_call_rejected', () => {
+        eventHandlers.onVideoCallRejected(dispatch);
+      });
+
 
     }
   }, [socketState]);

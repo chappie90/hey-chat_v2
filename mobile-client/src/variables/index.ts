@@ -6,9 +6,10 @@ export const Colors = {
   purpleDark: '#776ebf',
   greyLight: '#eaeaea',
   greyDark: '#343434',
+  greyLogo: '#232323',
   white: '#fff',
   black: '#000',
-  red: '#e50000',
+  red: '#f5414F',
   greenLight: '#65ff00'
 };
 

@@ -30,3 +30,11 @@ export const emitStopTyping = (data: string, socket: any) => {
 export const emitMakeOutgoingVideoCall = (data: string, socket: any) => {
   socket.emit('make_outgoing_video_call', data);
 };
+
+export const emitAcceptVideoCall = (data: string, socket: any) => {
+  socket.emit('accept_video_call', data);
+};
+
+export const emitRejectVideoCall = (data: string, socket: any) => {
+  socket.emit('reject_video_call', data);
+};

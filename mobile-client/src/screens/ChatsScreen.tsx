@@ -11,6 +11,7 @@ import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
 import ChatsList from 'components/chats/chatsList/ChatsList';
 import { chatsActions } from 'reduxStore/actions';
+import IncomingCallNotification from 'components/video/IncomingCallNotification';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -26,6 +27,7 @@ type ChatsScreenProps = {
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   const { userId } = useSelector(state => state.auth);
   const { chats } = useSelector(state => state.chats);
+  const { incomingCall: { callerId } } = useSelector(state => state.video);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
@@ -43,6 +45,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   return (
     <View style={styles.container}>
+      <IncomingCallNotification />
       <ChatsHeader openModal={openModal} />
       {isLoading ? 
         (
