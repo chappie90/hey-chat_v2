@@ -18,7 +18,7 @@ type ChatsStackParams = {
     contactName?: string;
     contactProfile?: string;
   };
-  Call: {
+  VideoCall: {
     contactId: number;
     contactName: string;
   };
