@@ -1,18 +1,37 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
+import LottieView from 'lottie-react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import RNSplashScreen from 'react-native-splash-screen'
+
+import { Animations } from 'assets';
+import { authActions } from 'reduxStore/actions';
 
 const SplashScreen = () => {
+  const { initialLoad } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  const onAnimationFinish = (): void => {
+    dispatch(authActions.setIsInitialLoad(false));
+  };
+
+  useEffect(() => {
+    RNSplashScreen.hide();
+  }, []);
+
+  if (!initialLoad) return <></>;
+
   return (
-    <View style={styles.container}>
-      <Text>SplashScreen</Text>
-    </View>
+    <>
+      <StatusBar barStyle='light-content' />
+      <LottieView 
+        source={ Animations.splash } 
+        autoPlay 
+        loop={false}
+        onAnimationFinish={onAnimationFinish}
+      />
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
 
 export default SplashScreen;

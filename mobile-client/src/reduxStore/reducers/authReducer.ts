@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 
 type AuthState = {
+  initialLoad: boolean;
   userId: number | null;
   username: string | null;
   token: string | null;
@@ -10,6 +11,7 @@ type AuthState = {
 };
 
 const INITIAL_STATE: AuthState = {
+  initialLoad: true,
   userId: null,
   username: null,
   token: null,
@@ -20,6 +22,11 @@ const INITIAL_STATE: AuthState = {
 
 export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case 'set_is_initial_load':
+      return {
+        ...state,
+        initialLoad: action.payload
+      };
     case 'signin':
       return { 
         userId: action.payload.userId,

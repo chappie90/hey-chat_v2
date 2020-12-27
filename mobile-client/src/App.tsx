@@ -10,7 +10,6 @@ import Navigator from 'navigation/Navigator';
 import AppStateManager from 'components/utility/AppStateManager';
 import PushNotificationsManager from 'components/utility/PushNotificationsManager';
 import SocketEventListeners from 'socket/EventListeners';
-import SplashScreen from 'react-native-splash-screen'
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
 
 declare const global: {HermesInternal: null | {}};
@@ -18,10 +17,6 @@ declare const global: {HermesInternal: null | {}};
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const App = () => {
-  useEffect(() => {
-    SplashScreen.hide();
-  }, [])
-
   return (
     <Provider store={store}>
       <BackgroundTasksManager />

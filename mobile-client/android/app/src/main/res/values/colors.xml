@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="splashscreen_bg">#202020</color>
+    <color name="splashscreen_bg">#232323</color>
     <color name="app_bg">#202020</color>
+    <color name="primary_dark">#4F6D7A</color>
 </resources>
