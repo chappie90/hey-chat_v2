@@ -5,10 +5,6 @@ import LottieView from 'lottie-react-native';
 
 import { Animations } from 'assets';
 import CustomText from './CustomText';
-import ScaleImageAnim from 'components/animations/ScaleImageAnim';
-import TranslateFadeViewAnim from 'components/animations/TranslateFadeViewAnim';
-import { Colors, Fonts, Headings } from 'variables';
-
 
 type StarterPagerProps = {
   onPageChange: (activeIndex: number) => void;
@@ -28,11 +24,11 @@ const StarterPager = ({ onPageChange }: StarterPagerProps) => {
       onPageScroll={(e) => onPageChange(e.nativeEvent.position)}
     >
       <View style={styles.page} key="1">
-        <TranslateFadeViewAnim style={styles.textContainer}>
+        <View style={styles.textContainer}>
           <CustomText style={styles.text}>
             Stay in touch with the people you love
           </CustomText>
-        </TranslateFadeViewAnim>
+        </View>
         <LottieView 
           source={ Animations.starterAnimChat } 
           autoPlay 
@@ -40,11 +36,11 @@ const StarterPager = ({ onPageChange }: StarterPagerProps) => {
         />
       </View>
       <View style={styles.page} key="2">
-        <TranslateFadeViewAnim style={styles.textContainer}>
+        <View style={styles.textContainer}>
           <CustomText style={styles.text}>
             Always know what your friends are up to
           </CustomText>
-        </TranslateFadeViewAnim>
+        </View>
         <LottieView 
           source={ Animations.starterAnimActive } 
           autoPlay 
@@ -52,11 +48,11 @@ const StarterPager = ({ onPageChange }: StarterPagerProps) => {
         />
       </View>
       <View style={styles.page} key="3">
-        <TranslateFadeViewAnim style={styles.textContainer}>
+        <View style={styles.textContainer}>
           <CustomText style={styles.text}>
             Watch your favourite videos while chatting with your friends
           </CustomText>
-        </TranslateFadeViewAnim>
+        </View>
         <LottieView 
           source={ Animations.starterAnimYoutube } 
           autoPlay 
@@ -64,11 +60,11 @@ const StarterPager = ({ onPageChange }: StarterPagerProps) => {
         />
       </View>
       <View style={styles.page} key="4">
-        <TranslateFadeViewAnim style={styles.textContainer}>
+        <View style={styles.textContainer}>
           <CustomText style={styles.text}>
             Create groups based on shared interests
           </CustomText>
-        </TranslateFadeViewAnim>
+        </View>
         <LottieView 
           source={ Animations.starterAnimGroup } 
           autoPlay 
@@ -94,7 +90,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     position: 'absolute',
-    top: 140,
+    top: 120,
     zIndex: 2
   },
   text: {

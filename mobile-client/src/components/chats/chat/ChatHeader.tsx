@@ -24,7 +24,7 @@ const ChatHeader = ({ chatType, contactId, contactName, contactProfile }: ChatHe
   const onCallConctact = (): void => {
     const routeParams = { contactName, contactId };
 
-    navigation.navigate('Call', routeParams);
+    navigation.navigate('VideoCall', routeParams);
   };
 
   return (

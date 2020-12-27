@@ -13,7 +13,7 @@ const ScaleViewAnim = ({ style, children }: ScaleViewAnimProps) => {
     Animated.spring(
       scaleAnim, { 
         toValue: 1, 
-        delay: 800,
+        delay: 400,
         useNativeDriver: true 
       }
     ).start();

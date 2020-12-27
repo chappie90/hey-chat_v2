@@ -11,7 +11,6 @@ import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
 import ChatsList from 'components/chats/chatsList/ChatsList';
 import { chatsActions } from 'reduxStore/actions';
-import IncomingCallNotification from 'components/video/IncomingCallNotification';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -45,7 +44,6 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <IncomingCallNotification />
       <ChatsHeader openModal={openModal} />
       {isLoading ? 
         (

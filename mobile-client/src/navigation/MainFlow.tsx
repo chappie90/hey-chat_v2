@@ -106,7 +106,7 @@ const MainFlow = () => {
         component={ProfileScreen} 
         options={{
           tabBarIcon: ({ size, focused }) => (
-            <MaterialIcon name="account-balance" size={size} color={focused ? Colors.white : Colors.darkGrey} />
+            <MaterialIcon name="account-balance" size={size} color={focused ? Colors.white : Colors.greyDark} />
           )
         }}
       />

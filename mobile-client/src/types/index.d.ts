@@ -63,7 +63,7 @@ type TContact = {
   _id: number;
   username: string;
   profile?: TUserProfile;
-  chatId?: number;
+  chatId?: string;
   pending?: boolean;
   online: boolean;
 };

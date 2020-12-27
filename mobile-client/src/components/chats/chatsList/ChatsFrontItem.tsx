@@ -22,6 +22,7 @@ type ChatsFrontItemProps = {
 
 const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) => {
   const { typingContacts } = useSelector(state => state.chats);
+  const { onlineContacts } = useSelector(state => state.contacts);
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
   return (
@@ -91,9 +92,10 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
           </View>
           <View style={styles.divider} />
         </View>
-        {/* {onlineContacts.includes(rowData.item.contact) && ( */}
+        {onlineContacts.length > 0 &&
+          onlineContacts.filter((contact: TContact) => contact.chatId === chat.chatId)[0].online &&
           <View style={styles.isOnlineBadge} />
-        {/* )}   */}
+        }
         </View>
       </TouchableWithoutFeedback>
   );
@@ -150,13 +152,13 @@ const styles = StyleSheet.create({
   },
   isOnlineBadge: {
     backgroundColor: Colors.greenLight, 
-    width: 15, 
-    height: 15, 
-    borderRadius: 7, 
+    width: 18, 
+    height: 18, 
+    borderRadius: 9, 
     borderWidth: 2, 
     borderColor: Colors.white,
     position: 'absolute', 
-    bottom: 9, 
+    bottom: 8, 
     left: 16
   },
   unreadBadge: {

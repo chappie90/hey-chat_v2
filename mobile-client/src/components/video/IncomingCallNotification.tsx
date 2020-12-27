@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,36 +24,35 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
   const { userId, socketState } = useSelector(state => state.auth);
   const { incomingCall: { callerId, callerName, offer } } = useSelector(state => state.video);
   const dispatch = useDispatch();
-
-  const createRTCPeerConnection = (): any => {
-    return new RTCPeerConnection({
+  const [RTCConnection, setRTCConnection] = useState(
+    new RTCPeerConnection({
       iceServers: [
         {
-          urls: ['stun:stun.l.google.com:19302'],  
+          urls: 'stun:stun.l.google.com:19302',  
         }, {
-          urls: ['stun:stun1.l.google.com:19302'],    
+          urls: 'stun:stun1.l.google.com:19302',    
         }, {
-          urls: ['stun:stun2.l.google.com:19302'],    
+          urls: 'stun:stun2.l.google.com:19302',    
         }
 
       ],
-    });
-  };
+    })
+  );
   
   const onAcceptCall = async (): Promise<void> => {
-    const RTCPeerConnection = createRTCPeerConnection();
-    try {
-      await RTCPeerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    console.log(offer)
+      try {
+        await RTCConnection.setRemoteDescription(new RTCSessionDescription(offer));
 
-      const answer = await RTCPeerConnection.createAnswer();
+        const answer = await RTCConnection.createAnswer();
 
-      await RTCPeerConnection.setLocalDescription(answer);
+        await RTCConnection.setLocalDescription(answer);
 
-      const data = { callerId, recipientId: userId, answer };
-      emitAcceptVideoCall(JSON.stringify(data), socketState)
-    } catch (err) {
-      console.log('Offerr Error', err);
-    }
+        const data = { callerId, recipientId: userId, answer };
+        emitAcceptVideoCall(JSON.stringify(data), socketState)
+      } catch (err) {
+        console.log('Offerr Error', err);
+      }
   };
 
   const onRejectCall = (): void => {
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     zIndex: 10,
-    top: 25,
+    top: 45,
     left: 20,
     right: 20,
     flexDirection: 'row',
