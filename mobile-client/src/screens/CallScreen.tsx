@@ -23,31 +23,19 @@ import InCallManager from 'react-native-incall-manager';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import { emitMakeOutgoingVideoCall } from 'socket/eventEmitters';
+import { videoCallActions } from 'reduxStore/actions';
 
 type CallScreenProps = StackScreenProps<ChatsStackParams, 'Call'>;
 
 const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { contactId, contactName } = route.params;
   const { userId, username, socketState } = useSelector(state => state.auth);
-  const [stream, setStream] = useState<boolean>(null);
+  const { RTCPeerConnection } = useSelector(state => state.video);
+  const dispatch = useDispatch();
   const [calling, setCalling] = useState(false);
   const [localStream, setLocalStream] = useState({toURL: () => null});
   const [remoteStream, setRemoteStream] = useState({toURL: () => null});
-  const [RTCConn, setRTCConn] = useState(
-    //change the config as you need
-    new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302',  
-        }, {
-          urls: 'stun:stun1.l.google.com:19302',    
-        }, {
-          urls: 'stun:stun2.l.google.com:19302',    
-        }
 
-      ],
-    }),
-  );
   const [offer, setOffer] = useState(null);
 
   const [callToUsername, setCallToUsername] = useState(null);
@@ -55,11 +43,9 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const onCallContact = () => {
     setCalling(true);
 
-    console.log('Calling ' + contactName);
-
     // Create an offer
-    RTCConn.createOffer().then(offer => {
-      RTCConn.setLocalDescription(offer).then(() => {
+    RTCPeerConnection.createOffer().then((offer: any) => {
+      RTCPeerConnection.setLocalDescription(offer).then(() => {
         // Check if contact online. Emit event if online, do some Push Kit magic if not?
         const data = { callerId: userId, callerName: username, recipientId: contactId, offer };
         emitMakeOutgoingVideoCall(JSON.stringify(data), socketState);
@@ -67,9 +53,28 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     });
   };
 
+  const createRTCPeerConnection = (): any => {
+    return new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: ['stun:stun.l.google.com:19302'],  
+        }, {
+          urls: ['stun:stun1.l.google.com:19302'],    
+        }, {
+          urls: ['stun:stun2.l.google.com:19302'],    
+        }
+
+      ],
+    });
+  };
+
   useEffect(() => {
-    onCallContact();
+    dispatch(videoCallActions.setRTCPeerConnection(createRTCPeerConnection()));
   }, []);
+
+  useEffect(() => {
+    if (RTCPeerConnection) onCallContact();
+  }, [RTCPeerConnection]);
 
   // useEffect(() => {
   //   if (socketState && userId) {
