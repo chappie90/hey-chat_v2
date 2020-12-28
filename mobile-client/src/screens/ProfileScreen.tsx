@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 
 import api from 'api';
 import { authActions, profileActions } from 'reduxStore/actions';
@@ -119,6 +120,15 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   useEffect(() => {
     dispatch(profileActions.getProfileImage(userId));
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+
+      return () => {
+        setShowImageActions(false);
+      };
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

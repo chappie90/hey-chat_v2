@@ -58,7 +58,7 @@ const ContactsStackNavigator = () => {
       <ContactsStack.Screen 
         name="CurrentChat" 
         component={CurrentChatScreen} 
-        options={({ route }) => ({ title: route.params.contactName })}
+        options={{ headerShown: false }}
       />
     </ContactsStack.Navigator>
   );
