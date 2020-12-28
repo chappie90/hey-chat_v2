@@ -28,7 +28,7 @@ type ContactsStackParams = {
   Contacts: undefined;
   CurrentChat: {
     chatType: string;
-    chatId: string;
+    chatId: string | undefined;
     contactId: number;
     contactName: string;
     contactProfile?: string;
