@@ -64,7 +64,7 @@ const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) 
             toggleModals={toggleModals}
             toggleOpacityArrow={toggleOpacityArrow}
           />
-          {Platform.OS === 'ios' && <KeyboardAvoidingView behavior="padding" />}
+          <KeyboardAvoidingView behavior="padding"  />
         </View>
       </TouchableWithoutFeedback>
     </Modal>

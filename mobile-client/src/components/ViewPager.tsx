@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import ViewPager from '@react-native-community/viewpager';
 import LottieView from 'lottie-react-native';
 
@@ -11,12 +11,6 @@ type StarterPagerProps = {
 };
 
 const StarterPager = ({ onPageChange }: StarterPagerProps) => {
-  const window = useWindowDimensions();
-  const imageDimensions = {
-    width: window.width * 0.85,
-    height: window.width * 0.85 / 1.522
-  };
-
   return (
     <ViewPager
       style={styles.viewPager} 
@@ -84,9 +78,7 @@ const styles = StyleSheet.create({
     bottom: 0
   },
   page: {
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 25
   },
   textContainer: {
     position: 'absolute',
