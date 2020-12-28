@@ -1,8 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import { event } from 'react-native-reanimated';
 import { useSelector, useDispatch } from 'react-redux';
+import { navigate } from 'navigation/NavigationRef';
 
-import eventHandlers from './eventHandlers';
+import { 
+  authHandlers,
+  contactsHandlers,
+  chatsHandlers,
+  profileHandlers,
+  videoCallHandlers
+} from './eventHandlers';
 
 const SocketEventListeners = () => {
   const { userId, username, socketState, currentScreen } = useSelector(state => state.auth);
@@ -20,12 +26,12 @@ const SocketEventListeners = () => {
     if (socketState) {
       // User has successfully connected
       socketState.on('get_contacts', (data: string) => {
-        eventHandlers.onGetContacts(data, dispatch);
+        contactsHandlers.onGetContacts(data, dispatch);
       });
 
       // User has successfully connected
       socketState.on('get_online_contacts', (data: string) => {
-        eventHandlers.onGetOnlineContacts(data, dispatch);
+        contactsHandlers.onGetOnlineContacts(data, dispatch);
       });
 
       // Add new chat to sender's chats list
@@ -33,88 +39,88 @@ const SocketEventListeners = () => {
       // send confirmation of message delivered to sender
       // and add new pending contact to sender's contacts list
       socketState.on('first_message_sent', (data: string) => {
-        eventHandlers.onFirstMessageSent(data, dispatch);
+        chatsHandlers.onFirstMessageSent(data, dispatch);
       });
 
       // Add new chat to recipient's chats list
       socketState.on('first_message_received', (data: string) => {
-        eventHandlers.onFirstMessageReceived(data, dispatch);
+        chatsHandlers.onFirstMessageReceived(data, dispatch);
       });
 
       // Update sender chat and send confirmation of message delivered to sender
       socketState.on('message_sent', (data: string) => {
-        eventHandlers.onMessageSent(data, dispatch);
+        chatsHandlers.onMessageSent(data, dispatch);
       });
 
       // Update recipient's chats list and add new message to chat history
       socketState.on('message_received', (data: string) => {
-        eventHandlers.onMessageReceived(data, username, chatHistory, dispatch, socketState, currentScreenRef.current);
+        chatsHandlers.onMessageReceived(data, username, chatHistory, dispatch, socketState, currentScreenRef.current);
       });
 
       // Mark all sender's chat history messages as read
       socketState.on('messages_marked_as_read_sender', (data: string) => {
-        eventHandlers.onMessagesMarkedAsReadSender(data, dispatch);
+        chatsHandlers.onMessagesMarkedAsReadSender(data, dispatch);
       });
 
       // Update recipient's chat messages with liked message
       socketState.on('message_liked', (data: string) => {
-        eventHandlers.onMessageLiked(data, dispatch);
+        chatsHandlers.onMessageLiked(data, dispatch);
       }); 
 
       // Delete message for recipient
       socketState.on('message_deleted', (data: string) => {
-        eventHandlers.onMessageDeleted(data, dispatch);
+        chatsHandlers.onMessageDeleted(data, dispatch);
       }); 
 
       // Update recipient's chat with new contact profile image
       socketState.on('profile_image_updated', (data: string) => {
-        eventHandlers.onProfileImageUpdated(data, dispatch);
+        profileHandlers.onProfileImageUpdated(data, dispatch);
       });
 
       // Notify user when contact goes online
       socketState.on('user_online', (data: string) => {
-        eventHandlers.onContactIsOnline(data, userId, dispatch);
+        contactsHandlers.onContactIsOnline(data, userId, dispatch);
       }); 
 
       // Notify user when contact goes offline
       socketState.on('user_offline', (userId: string) => {
-        eventHandlers.onContactIsOffline(userId, dispatch);
+        contactsHandlers.onContactIsOffline(userId, dispatch);
       }); 
 
       // Contact has started typing
       socketState.on('contact_is_typing', (contactId: string) => {
-        eventHandlers.onContactIsTyping(contactId, dispatch);
+        contactsHandlers.onContactIsTyping(contactId, dispatch);
       }); 
 
       // Contact has stopped typing
       socketState.on('contact_stopped_typing', (contactId: string) => {
-        eventHandlers.onContactStoppedTyping(contactId, dispatch);
+        contactsHandlers.onContactStoppedTyping(contactId, dispatch);
       }); 
 
       // User has successfully established socket connection
       socketState.on('user_connected', () => {
-        eventHandlers.onUserConnected(dispatch);
+        authHandlers.onUserConnected(dispatch);
       });
 
       // User has sent message after deleting chat
       // Restore chat
       socketState.on('chat_restored', (data: string) => {
-        eventHandlers.onChatRestored(data, dispatch);
+        chatsHandlers.onChatRestored(data, dispatch);
       });
 
       // User has received video call offer
       socketState.on('incoming_video_call_received', (data: string) => {
-        eventHandlers.onIncomingVideoCallReceived(data, dispatch);
+        videoCallHandlers.onIncomingVideoCallReceived(data, dispatch);
       });
 
       // User has accepted video call
       socketState.on('video_call_accepted', (data: string) => {
-        eventHandlers.onVideoCallAccepted(data, RTCPeerConnection);
+        videoCallHandlers.onVideoCallAccepted(data, RTCPeerConnection);
       });
 
       // User has rejected video call
       socketState.on('video_call_rejected', () => {
-        eventHandlers.onVideoCallRejected(dispatch);
+        videoCallHandlers.onVideoCallRejected(navigate, dispatch);
       });
 
 

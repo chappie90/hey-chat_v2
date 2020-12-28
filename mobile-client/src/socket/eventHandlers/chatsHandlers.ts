@@ -1,26 +1,7 @@
 import { Dispatch } from 'redux';
 
-import { 
-  authActions, 
-  contactsActions, 
-  chatsActions,
-  videoCallActions 
-} from 'reduxStore/actions';
-import { emitMarkAllMessagesAsRead } from './eventEmitters';
-import { Colors, Fonts, Headings } from 'variables';
-import { RTCSessionDescription } from 'react-native-webrtc';
-import { useNavigation } from '@react-navigation/native';
-
-const onGetContacts = (data: string, dispatch: Dispatch) => {
-  const { contacts } = JSON.parse(data);
-  dispatch(contactsActions.getContacts(contacts));
-  dispatch(contactsActions.markContactsAsFetched());
-};
-
-const onGetOnlineContacts = (data: string, dispatch: Dispatch) => {
-  const { onlineContacts } = JSON.parse(data);
-  dispatch(contactsActions.getOnlineContacts(onlineContacts));
-};
+import { chatsActions, contactsActions } from 'reduxStore/actions';
+import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 
 const onFirstMessageSent = (data: string, dispatch: Dispatch) => {
   const { newChat, newMessage, pendingContact } = JSON.parse(data);
@@ -104,71 +85,13 @@ const onMessageDeleted = (data: string, dispatch: Dispatch) => {
   dispatch(chatsActions.deleteMessage(chatId, messageId));
 };
 
-const onProfileImageUpdated = (data: string, dispatch: Dispatch) => {
-  const { userId, profileImage } = JSON.parse(data);
-  console.log('inside profile event listener');
-  console.log(userId);
-  console.log(profileImage);
-};
-
-const onContactIsOnline = (data: string, userId: number, dispatch: Dispatch) => {
-  const { user } = JSON.parse(data);
-        
-  // If contact pending mark as such
-  const isPending = user.pendingContacts.some((contact: TContact) => contact._id === userId);
-  user.pending = isPending;
-
-  // Get id of chat between user and contact
-  const chats = [ ...user.chats, ...user.deletedChats ];
-  const chatId: string = chats.filter(chat => chat.participants.filter((p: any) => p === userId))[0].chatId;
-  user.chatId = chatId;
-
-  user.online = true;
-
-  dispatch(contactsActions.contactGoesOnline(user));
-};
-
-const onContactIsOffline = (userId: string, dispatch: Dispatch) => {
-  dispatch(contactsActions.contactGoesOffline(userId));
-};
-
-const onContactIsTyping = (contactId: string, dispatch: Dispatch) => {
-  dispatch(chatsActions.contactIsTyping(contactId));
-};
-
-const onContactStoppedTyping = (contactId: string, dispatch: Dispatch) => {
-  dispatch(chatsActions.contactStoppedTyping(contactId));
-};
-
-const onUserConnected = (dispatch: Dispatch) => {
-  dispatch(authActions.setUserConnectionState(true));
-};
-
 const onChatRestored = (data: string, dispatch: Dispatch) => {
   const { chat, newMessage } = JSON.parse(data);
   const restoredChat = { ...chat, lastMessage: newMessage };
   dispatch(chatsActions.addChat(restoredChat));
 };
 
-const onIncomingVideoCallReceived = (data: string, dispatch: Dispatch) => {
-  const { callerId, callerName, offer } = JSON.parse(data);
-  dispatch(videoCallActions.receiveIncomingCall(callerId, callerName, offer));
-};
-
-const onVideoCallAccepted = (data: string, RTCPeerConnection: any) => {
-  const { answer } = JSON.parse(data);
-  RTCPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-};
-
-const onVideoCallRejected = (dispatch: Dispatch) => {
-  dispatch(videoCallActions.setRTCPeerConnection(null));
-  const navigation = useNavigation();
-  navigation.goBack();
-};
-
 export default {
-  onGetContacts,
-  onGetOnlineContacts,
   onFirstMessageSent,
   onFirstMessageReceived,
   onMessageSent,
@@ -176,14 +99,5 @@ export default {
   onMessagesMarkedAsReadSender,
   onMessageLiked,
   onMessageDeleted,
-  onProfileImageUpdated,
-  onContactIsOnline,
-  onContactIsOffline,
-  onContactIsTyping,
-  onContactStoppedTyping,
-  onUserConnected,
-  onChatRestored,
-  onIncomingVideoCallReceived,
-  onVideoCallAccepted,
-  onVideoCallRejected
+  onChatRestored
 };
