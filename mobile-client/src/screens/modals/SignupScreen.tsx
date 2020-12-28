@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from "react-native-modal";
+import { useDispatch } from 'react-redux';
 
 import { authActions } from 'reduxStore/actions';
 import AuthForm from 'components/authentication/AuthForm';
@@ -22,6 +23,7 @@ type SignupScreenProps = {
 
 const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) => {
   const [opacity, setOpacity] = useState(1);
+  const dispatch = useDispatch();
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();
@@ -34,6 +36,7 @@ const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) 
   const onModalClose = (): void => {
     closeModal();
     toggleOpacityArrow(false);
+    dispatch(authActions.setAuthError(''));
   };
 
   return (

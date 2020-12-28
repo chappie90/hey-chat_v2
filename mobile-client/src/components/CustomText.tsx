@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Text } from 'react-native';
 
 import { Colors, Fonts, Headings } from 'variables';
@@ -9,7 +9,7 @@ type CustomTextProps = {
   fontWeight?: string;
   numberOfLines?: number;
   ellipsize?: string;
-  style?: CSSProperties;
+  style?: any;
   children: ReactNode;
 }
 

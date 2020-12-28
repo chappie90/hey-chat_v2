@@ -6,12 +6,14 @@ import {
   TextInput, 
   TouchableOpacity
 } from 'react-native';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
+import { BallIndicator } from 'react-native-indicators';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
-import CustomButton from 'components/CustomButton';
-import ErrorMessage from 'components/ErrorMessage';
+import CustomButton from 'components/common/CustomButton';
+import { authActions } from 'reduxStore/actions';
 
 type AuthFormTypes = {
   heading: string;
@@ -32,15 +34,23 @@ const AuthForm = ({
   toggleModals,
   toggleOpacityArrow
 }: AuthFormTypes) => {
+  const { isAuthenticating, authError } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameIsValid, setUsernameIsValid] = useState<boolean | null>(null);
   const [passwordIsValid, setPasswordIsValid] = useState<boolean | null>(null);
   const [usernameError, setUsernameError] = useState('');
-  const [showErrorMsg, setShowErrorMsg] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const inputEl = useRef<TextInput>(null);
+  const ERRORS = {
+    username: {
+      isEmpty: 'Username can\'t be an empty value',
+      allowedChars: 'Username must contain only letters, number and spaces'
+    },
+    password: {
+      minLength: 'Password must be at least 8 characters long'
+    }
+  };
 
   const focusInput = (): void => {
     if (inputEl.current) {
@@ -51,10 +61,10 @@ const AuthForm = ({
   const usernameChanged = (text: string): void => {
     if (text.trim().length === 0) {
       setUsernameIsValid(false);
-      setUsernameError('Username can\'t be an empty value');
+      setUsernameError(ERRORS.username.isEmpty);
     } else if (/[^a-zA-Z0-9 ]/.test(text)) {
       setUsernameIsValid(false); 
-      setUsernameError('Username must contain only letters, number and spaces');
+      setUsernameError(ERRORS.username.allowedChars);
     } else {
       setUsernameIsValid(true);
       setUsernameError('');
@@ -76,26 +86,32 @@ const AuthForm = ({
       return;
     }
 
-    const response = await dispatch(onSubmitCallback(username, password));
-    if (response) {
-      let errorMsg;
-      if (response.data && response.data.message) {
-        errorMsg = response.data.message;
-      } else {
-        errorMsg = 'Something went wrong with your request!';
-      }
-      setShowErrorMsg(true);
-      setErrorMsg(errorMsg);
-    }
+    dispatch(authActions.isAuthenticating(true));
+
+    dispatch(onSubmitCallback(username, password));
   };
 
   const onClearErrorMsg = (): void => {
-    setShowErrorMsg(false);
-    setErrorMsg('');
+    dispatch(authActions.setAuthError(''));
   };
 
   return (
     <View style={styles.container}>
+      {isAuthenticating &&
+        <View style={styles.spinner}>
+          <BallIndicator size={32} color={Colors.purpleDark} />
+        </View>
+      }
+      {!!authError &&
+        <View style={styles.formError}>
+          <CustomText fontSize={Headings.headingSmall} color={Colors.red}>
+            {authError}
+          </CustomText>
+          <TouchableOpacity style={styles.closeErrorBtn} onPress={onClearErrorMsg}>
+            <MaterialIcon color={Colors.red} name="close" size={22} />
+          </TouchableOpacity>
+        </View>
+      }
       <CustomText 
         color={Colors.yellowDark}
         fontSize={Headings.headingExtraLarge}
@@ -136,28 +152,20 @@ const AuthForm = ({
       />
       {passwordIsValid !== null && !passwordIsValid && (
           <CustomText color={Colors.red} fontSize={Headings.headingSmall}>
-            Password must be at least 8 characters long    
+            {ERRORS.password.minLength}  
           </CustomText>
       )}
       <CustomButton 
-        color={Colors.yellowDark}
-        buttonSize="big"
-        style={styles.button} 
+        buttonStyle={styles.buttonStyle} 
+        layout={styles.buttonLayout}
         onPress={onFormSubmit}
       >
-        {buttonText}
+          {buttonText}
       </CustomButton>
       <TouchableOpacity style={{ marginTop: 10 }} onPress={toggleModals}>
         <Text style={styles.toggleText}>{toggleModalPrompt}</Text>
         <Text style={styles.toggleText}>{toggleModalLink}</Text>
       </TouchableOpacity>
-      <ErrorMessage 
-        visible={showErrorMsg} 
-        heading="Something went wrong with your signup..." 
-        message={errorMsg}
-        buttonText="Dismiss"
-        onClearMessage={onClearErrorMsg}
-      />
     </View>
   );
 };
@@ -177,15 +185,43 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: Colors.greyLight
   },
-  button: {
+  buttonStyle: {
+    backgroundColor: Colors.yellowDark,
+    justifyContent: 'center',
+    width: 180,
+    height: 50,
+    borderRadius: 35,
+  },
+  buttonLayout: {
     alignSelf: 'center',
     marginBottom: 10,
-    marginTop: 55
+    marginTop: 55,
+    flexDirection: 'row'
   },
   toggleText: {
     fontSize: Headings.headingSmall,
     textAlign: 'center',
     color: Colors.greyDark
+  },
+  spinner: {
+    position: 'absolute',
+    top: -40,
+    alignSelf: 'center',
+  },
+  formError: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingLeft: 25,
+    paddingRight: 20,
+    backgroundColor: Colors.redLight,
+    borderRadius: 25,
+    marginBottom: 15
+  },
+  closeErrorBtn: {
+    marginLeft: 15
   }
 });
 

@@ -1,11 +1,14 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import api from 'api';
 
 type AuthState = {
   initialLoad: boolean;
+  isAuthenticating: boolean;
+  authError: string;
   userId: number | null;
   username: string | null;
   token: string | null;
@@ -17,6 +20,8 @@ type AuthState = {
 type AuthAction = 
   | { type: 'set_is_initial_load'; payload: boolean }
   | { type: 'signin'; payload: TUser }
+  | { type: 'is_authenticating'; payload: boolean }
+  | { type: 'set_auth_error'; payload: string }
   | { type: 'sign_out'; }
   | { type: 'set_socket'; payload: any }
   | { type: 'set_user_connected'; payload: boolean };
@@ -34,6 +39,8 @@ const signup = (username: string, password: string) => async (dispatch: ThunkDis
     };
     await AsyncStorage.setItem('user', JSON.stringify(user));
 
+    dispatch({ type: 'is_authenticating', payload: false });
+
     dispatch({ type: 'signin', payload: user });
   } catch (error) {
     console.log('Signup method error');
@@ -42,7 +49,14 @@ const signup = (username: string, password: string) => async (dispatch: ThunkDis
       console.log(error.response.status);
     }
     if (error.message) console.log(error.message);
-    return error.response ? error.response : error.message;
+
+    dispatch({ type: 'is_authenticating', payload: false });
+    dispatch({ 
+      type: 'set_auth_error', 
+      payload: error.response ? 
+        error.response.data.message : 
+        error.message 
+    });
   }
 };
 
@@ -57,6 +71,8 @@ const signin = (username: string, password: string) => async (dispatch: ThunkDis
     };
     await AsyncStorage.setItem('user', JSON.stringify(user));
 
+    dispatch({ type: 'is_authenticating', payload: false });
+
     dispatch({ type: 'signin', payload: user });
   } catch (error) {
     if (error.response) {
@@ -64,9 +80,20 @@ const signin = (username: string, password: string) => async (dispatch: ThunkDis
       console.log(error.response.status);
     }
     if (error.message) console.log(error.message);
-    return error.response ? error.response : error.message;
+
+    dispatch({ type: 'is_authenticating', payload: false });
+    dispatch({ 
+      type: 'set_auth_error', 
+      payload: error.response ? 
+        error.response.data.message : 
+        error.message 
+    });
   }
 };
+
+const isAuthenticating = (state: boolean) => ({ type: 'is_authenticating', payload: state });
+
+const setAuthError = (errorMsg: string) => ({ type: 'set_auth_error', payload: errorMsg });
 
 const autoSignin = () => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
@@ -104,6 +131,8 @@ export default {
   setIsInitialLoad,
   signup,
   signin,
+  isAuthenticating,
+  setAuthError,
   autoSignin,
   signOut,
   setSocketState,

@@ -4,6 +4,7 @@ import {
   StyleSheet
 } from 'react-native';
 import Dots from 'react-native-dots-pagination';
+import { useDispatch } from 'react-redux';
 
 import { Colors } from 'variables';
 import ViewPager from 'components/ViewPager';
@@ -11,11 +12,13 @@ import CustomButton from 'components/CustomButton';
 import ScaleViewAnim from 'components/animations/ScaleViewAnim';
 import SigninScreen from './modals/SigninScreen';
 import SignupScreen from './modals/SignupScreen';
+import { authActions } from 'reduxStore/actions';
 
 const StarterScreen = () => {
   const [showSignin, setShowSignin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [activeDot, setActiveDot] = useState(0);
+  const dispatch = useDispatch();
 
   const closeModal = (): void => {
     setShowSignup(false);
@@ -23,6 +26,8 @@ const StarterScreen = () => {
   };
 
   const toggleModals = (): void => {
+    dispatch(authActions.setAuthError(''));
+
     if (showSignin) {
       setShowSignin(false);
       setShowSignup(true);
