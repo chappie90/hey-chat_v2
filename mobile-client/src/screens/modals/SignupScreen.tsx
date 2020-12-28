@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   StyleSheet, 
@@ -21,9 +21,19 @@ type SignupScreenProps = {
 };
 
 const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) => {
+  const [opacity, setOpacity] = useState(1);
 
   const dismissKeyboard = (): void => {
     Keyboard.dismiss();
+  };
+
+  const toggleOpacityArrow = (isInputFocused: boolean): void => {
+    setOpacity(isInputFocused ? 0.25 : 1);
+  };
+
+  const onModalClose = (): void => {
+    closeModal();
+    toggleOpacityArrow(false);
   };
 
   return (
@@ -31,7 +41,7 @@ const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) 
       isVisible={visible} 
       animationIn="slideInUp"
       animationOut="slideOutDown"
-      onSwipeComplete={() => closeModal()}
+      onSwipeComplete={onModalClose}
       swipeThreshold={60}
       swipeDirection="down"
       coverScreen={false}
@@ -42,7 +52,7 @@ const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) 
     >
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
-          <View style={styles.arrowIcon}>
+          <View style={[ styles.arrowIcon, { opacity } ]}>
             <MaterialIcon name="keyboard-arrow-down" size={85} color={Colors.yellowDark} />
           </View>
           <AuthForm 
@@ -52,6 +62,7 @@ const SignupScreen = ({ visible, toggleModals, closeModal }: SignupScreenProps) 
             toggleModalLink="Sign in here"
             onSubmitCallback={authActions.signup}
             toggleModals={toggleModals}
+            toggleOpacityArrow={toggleOpacityArrow}
           />
           {Platform.OS === 'ios' && <KeyboardAvoidingView behavior="padding" />}
         </View>
@@ -70,13 +81,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.white,
-    marginTop: '35%',
+    marginTop: '25%',
     borderTopLeftRadius: 35,
-    borderTopRightRadius: 35
+    borderTopRightRadius: 35,
+    overflow: 'hidden'
   },
   arrowIcon: {
     position: 'absolute',
-    top: 10,
+    top: -10,
     margin: 'auto'
   }
 });

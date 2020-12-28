@@ -25,6 +25,7 @@ module.exports = {
           context: './src/context',
           screens: './src/screens',
           socket: './src/socket',
+          tests: './__tests__',
           variables: './src/variables',
           utils: './src/utils'
         },

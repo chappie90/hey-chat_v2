@@ -20,6 +20,7 @@ type AuthFormTypes = {
   toggleModals: () => void;
   toggleModalPrompt: string;
   toggleModalLink: string;
+  toggleOpacityArrow: (isInputFocused: boolean) => void;
 };
 
 const AuthForm = ({ 
@@ -28,7 +29,8 @@ const AuthForm = ({
   toggleModalPrompt, 
   toggleModalLink,
   onSubmitCallback, 
-  toggleModals
+  toggleModals,
+  toggleOpacityArrow
 }: AuthFormTypes) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
@@ -110,6 +112,8 @@ const AuthForm = ({
         onSubmitEditing={focusInput} 
         autoCapitalize="none"
         placeholderTextColor={Colors.greyDark}
+        onFocus={() => toggleOpacityArrow(true)} 
+        onBlur={() => toggleOpacityArrow(false)}
         // blurOnSubmit={false}
         autoCorrect={false} />
       {usernameIsValid !== null && !usernameIsValid && (
@@ -126,6 +130,8 @@ const AuthForm = ({
         autoCapitalize="none"
         secureTextEntry
         placeholderTextColor={Colors.greyDark}
+        onFocus={() => toggleOpacityArrow(true)} 
+        onBlur={() => toggleOpacityArrow(false)}
         ref={inputEl}
       />
       {passwordIsValid !== null && !passwordIsValid && (
@@ -159,11 +165,11 @@ const AuthForm = ({
 const styles = StyleSheet.create({ 
   container: {
     width: '100%',
-    paddingHorizontal: 60
+    paddingHorizontal: 50
   },
   header: {
     textAlign: 'center',
-    marginBottom: 50
+    marginBottom: 30
   },
   input: {
     height: 60,

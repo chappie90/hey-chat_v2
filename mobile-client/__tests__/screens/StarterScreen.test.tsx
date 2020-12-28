@@ -2,7 +2,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import { cleanup, render, fireEvent } from '@testing-library/react-native';
 
-import StarterScreen from './StarterScreen';
+import StarterScreen from 'screens/StarterScreen';
 
 describe('StarterScreen', () => {
   beforeEach(() => jest.useFakeTimers());

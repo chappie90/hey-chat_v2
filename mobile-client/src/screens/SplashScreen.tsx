@@ -6,6 +6,7 @@ import RNSplashScreen from 'react-native-splash-screen'
 
 import { Animations } from 'assets';
 import { authActions } from 'reduxStore/actions';
+import { Colors } from 'variables';
 
 const SplashScreen = () => {
   const { initialLoad } = useSelector(state => state.auth);
@@ -23,7 +24,7 @@ const SplashScreen = () => {
 
   return (
     <>
-      <StatusBar barStyle='light-content' />
+      <StatusBar backgroundColor={Colors.greyLogo} barStyle='light-content' />
       <LottieView 
         source={ Animations.splash } 
         autoPlay 
