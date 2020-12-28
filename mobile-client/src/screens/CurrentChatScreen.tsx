@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux'
 
-import { authActions, chatsActions } from 'reduxStore/actions';
+import { appActions, chatsActions } from 'reduxStore/actions';
 import Chat from 'components/chats/chat/Chat';
 import ChatHeader from 'components/chats/chat/ChatHeader';
 import { Colors } from 'variables';
@@ -33,12 +33,12 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
   const onSelectPhoto = (photoData: TCameraPhoto): void => setMessageImageData(photoData);
 
   useEffect(() => {
-    dispatch(authActions.getCurrentScreen(route.name));
+    dispatch(appActions.getCurrentScreen(route.name));
     const activeChat: TChat = chats.filter((chat: TChat) => chat.chatId === chatId)[0];
     dispatch(chatsActions.setActiveChat(activeChat));
 
     return () => {
-      dispatch(authActions.getCurrentScreen(''));
+      dispatch(appActions.getCurrentScreen(''));
       dispatch(chatsActions.setActiveChat(null));
     };
   }, []);

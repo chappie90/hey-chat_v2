@@ -3,7 +3,7 @@ import { AppState, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { connectToSocket } from 'socket/connection';
-import { authActions, chatsActions } from 'reduxStore/actions';
+import { appActions, authActions, chatsActions } from 'reduxStore/actions';
 import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 
 type AppStateManagerProps = { children: ReactNode };
@@ -21,7 +21,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   const createSocketConnection = (): void => {
     if (token && userId) {
       socket.current = connectToSocket(userId);
-      dispatch(authActions.setSocketState(socket.current));
+      dispatch(appActions.setSocketState(socket.current));
     //   // if (Platform.OS === 'ios') {
     //   //   await Notifications.setBadgeNumberAsync(0);
     //   // }
@@ -34,7 +34,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
 
   const destroySocketConnection = (): void => {
     socket.current.disconnect();
-    dispatch(authActions.setSocketState(null));
+    dispatch(appActions.setSocketState(null));
   };
 
   const handleAppStateChange = (nextAppState: string) => {
@@ -64,7 +64,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
         }
 
         destroySocketConnection(); 
-        dispatch(authActions.setUserConnectionState(false));
+        dispatch(appActions.setUserConnectionState(false));
       }
     }
 

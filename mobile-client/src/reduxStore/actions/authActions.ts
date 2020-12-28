@@ -1,32 +1,22 @@
 import { ActionCreator, Dispatch } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import api from 'api';
 
 type AuthState = {
-  initialLoad: boolean;
   isAuthenticating: boolean;
   authError: string;
   userId: number | null;
   username: string | null;
   token: string | null;
-  socketState: any | null;
-  currentScreen: string | '';
-  userConnected: boolean;
 };
 
 type AuthAction = 
-  | { type: 'set_is_initial_load'; payload: boolean }
   | { type: 'signin'; payload: TUser }
   | { type: 'is_authenticating'; payload: boolean }
   | { type: 'set_auth_error'; payload: string }
-  | { type: 'sign_out'; }
-  | { type: 'set_socket'; payload: any }
-  | { type: 'set_user_connected'; payload: boolean };
-
-const setIsInitialLoad = (status: boolean) => ({ type: 'set_is_initial_load', payload: status });
+  | { type: 'sign_out'; };
 
 const signup = (username: string, password: string) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
@@ -121,21 +111,11 @@ const signOut = (userId: string, socketInstance: any) => async (dispatch: ThunkD
   } 
 };
 
-const setSocketState = (socketState: any) => ({ type: 'set_socket', payload: socketState });
-
-const getCurrentScreen = (currentScreen: string) => ({ type: 'get_current_screen', payload: currentScreen });
-
-const setUserConnectionState = (state: boolean) => ({ type: 'set_user_connected', payload: state });
-
 export default {
-  setIsInitialLoad,
   signup,
   signin,
   isAuthenticating,
   setAuthError,
   autoSignin,
-  signOut,
-  setSocketState,
-  getCurrentScreen,
-  setUserConnectionState
+  signOut
 };  

@@ -48,6 +48,5 @@ export default {
   onContactIsOnline,
   onContactIsOffline,
   onContactIsTyping,
-  onContactStoppedTyping,
-  onUserConnected
+  onContactStoppedTyping
 };

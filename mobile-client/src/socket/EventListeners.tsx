@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { navigate } from 'navigation/NavigationRef';
 
 import { 
-  authHandlers,
+  appHandlers,
   contactsHandlers,
   chatsHandlers,
   profileHandlers,
@@ -99,7 +99,7 @@ const SocketEventListeners = () => {
 
       // User has successfully established socket connection
       socketState.on('user_connected', () => {
-        authHandlers.onUserConnected(dispatch);
+        appHandlers.onUserConnected(dispatch);
       });
 
       // User has sent message after deleting chat

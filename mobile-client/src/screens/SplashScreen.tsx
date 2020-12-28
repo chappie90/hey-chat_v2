@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import RNSplashScreen from 'react-native-splash-screen'
 
 import { Animations } from 'assets';
-import { authActions } from 'reduxStore/actions';
+import { appActions } from 'reduxStore/actions';
 import { Colors } from 'variables';
 
 const SplashScreen = () => {
@@ -13,7 +13,7 @@ const SplashScreen = () => {
   const dispatch = useDispatch();
 
   const onAnimationFinish = (): void => {
-    dispatch(authActions.setIsInitialLoad(false));
+    dispatch(appActions.setIsInitialLoad(false));
   };
 
   useEffect(() => {

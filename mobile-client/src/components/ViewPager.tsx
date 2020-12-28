@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   },
   page: {
     alignItems: 'center',
+    paddingHorizontal: 15
   },
   textContainer: {
     position: 'absolute',

@@ -45,7 +45,7 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
         userId: null,  
         username: null, 
         token: null,
-        socketState: null
+        // socketState: null
       };
     case 'set_socket':
       return { ...state, socketState: action.payload };
