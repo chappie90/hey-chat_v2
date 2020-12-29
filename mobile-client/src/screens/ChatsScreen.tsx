@@ -6,6 +6,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux';
 
+import IncomingCallNotification from 'components/video/IncomingCallNotification';
 import { Colors } from 'variables';
 import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
@@ -44,6 +45,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   return (
     <View style={styles.container}>
+      <IncomingCallNotification />
       <ChatsHeader openModal={openModal} />
       {isLoading ? 
         (

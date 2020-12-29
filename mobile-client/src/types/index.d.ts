@@ -33,6 +33,10 @@ type ContactsStackParams = {
     contactName: string;
     contactProfile?: string;
   };
+  VideoCall: {
+    contactId: number;
+    contactName: string;
+  };
 };
 
 // User

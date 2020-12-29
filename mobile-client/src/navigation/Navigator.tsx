@@ -20,8 +20,7 @@ const Navigator = () => {
   if (initialLoad) return <SplashScreen />;
 
   return (
-    <NavigationContainer ref={navigationRef} >
-      <IncomingCallNotification />
+    <NavigationContainer ref={navigationRef}>
       {token ? (
         <MainFlow />
       ) : (
