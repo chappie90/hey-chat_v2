@@ -19,8 +19,11 @@ type ChatsStackParams = {
     contactProfile?: string;
   };
   VideoCall: {
+    chatType: string;
+    chatId: string;
     contactId: number;
     contactName: string;
+    contactProfile?: string;
   };
 };
 
@@ -34,8 +37,11 @@ type ContactsStackParams = {
     contactProfile?: string;
   };
   VideoCall: {
+    chatType: string;
+    chatId: string | undefined;
     contactId: number;
     contactName: string;
+    contactProfile?: string;
   };
 };
 

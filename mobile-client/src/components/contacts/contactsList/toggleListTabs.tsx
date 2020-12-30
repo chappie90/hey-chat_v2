@@ -23,7 +23,7 @@ const ToggleListTabs = ({
     Animated.timing(
       translateAnim,
       {
-        toValue: toggleState ? 150 : 0,
+        toValue: toggleState ? 130 : 0,
         duration: 200,
         useNativeDriver: true
       }
@@ -67,13 +67,13 @@ const styles = StyleSheet.create({
   tabsContainer: {
     alignSelf: 'center',
     backgroundColor: Colors.purpleLight,
-    width: 300,
+    width: 260,
     borderRadius: 35,
     marginTop: 20,
     marginBottom: 10
   },
   animatedTab: {
-    width: 150,
+    width: 130,
     height: 35,
     backgroundColor: Colors.purpleDark,
     borderRadius: 35
@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
   },
   allUsersTab: {
     left: 0,
-    right: 150,
+    right: 130,
   },
   activeUsersTab: {
-    left: 150,
+    left: 130,
     right: 0
   },
   tabText: {

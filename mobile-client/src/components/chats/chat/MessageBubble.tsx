@@ -47,7 +47,7 @@ const MessageBubble = ({
     msgImgUploadFinished 
   } = useSelector(state => state.chats);
   const windowWidth = useWindowDimensions().width;
-  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/chat/${activeChat.chatId}`;
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/chat/${activeChat?.chatId}`;
   const widthAnim = useRef(new Animated.Value(0));
   const dispatch = useDispatch();
   const [updateImage, setUpdateImage] = useState(false);
@@ -84,7 +84,7 @@ const MessageBubble = ({
           },
         ).start();
         setTimeout(() => {
-          dispatch(chatsActions.messageImageIsUploading(activeChat.chatId, activeMessage._id, 0, null));
+          dispatch(chatsActions.messageImageIsUploading(activeChat?.chatId, activeMessage._id, 0, null));
         }, 1200);
       }, 2000);
     }
@@ -145,7 +145,7 @@ const MessageBubble = ({
             userId === 2 && sameSenderNextMsg && styles.leftBubbleNextMsg
           ]}
         >
-          {activeChat.chatId && image ? 
+          {activeChat?.chatId && image ? 
             ( 
               <View style={[
                 styles.messageImageContainer,

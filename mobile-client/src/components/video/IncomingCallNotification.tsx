@@ -1,62 +1,106 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-  RTCView,
-  MediaStream,
-  MediaStreamTrack,
-  mediaDevices,
-  registerGlobals,
-} from 'react-native-webrtc';
+import { RTCSessionDescription, mediaDevices } from 'react-native-webrtc';
+import InCallManager from 'react-native-incall-manager';
 
 import CustomText from 'components/CustomText';
 import { Colors, Fonts, Headings } from 'variables';
 import { videoCallActions } from 'reduxStore/actions';
 import { emitRejectVideoCall, emitAcceptVideoCall } from 'socket/eventEmitters';
+import { navigate } from 'navigation/NavigationRef';
 
 type IncomingCallNotificationProps = {};
 
 const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
-  const { userId, socketState } = useSelector(state => state.auth);
-  const { incomingCall: { callerId, callerName, offer } } = useSelector(state => state.video);
+  const { userId, username, socketState } = useSelector(state => state.auth);
+  const { profileImage } = useSelector(state => state.profile);
+  const { 
+    RTCConnection,
+    incomingCall: { chatType, chatId, callerId, callerName, callerProfile, offer },
+    activeCall: { remoteStream  }
+  } = useSelector(state => state.video);
   const dispatch = useDispatch();
-  const [RTCConnection, setRTCConnection] = useState(
-    new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302',  
-        }, {
-          urls: 'stun:stun1.l.google.com:19302',    
-        }, {
-          urls: 'stun:stun2.l.google.com:19302',    
-        }
 
-      ],
-    })
-  );
+  const startLocalStream = async (): Promise<any> => {
+    try {
+      // isFront will determine if the initial camera should face user or environment
+      const isFront = false;
+      const devices = await mediaDevices.enumerateDevices();
+
+      const facing = isFront ? 'front' : 'environment';
+      const videoSourceId = devices.find((device: any) => device.kind === 'videoinput' && device.facing === facing);
+      const facingMode = isFront ? 'user' : 'environment';
+      const constraints: any = {
+        audio: true,
+        video: {
+          mandatory: {
+            minWidth: 500, // Provide your own width, height and frame rate here
+            minHeight: 300,
+            minFrameRate: 30,
+          },
+          facingMode,
+          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
+        },
+      };
+
+      const newStream = await mediaDevices.getUserMedia(constraints);
+
+      dispatch(videoCallActions.setLocalStream(newStream));
+
+      return newStream;
+    } catch (err) {
+      console.log('Start local stream recipient method error');
+      console.log(err);
+    }
+  };
   
   const onAcceptCall = async (): Promise<void> => {
-    console.log(offer)
-      try {
-        await RTCConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    const stream = await startLocalStream();
+    RTCConnection.addStream(stream);
 
-        const answer = await RTCConnection.createAnswer();
-
-        await RTCConnection.setLocalDescription(answer);
-
-        const data = { callerId, recipientId: userId, answer };
-        emitAcceptVideoCall(JSON.stringify(data), socketState)
-      } catch (err) {
-        console.log('Offerr Error', err);
+    RTCConnection.onaddstream = (event: any) => {
+      if (event.stream && remoteStream !== event.stream) {
+        dispatch(videoCallActions.setRemoteStream(event.stream));
       }
+    };
+
+    try {
+      await RTCConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+      const answer = await RTCConnection.createAnswer();
+      await RTCConnection.setLocalDescription(answer);
+
+      const data = { 
+        callerId, 
+        recipientId: userId, 
+        recipientName: username, 
+        recipientProfile: profileImage, 
+        answer 
+      };
+      emitAcceptVideoCall(JSON.stringify(data), socketState);
+    } catch (err) {
+      console.log('Offer Error', err);
+    }
+
+    const routeParams = { 
+      chatType, 
+      chatId, 
+      contactId: callerId, 
+      contactName: callerName, 
+      contactProfile: callerProfile 
+    };
+
+    dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
+    dispatch(videoCallActions.setActiveCallStatus(true));
+
+    navigate('VideoCall', routeParams);
   };
 
   const onRejectCall = (): void => {
-    dispatch(videoCallActions.receiveIncomingCall('', '', null));
+    dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
+
     const data = { callerId };
     emitRejectVideoCall(JSON.stringify(data), socketState);
   };
@@ -98,7 +142,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     zIndex: 10,
-    top: 45,
+    top: 40,
     left: 20,
     right: 20,
     flexDirection: 'row',
@@ -132,6 +176,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 1
+  },
+  videoContainer: {
+    flex: 1
   }
 });
 

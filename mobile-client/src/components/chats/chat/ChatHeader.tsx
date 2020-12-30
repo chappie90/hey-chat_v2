@@ -12,17 +12,18 @@ import { Colors, Fonts } from 'variables';
 
 type ChatHeaderProps = {
   chatType: string;
+  chatId: string | undefined;
   contactId: number;
   contactName: string;
   contactProfile: string | undefined;
 };
 
-const ChatHeader = ({ chatType, contactId, contactName, contactProfile }: ChatHeaderProps) => {
+const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }: ChatHeaderProps) => {
   const { typingContacts } = useSelector(state => state.chats);
   const navigation = useNavigation();
 
   const onCallConctact = (): void => {
-    const routeParams = { contactName, contactId };
+    const routeParams = { chatType, chatId, contactId, contactName, contactProfile };
 
     navigation.navigate('VideoCall', routeParams);
   };
@@ -30,15 +31,15 @@ const ChatHeader = ({ chatType, contactId, contactName, contactProfile }: ChatHe
   return (
     <View style={styles.container}>
       <View style={styles.top}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.navigate('Chats')}>
           <View style={styles.backButton}>
             <MaterialCommunityIcon name="arrow-left" size={38} color={Colors.yellowDark} /> 
           </View>
         </TouchableOpacity>
         <View style={styles.imageContainer}>
-          {contactProfile?.image?.small.path ? (
+          {contactProfile ? (
             <Image 
-              source={{ uri: `${config.RN_API_BASE_URL}/${contactProfile.image.small.path}` }} 
+              source={{ uri: `${config.RN_API_BASE_URL}/${contactProfile}` }} 
               style={styles.image} 
             />
           ) : (

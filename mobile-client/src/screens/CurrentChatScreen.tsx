@@ -47,6 +47,7 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
     <View style={styles.container}>
       <ChatHeader 
         chatType={chatType}
+        chatId={chatId}
         contactId={contactId}
         contactName={contactName} 
         contactProfile={contactProfile} 

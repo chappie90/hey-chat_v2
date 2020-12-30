@@ -17,7 +17,7 @@ import { Colors } from 'variables';
 // Hide bottom tab navigator on current chat screen
 const hideTabBar = (route: any) => {
   const routeName = getFocusedRouteNameFromRoute(route);
-  if (routeName === 'CurrentChat') return false;
+  if (routeName === 'CurrentChat' || routeName === 'VideoCall') return false;
 
   return true;
 };
@@ -42,6 +42,7 @@ const ChatsStackNavigator = () => {
       <ChatsStack.Screen 
         name="VideoCall" 
         component={VideoCallScreen} 
+        options={{ headerShown: false }}
       />
     </ChatsStack.Navigator>
   );
@@ -58,6 +59,11 @@ const ContactsStackNavigator = () => {
       <ContactsStack.Screen 
         name="CurrentChat" 
         component={CurrentChatScreen} 
+        options={{ headerShown: false }}
+      />
+      <ContactsStack.Screen 
+        name="VideoCall" 
+        component={VideoCallScreen} 
         options={{ headerShown: false }}
       />
     </ContactsStack.Navigator>
