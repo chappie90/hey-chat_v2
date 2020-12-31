@@ -124,7 +124,7 @@ const SocketEventListeners = () => {
 
       // Recipient has accepted video call
       socketState.on('video_call_accepted', (data: string) => {
-        videoCallHandlers.onVideoCallAccepted(data, RTCPeerConnectionRef.current, dispatch);
+        videoCallHandlers.onVideoCallAccepted(data, userId, socketState, RTCPeerConnectionRef.current, dispatch);
       });
 
       // Recipient has rejected video call
@@ -138,6 +138,7 @@ const SocketEventListeners = () => {
       });
 
       // Either user ends video call
+  // Stop local stream
       socketState.on('video_call_ended', (data: string) => {
         videoCallHandlers.onVideoCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
       });

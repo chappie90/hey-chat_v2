@@ -8,7 +8,7 @@ import InCallManager from 'react-native-incall-manager';
 import CustomText from 'components/CustomText';
 import { Colors, Fonts, Headings } from 'variables';
 import { videoCallActions } from 'reduxStore/actions';
-import { emitRejectVideoCall, emitAcceptVideoCall } from 'socket/eventEmitters';
+import { emitRejectVideoCall, emitAcceptVideoCall, emitSendICECandidate } from 'socket/eventEmitters';
 import { navigate } from 'navigation/NavigationRef';
 
 type IncomingCallNotificationProps = {};
@@ -26,7 +26,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
   const startLocalStream = async (): Promise<any> => {
     try {
       // isFront will determine if the initial camera should face user or environment
-      const isFront = false;
+      const isFront = true;
       const devices = await mediaDevices.enumerateDevices();
 
       const facing = isFront ? 'front' : 'environment';
@@ -80,6 +80,15 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
         answer 
       };
       emitAcceptVideoCall(JSON.stringify(data), socketState);
+
+      // Send candidates to caller
+      RTCConnection.onicecandidate = (event: any) => {
+        if (event.candidate) {
+          const data = { userId, contactId: callerId, candidate: event.candidate };
+          emitSendICECandidate(JSON.stringify(data), socketState);
+        }
+      };
+      
     } catch (err) {
       console.log('Offer Error', err);
     }
@@ -95,10 +104,15 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
     dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
     dispatch(videoCallActions.setActiveCallStatus(true));
 
+    InCallManager.start({media: 'audio/video'});
+
     navigate('VideoCall', routeParams);
   };
 
   const onRejectCall = (): void => {
+    InCallManager.stopRingtone();
+    InCallManager.stop();
+
     dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
 
     const data = { callerId };

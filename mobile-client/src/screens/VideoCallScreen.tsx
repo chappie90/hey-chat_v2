@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, useWindowDimensions } from 'react-native';
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -8,15 +8,16 @@ import {
   MediaStream,
   MediaStreamTrack,
   mediaDevices,
-  registerGlobals,
 } from 'react-native-webrtc';
 import { Colors, Headings } from 'variables';
 import { useSelector, useDispatch } from 'react-redux';
 import InCallManager from 'react-native-incall-manager';
 import { StackScreenProps } from '@react-navigation/stack';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import config from 'react-native-config';
+import Draggable from 'react-native-draggable';
 
 import { 
   emitMakeVideoCallOffer, 
@@ -42,6 +43,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   } = useSelector(state => state.video);
   const dispatch = useDispatch();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
+  const [muteMic, setMuteMic] = useState(true);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const startLocalStream = async (): Promise<any> => {
     try {
@@ -62,8 +65,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
           },
           facingMode,
           optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
-        },
-        zOrder: 1
+        }
       };
       const newStream = await mediaDevices.getUserMedia(constraints);
       dispatch(videoCallActions.setLocalStream(newStream));
@@ -76,24 +78,30 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   };
 
   const startCall = async (): Promise<void> => {
-    const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
+    const configuration = {iceServers: [
+      {
+        url: 'stun:stun.l.google.com:19302',  
+      }, {
+        url: 'stun:stun1.l.google.com:19302',    
+      }, {
+        url: 'stun:stun2.l.google.com:19302',    
+      },
+    ]};
     const peerConn = new RTCPeerConnection(configuration);
-
     dispatch(videoCallActions.setRTCPeerConnection(peerConn));
 
-    peerConn.onicecandidate = event => {
-      if (event.candidate) {
-        const data = { userId, contactId, candidate: event.candidate };
-        emitSendICECandidate(JSON.stringify(data), socketState);
-      }
+    // Reattempt connection if unintentionally disconnected?
+    peerConn.oniceconnectionstatechange = (event) => {
+      console.log('Ice connection state: ' + event.target.iceConnectionState);
+    };
+
+    peerConn.onnegotiationneeded = (): void => {
+      console.log('Negotiation needed');
     };
 
     peerConn.onaddstream = (event) => {
       try {
         if (event.stream && remoteStream !== event.stream) {
-            // Stop ringing when user picks up
-            // InCallManager.stopRingtone();
-            // InCallManager.start();
             dispatch(videoCallActions.setRemoteStream(event.stream));
         }
       } catch (err) {
@@ -122,6 +130,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     } catch (err) {
       console.error(err);
     }
+
+    InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
   };
 
   const stopLocalStream = () => {
@@ -131,12 +141,15 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   };
 
   const onEndCall = (): void => {
+    InCallManager.stop();
+
     stopLocalStream();
 
     // Close Peer connection and clean up event listeners
     RTCConnection.close(); 
-    RTCConnection.onicecandidate = null; 
-    RTCConnection.onaddstream = null; 
+    // RTCConnection.onicecandidate = null; 
+    // RTCConnection.onaddstream = null; 
+    
     dispatch(videoCallActions.setRTCPeerConnection(null));
 
     if (isCallActive) {
@@ -161,21 +174,26 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   };
 
   const toggleCameraFacingMode = async (): Promise<void> => {
-    InCallManager.setKeepScreenOn(false);
-    InCallManager.turnScreenOff();
+    localStream.getVideoTracks()[0]._switchCamera();
   };
 
   const toggleCameraFacingMode1 = async (): Promise<void> => {
-    InCallManager.setForceSpeakerphoneOn(false);
-    InCallManager.setSpeakerphoneOn(false);
+ 
    };
 
-   const toggleCameraFacingMode2 = async (): Promise<void> => {
-    InCallManager.setMicrophoneMute(true);
+   const toggleMuteMicrophone = async (): Promise<void> => {
+    localStream.getTracks().forEach((track: any) => {
+      if (track.kind === 'audio')  {
+        track.enabled = !muteMic
+      }
+    } );
+    setMuteMic(!muteMic);
    };
 
   useEffect(() => {
-    startCall();
+    if (!isCallActive) {
+      startCall();
+    }
   }, []);
 
   useEffect(() => {
@@ -197,7 +215,17 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
           </CustomText>
         </View>
       }
-      {localStream && 
+     {localStream && 
+      <Draggable 
+        x={windowWidth - 150} 
+        y={20} 
+        touchableOpacityProps={{ activeOpacity: 1 }}
+        minX={20}
+        minY={20}
+        maxX={windowWidth - 20}
+        maxY={windowHeight - 40}
+        onShortPressRelease={()=> console.log('touched!!')}
+      >
         <View 
           style={remoteStream ?
             styles.partialLocalStreamContainer :
@@ -206,6 +234,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
         >
           <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
         </View>
+      </Draggable>
       }
       {remoteStream && 
         <View style={styles.actions}>
@@ -218,8 +247,12 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
           <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode1}>
             <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
           </CustomButton>
-          <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode2}>
-            <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
+          <CustomButton layout={styles.actionBtnLayout} onPress={toggleMuteMicrophone}>
+            <FontAwesomeIcon 
+              name={muteMic ? "microphone-slash" : "microphone"} 
+              size={50} 
+              color={Colors.red} 
+            /> 
           </CustomButton>
         </View>
       }
@@ -257,20 +290,17 @@ const styles = StyleSheet.create({
     flex: 1
   },
   remoteStream: {
-    flex: 1
+    flex: 1,
+    zIndex: -2
   }, 
   fullLocalStreamContainer: {
     flex: 1
   },
   partialLocalStreamContainer: {
-    position: 'absolute',
     width: 140,
     height: 190,
-    zIndex: 2,
-    right: 10,
-    top: 10,
     borderRadius: 25,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   localStream: {
     width: '100%',
@@ -318,7 +348,8 @@ const styles = StyleSheet.create({
     right: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    zIndex: -1
   },
   actionBtnLayout: {
 
