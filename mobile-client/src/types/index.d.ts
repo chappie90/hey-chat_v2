@@ -136,4 +136,29 @@ type TCameraPhoto = {
   filename?: string;
 };
 
+// Call
+type TIncomingCall = {
+  status: boolean;
+  chat: {
+    chatType: string;
+    chatId: string;
+  },
+  caller: TContact;
+  offer: any;
+};
+
+type TActiveCall = {
+  status: boolean;
+  chat: {
+    chatType: string;
+    chatId: string;
+  };
+  contact: TContact;
+  remoteStream: any | null;
+  type: string; // Audio or Video
+  muted: boolean;
+  cameraFacingMode: string; // Front or Back
+  speaker: boolean;
+};
+
 

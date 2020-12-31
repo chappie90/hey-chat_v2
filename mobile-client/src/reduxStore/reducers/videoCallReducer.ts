@@ -3,28 +3,8 @@ import { Reducer } from 'redux';
 type VideoCallState = {
   localStream: any | null;
   RTCConnection: any | null;
-  incomingCall: {
-    status: boolean;
-    chat: {
-      chatType: string;
-      chatId: string;
-    },
-    caller: TContact;
-    offer: any;
-  };
-  activeCall: {
-    status: boolean;
-    chat: {
-      chatType: string;
-      chatId: string;
-    };
-    contact: TContact;
-    remoteStream: any | null;
-    type: string; // Audio or Video
-    muted: boolean;
-    cameraFacingMode: string; // Front or Back
-    speaker: boolean;
-  };
+  incomingCall: TIncomingCall;
+  activeCall: TActiveCall
 };
 
 const INITIAL_STATE: VideoCallState = {

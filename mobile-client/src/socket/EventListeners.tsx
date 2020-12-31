@@ -138,7 +138,7 @@ const SocketEventListeners = () => {
       });
 
       // Either user ends video call
-  // Stop local stream
+      // Stop local stream
       socketState.on('video_call_ended', (data: string) => {
         videoCallHandlers.onVideoCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
       });

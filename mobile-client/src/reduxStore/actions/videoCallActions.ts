@@ -3,6 +3,13 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import api from 'api';
 
+type VideoCallState = {
+  localStream: any | null;
+  RTCConnection: any | null;
+  incomingCall: TIncomingCall;
+  activeCall: TActiveCall
+};
+
 type VideoCallAction =
   | { type: 'set_rtc_peer_connection'; payload: any }
   | { type: 'receive_incoming_call'; payload: string }

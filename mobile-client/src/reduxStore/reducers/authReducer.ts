@@ -2,27 +2,19 @@ import { act } from 'react-test-renderer';
 import { Reducer } from 'redux';
 
 type AuthState = {
-  initialLoad: boolean;
   isAuthenticating: boolean;
   authError: string;
   userId: number | null;
   username: string | null;
   token: string | null;
-  socketState: any | null;
-  currentScreen: string;
-  userConnected: boolean;
 };
 
 const INITIAL_STATE: AuthState = {
-  initialLoad: true,
   isAuthenticating: false,
   authError: '',
   userId: null,
   username: null,
   token: null,
-  socketState: null,
-  currentScreen: '',
-  userConnected: false
 };
 
 export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
