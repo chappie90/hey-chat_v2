@@ -34,16 +34,16 @@ type CallScreenProps = StackScreenProps<ChatsStackParams, 'VideoCall'>;
 
 const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
-  const { userId, username, socketState } = useSelector(state => state.auth);
+  const { socketState } = useSelector(state => state.app);
+  const { userId, username } = useSelector(state => state.auth);
   const { profileImage } = useSelector(state => state.profile);
   const { 
     RTCConnection, 
     localStream, 
-    activeCall: { status: isCallActive, remoteStream } 
+    activeCall: { status: isCallActive, muted, cameraFacingMode, remoteStream } 
   } = useSelector(state => state.video);
   const dispatch = useDispatch();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
-  const [muteMic, setMuteMic] = useState(true);
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const startLocalStream = async (): Promise<any> => {

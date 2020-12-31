@@ -18,7 +18,8 @@ import { emitUpdateProfileImage } from 'socket/eventEmitters';
 type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
-  const { username, userId, socketState } = useSelector(state => state.auth);
+  const { socketState } = useSelector(state => state.app);
+  const { username, userId } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);

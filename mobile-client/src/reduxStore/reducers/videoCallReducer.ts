@@ -26,7 +26,7 @@ const INITIAL_STATE: VideoCallState = {
   },
   activeCall: {
     status: false,
-    chat: { chatType: '', chatId: '' },
+    chat: { chatType: 'private', chatId: '' },
     contact: {
       chatId: '',
       _id: 0,
@@ -51,16 +51,32 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state,
         RTCConnection: action.payload
       };
-    case 'receive_incoming_call':
+    case 'set_incoming_call':
       return {
         ...state,
         incomingCall: {
-          chatType: action.payload.chatType,
-          chatId: action.payload.chatId,
-          callerId: action.payload.callerId,
-          callerName: action.payload.callerName,
-          callerProfile: action.payload.callerProfile,
+          status: true,
+          chat: {
+            ...state.incomingCall.chat,
+            chatId: action.payload.chatId
+          },
+          contact: {
+            ...state.incomingCall.caller,
+            chatId: action.payload.chatId,
+            _id: action.payload.caller.callerId,
+            username: action.payload.caller.callerName,
+            profile: {
+              image: { small: { name: action.payload.caller.callerProfile } }
+            }
+          },
           offer: action.payload.offer,
+        }
+      };
+    case 'unset_incoming_call':
+      return {
+        ...state,
+        incomingCall: {
+          ...INITIAL_STATE.incomingCall
         }
       };
     case 'set_local_stream':
@@ -73,12 +89,40 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
           remoteStream: action.payload 
         }
       };
-    case 'set_active_call_status':
+    case 'start_active_call':
       return {
         ...state,
         activeCall: {
           ...state.activeCall,
-          status: action.payload
+          status: true,
+          chat: {
+            ...state.activeCall.chat,
+            chatId: action.payload.chatId
+          },
+          caller: {
+            ...state.activeCall.contact,
+            chatId: action.payload.chatId,
+            _id: action.payload.contact.contactId,
+            username: action.payload.contact.contactName,
+            profile: {
+              image: { small: { name: action.payload.contact.contactProfile } }
+            }
+          },
+        }
+      };
+    case 'end_active_call':
+      return {
+        ...state,
+        activeCall: {
+          ...INITIAL_STATE.activeCall
+        }
+      };
+    case 'toggle_mute_call':
+      return {
+        ...state,
+        activeCall: {
+          ...state.activeCall,
+          muted: !state.activeCall.muted
         }
       };
     default:

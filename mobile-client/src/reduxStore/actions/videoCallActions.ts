@@ -12,34 +12,43 @@ type VideoCallState = {
 
 type VideoCallAction =
   | { type: 'set_rtc_peer_connection'; payload: any }
-  | { type: 'receive_incoming_call'; payload: string }
+  | { type: 'set_incoming_call'; payload: { chatId: string; caller: TContact, offer: any } }
+  | { type: 'unset_incoming_call' }
   | { type: 'set_local_stream'; payload: any }
   | { type: 'set_remote_stream'; payload: any }
-  | { type: 'set_active_call_status'; payload: any };
+  | { type: 'start_active_call'; payload: { chatId: string; contact: TContact } }
+  | { type: 'end_active_call' }
+  | { type: 'toggle_mute_call' };
 
 const setRTCPeerConnection = (connection: any) => ({ type: 'set_rtc_peer_connection', payload: connection }); 
 
-const receiveIncomingCall = (
-  chatType: string,
+const setIncomingCall = (
   chatId: string,
-  callerId: string, 
-  callerName: string, 
-  callerProfile: string, 
+  caller: TContact,
   offer: any
 ) => {
-  return { type: 'receive_incoming_call', payload: { chatType, chatId, callerId, callerName, callerProfile, offer } }
+  return { type: 'set_incoming_call', payload: { chatId, caller, offer } }
 };
+
+const unsetIncomingCall = () => ({ type: 'unset_incoming_call' }); 
 
 const setLocalStream = (localStream: any) => ({ type: 'set_local_stream', payload: localStream }); 
 
 const setRemoteStream = (remoteStream: any) => ({ type: 'set_remote_stream', payload: remoteStream }); 
 
-const setActiveCallStatus = (activeStatus: boolean) => ({ type: 'set_active_call_status', payload: activeStatus }); 
+const startActiveCall = (chatId: string, contact: TContact) => ({ type: 'start_active_call', payload: { chatId, contact } });
+
+const endActiveCall = () => ({ type: 'end_active_call' }); 
+
+const toggleMuteActiveCall = () => ({ type: 'toggle_mute_call' }); 
 
 export default {
   setRTCPeerConnection,
-  receiveIncomingCall,
+  setIncomingCall,
+  unsetIncomingCall,
   setLocalStream,
   setRemoteStream,
-  setActiveCallStatus
+  startActiveCall,
+  endActiveCall,
+  toggleMuteActiveCall
 };

@@ -9,7 +9,8 @@ import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters'
 type AppStateManagerProps = { children: ReactNode };
 
 const AppStateManager = ({ children }: AppStateManagerProps) => {
-  const { userId, token, socketState, currentScreen, userConnected } = useSelector(state => state.auth);
+  const { userId, token } = useSelector(state => state.auth);
+  const { socketState, currentScreen, userConnected } = useSelector(state => state.app);
   const { chats, chatHistory, activeChat } = useSelector(state => state.chats);
   const dispatch = useDispatch();
   const appState = useRef<string>(AppState.currentState);

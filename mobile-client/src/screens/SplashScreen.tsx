@@ -9,7 +9,7 @@ import { appActions } from 'reduxStore/actions';
 import { Colors } from 'variables';
 
 const SplashScreen = () => {
-  const { initialLoad } = useSelector(state => state.auth);
+  const { initialLoad } = useSelector(state => state.app);
   const dispatch = useDispatch();
 
   const onAnimationFinish = (): void => {

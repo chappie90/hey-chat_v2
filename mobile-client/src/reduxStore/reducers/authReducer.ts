@@ -19,8 +19,6 @@ const INITIAL_STATE: AuthState = {
 
 export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case 'set_is_initial_load':
-      return { ...state, initialLoad: action.payload };
     case 'signin':
       return { 
         ...state,
@@ -39,12 +37,6 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
         token: null,
         // socketState: null
       };
-    case 'set_socket':
-      return { ...state, socketState: action.payload };
-    case 'get_current_screen':
-      return { ...state, currentScreen: action.payload };
-    case 'set_user_connected':
-      return { ...state, userConnected: action.payload };
     default: 
       return state;
   }

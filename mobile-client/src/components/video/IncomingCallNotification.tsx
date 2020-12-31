@@ -14,7 +14,8 @@ import { navigate } from 'navigation/NavigationRef';
 type IncomingCallNotificationProps = {};
 
 const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
-  const { userId, username, socketState } = useSelector(state => state.auth);
+  const { socketState } = useSelector(state => state.app);
+  const { userId, username } = useSelector(state => state.auth);
   const { profileImage } = useSelector(state => state.profile);
   const { 
     RTCConnection,

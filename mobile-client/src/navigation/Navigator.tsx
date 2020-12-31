@@ -10,7 +10,8 @@ import IncomingCallNotification from 'components/video/IncomingCallNotification'
 import SplashScreen from 'screens/SplashScreen';
 
 const Navigator = () => {
-  const { token, initialLoad } = useSelector(state => state.auth);
+  const { initialLoad } = useSelector(state => state.app);
+  const { token } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {

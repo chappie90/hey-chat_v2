@@ -57,7 +57,8 @@ const Chat = ({
   messageImageData,
   clearMessageImageData
 }: ChatProps) => {
-  const { userId, username, socketState } = useSelector(state => state.auth);
+  const { socketState } = useSelector(state => state.app);
+  const { userId, username } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
