@@ -54,15 +54,14 @@ type TUser = {
 
 type TUserProfile = {
   image?: {
-    original: {
+    original?: {
       name: string;
       path: string;
     },  
-    small: {
+    small?: {
       name: string;
-      path: string;
     },
-    medium: {
+    medium?: {
       name: string;
       path: string;
     }
