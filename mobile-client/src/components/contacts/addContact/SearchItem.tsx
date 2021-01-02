@@ -5,6 +5,7 @@ import {
   Image
 } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import config from 'react-native-config';
 
 import { Images } from 'assets';
 import CustomButton from 'components/CustomButton';
@@ -17,14 +18,16 @@ type SearchItemProps = {
 };
 
 const SearchItem = ({ item, onSendMessage }: SearchItemProps) => {
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
+
   return (
     <View style={styles.item}>
       <View style={styles.userDetails}>
         <View style={styles.imageContainer}>
-          {item.profile ?
+          {item.avatar ?
             <Image 
               style={styles.image} 
-              source={{ uri: item.profile.cloudinaryImgPath_150 }}
+              source={{ uri: `${S3_BUCKET_PATH}/${item.avatar.small}` }}
               /> : 
             <Image style={styles.image} source={ Images.avatarSmall } />
           }

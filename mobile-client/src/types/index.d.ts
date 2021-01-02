@@ -16,7 +16,7 @@ type ChatsStackParams = {
     chatId: string;
     contactId?: number;
     contactName?: string;
-    contactProfile?: string;
+    contactProfile?: { small: string, medium: string };
   };
   VideoCall: {
     chatType: string;
@@ -34,7 +34,7 @@ type ContactsStackParams = {
     chatId: string | undefined;
     contactId: number;
     contactName: string;
-    contactProfile?: string;
+    contactProfile?: { small: string, medium: string };
   };
   VideoCall: {
     chatType: string;
@@ -50,28 +50,16 @@ type TUser = {
   userId: number;
   username: string;
   token: string;
-};
-
-type TUserProfile = {
-  image?: {
-    original?: {
-      name: string;
-      path: string;
-    },  
-    small?: {
-      name: string;
-    },
-    medium?: {
-      name: string;
-      path: string;
-    }
-  }
+  avatar?: string;
 };
 
 type TContact = {
   _id: number;
   username: string;
-  profile?: TUserProfile;
+  avatar?: {
+    small?: string;
+    medium?: string;
+  };
   chatId?: string;
   pending?: boolean;
   online: boolean;

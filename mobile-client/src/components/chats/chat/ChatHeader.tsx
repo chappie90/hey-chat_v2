@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -15,18 +15,23 @@ type ChatHeaderProps = {
   chatId: string | undefined;
   contactId: number;
   contactName: string;
-  contactProfile: string | undefined;
+  contactProfile?: string;
 };
 
 const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }: ChatHeaderProps) => {
   const { typingContacts } = useSelector(state => state.chats);
   const navigation = useNavigation();
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
   const onCallConctact = (): void => {
     const routeParams = { chatType, chatId, contactId, contactName, contactProfile };
 
     navigation.navigate('VideoCall', routeParams);
   };
+
+  useEffect(() => {
+    console.log(contactProfile)
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -39,7 +44,7 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
         <View style={styles.imageContainer}>
           {contactProfile ? (
             <Image 
-              source={{ uri: `${config.RN_API_BASE_URL}/${contactProfile}` }} 
+              source={{ uri: `${S3_BUCKET_PATH}/${contactProfile}` }} 
               style={styles.image} 
             />
           ) : (

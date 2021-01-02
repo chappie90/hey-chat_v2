@@ -35,7 +35,7 @@ type ChatProps = {
   chatId: string;
   contactId?: number;
   contactName?: string;
-  contactProfile?: string;
+  contactProfile?: { small: string; medium: string };
   showCamera: () => void;
   hideCamera: () => void;
   showLibrary: () => void;
@@ -179,7 +179,7 @@ const Chat = ({
       setIsLoading(true);
 
       const newPage = page + 1;
-      const response = await dispatch(chatsActions.getMoreMessages(username, contactProfile, chatIdRef.current, newPage));
+      const response = await dispatch(chatsActions.getMoreMessages(username, chatIdRef.current, newPage, contactProfile?.small ));
 
       if (response) setIsLoading(false);
       if (!chatHistory[chatIdRef.current].allMessagesLoaded) {
@@ -317,7 +317,7 @@ const Chat = ({
       // Get messages if no previous chat history loaded
       if (!chatHistory[chatIdRef.current]) {
         setIsLoading(true);
-        const response = await dispatch(chatsActions.getMessages(username, contactProfile, chatIdRef.current));
+        const response = await dispatch(chatsActions.getMessages(username, chatIdRef.current, contactProfile));
         if (response) setIsLoading(false);
       }
     })();
@@ -386,7 +386,7 @@ const Chat = ({
             (!isLoading &&
               <ContactInvitation 
                 contactName={contactName} 
-                contactProfile={contactProfile} 
+                contactProfile={contactProfile?.medium} 
                 onGreeting={onGreeting} 
               />
             )

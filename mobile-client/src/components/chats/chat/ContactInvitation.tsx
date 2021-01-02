@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
+import config from 'react-native-config';
 
 import CustomText from 'components/CustomText';
 import CustomButton from 'components/CustomButton';
 import { Images } from 'assets';
 import { Fonts, Colors, Headings } from 'variables';
+
+const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/medium`;
 
 type ContactInvitationProps = {
   contactName?: string;
@@ -19,7 +22,7 @@ const ContactInvitation = ({ contactName, contactProfile, onGreeting }: ContactI
         {contactProfile ?
           <Image 
             style={styles.image} 
-            source={{ uri: contactProfile }}
+            source={{ uri: `${S3_BUCKET_PATH}/${contactProfile}` }}
             /> : 
           <Image style={styles.image} source={ Images.avatarSmall } />
         }

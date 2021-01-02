@@ -105,7 +105,8 @@ const ChatsList = ({ chats }: ChatsListProps) => {
           chatType: chat.type,
           chatId: chat.chatId,
           contactName: contact.username,
-          contactId: contact._id
+          contactId: contact._id,
+          contactProfile: contact.avatar 
         };
       }
     }

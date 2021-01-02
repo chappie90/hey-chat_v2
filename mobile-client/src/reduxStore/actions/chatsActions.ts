@@ -60,15 +60,15 @@ const updateChat = (chat: TChat) => ({ type: 'update_chat', payload: chat });
 
 const getMessages = (
   username: string, 
-  contactProfile: string, 
-  chatId: string
+  chatId: string,
+  contactProfile?: string, 
 ) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { chatId };
 
   try {
     const response = await api.get('/messages', { params });
 
-    const messages: TMessage[] = transformMessagesArray(response.data.messages, username, contactProfile, chatId);
+    const messages: TMessage[] = transformMessagesArray(response.data.messages, username, chatId, contactProfile);
 
     dispatch({ type: 'get_messages', payload: { 
       chatId, 
@@ -86,16 +86,16 @@ const getMessages = (
 
 const getMoreMessages = (
   username: string, 
-  contactProfile: string, 
   chatId: string,
-  page: number
+  page: number,
+  contactProfile?: string 
   ) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { chatId, page };
 
   try {
     const response = await api.get('/messages/more', { params });
 
-    const messages: TMessage[] = transformMessagesArray(response.data.messages, username, contactProfile, chatId);
+    const messages: TMessage[] = transformMessagesArray(response.data.messages, username, chatId, contactProfile);
 
     dispatch({ type: 'get_more_messages', payload: { 
       chatId, 

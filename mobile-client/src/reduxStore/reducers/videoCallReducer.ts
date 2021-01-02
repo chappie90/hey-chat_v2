@@ -15,17 +15,13 @@ const INITIAL_STATE: VideoCallState = {
     caller: {
       _id: 0,
       username: '',
-      profile: {
-        image: { small: { name: '' } }
-      },
+      avatar: { small: '' },
       online: true
     },
     callee: {
       _id: 0,
       username: '',
-      profile: {
-        image: { small: { name: '' } }
-      },
+      avatar: { small: '' },
       online: true
     },
     localStream: null,
@@ -63,16 +59,16 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
             ...state.call.caller,
             _id: action.payload.caller._id,
             username: action.payload.caller.username,
-            profile: {
-              image: { small: { name: action.payload.caller.profile.image.small.name } }
+            avatar: {
+              small: action.payload.caller.avatar.small
             }
           },
           callee: {
             ...state.call.callee,
             _id: action.payload.callee._id,
             username: action.payload.callee.username,
-            profile: {
-              image: { small: { name: action.payload.callee.profile.image.small.name } }
+            avatar: {
+              small: action.payload.callee.avatar.small
             }
           },
           type: action.payload.type
@@ -92,16 +88,16 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
             chatId: action.payload.chatId,
             _id: action.payload.caller._id,
             username: action.payload.caller.username,
-            profile: {
-              image: { small: { name: action.payload.caller.profile.image.small.name } }
+            avatar: {
+              small: action.payload.caller.avatar.small
             }
           },
           callee: {
             ...state.call.callee,
             _id: action.payload.callee._id,
             username: action.payload.callee.username,
-            profile: {
-              image: { small: { name: action.payload.callee.profile.image.small.name } }
+            avatar: {
+              small: action.payload.callee.avatar.small
             }
           },
           offer: action.payload.offer,
@@ -146,8 +142,8 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
             chatId: action.payload.chatId,
             _id: action.payload.contact.contactId,
             username: action.payload.contact.contactName,
-            profile: {
-              image: { small: { name: action.payload.contact.contactProfile } }
+            avatar: {
+              small: action.payload.caller.avatar.small
             }
           },
         }
@@ -156,7 +152,7 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         activeCall: {
-          ...INITIAL_STATE.activeCall
+          ...INITIAL_STATE.call
         }
       };
     case 'toggle_mute_call':

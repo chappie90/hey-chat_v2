@@ -20,10 +20,10 @@ const ContactsItem = ({ item, onContactSelect }: ContactsItemProps) => {
     <TouchableWithoutFeedback onPress={() => onContactSelect(item)}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          {item.profile ?
+          {item.avatar ?
             <Image 
               style={styles.image} 
-              source={{ uri: item.profile.cloudinaryImgPath_150 }}
+              source={{ uri: item.avatar.small }}
             /> : 
             <Image style={styles.image} source={ Images.avatarSmall } />
           }

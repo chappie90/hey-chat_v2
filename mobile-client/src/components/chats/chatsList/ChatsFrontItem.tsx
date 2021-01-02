@@ -30,9 +30,9 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
       <View>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
-            {contact?.profile?.image?.small.name ? (
+            {contact?.avatar?.small ? (
               <Image 
-                source={{ uri: `${S3_BUCKET_PATH}/${contact.profile.image.small.name}` }} 
+                source={{ uri: `${S3_BUCKET_PATH}/${contact.avatar.small}` }} 
                 style={styles.image} 
               />
             ) : (

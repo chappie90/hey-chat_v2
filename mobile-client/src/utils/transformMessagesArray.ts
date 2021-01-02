@@ -1,8 +1,8 @@
 export const transformMessagesArray = (
   messages: any[], 
   username: string, 
-  contactProfile: string, 
-  chatId: string
+  chatId: string,
+  contactProfile: string | undefined
 ): TMessage[] => {
   return messages.map((message: any) => {
     const { 

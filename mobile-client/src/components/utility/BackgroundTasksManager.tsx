@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import React, { useEffect } from 'react'
 import BackgroundFetch from 'react-native-background-fetch';
 
