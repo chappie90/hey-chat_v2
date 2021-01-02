@@ -14,6 +14,9 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 
+// VOIP
+#import "RNCallKeep.h"
+
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -118,5 +121,16 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
+
+/* VoIP */
+- (BOOL)application:(UIApplication *)application
+  continueUserActivity:(NSUserActivity *)userActivity
+  restorationHandler:(void(^)(NSArray * __nullable restorableObjects))restorationHandler {
+    return [RNCallKeep application:application
+                        continueUserActivity:userActivity
+                        restorationHandler:restorationHandler];
+  
+}
+/* End VoIP */
 
 @end

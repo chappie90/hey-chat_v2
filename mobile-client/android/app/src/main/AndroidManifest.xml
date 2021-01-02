@@ -13,6 +13,10 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.BIND_TELECOM_CONNECTION_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
       android:name=".MainApplication"
@@ -57,6 +61,7 @@
           </intent-filter>
       </receiver>
 
+      <!-- Push notifications -->
       <service
           android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
           android:exported="false" >
@@ -64,6 +69,18 @@
               <action android:name="com.google.firebase.MESSAGING_EVENT" />
           </intent-filter>
       </service>
+
+      <!-- VoIP -->
+      <service android:name="io.wazo.callkeep.VoiceConnectionService"
+          android:label="Wazo"
+          android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+         <!-- android:foregroundServiceType="camera|microphone">> -->
+          <intent-filter>
+              <action android:name="android.telecom.ConnectionService" />
+          </intent-filter>
+      </service>
+      <service android:name="io.wazo.callkeep.RNCallKeepBackgroundMessagingService" />
+      <!-- End VoIP -->
 
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
