@@ -137,23 +137,20 @@ type TCameraPhoto = {
 };
 
 // Call
-type TIncomingCall = {
-  status: boolean;
-  chat: {
-    chatType: string;
-    chatId: string;
-  },
-  caller: TContact;
-  offer: any;
-};
-
-type TActiveCall = {
-  status: boolean;
-  chat: {
+type TCall = {
+  callId: string;
+  isActive: boolean;
+  isInitiatingCall: boolean;
+  isReceivingCall: boolean;
+  offer: any,
+  chat: { 
     chatType: string;
     chatId: string;
   };
-  contact: TContact;
+  caller: TContact;
+  callee: TContact;
+  RTCConnection: any | null;
+  localStream: any | null;
   remoteStream: any | null;
   type: string; // Audio or Video
   muted: boolean;

@@ -11,6 +11,7 @@ import AppStateManager from 'components/utility/AppStateManager';
 import PushNotificationsManager from 'components/utility/PushNotificationsManager';
 import SocketEventListeners from 'socket/EventListeners';
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
+import VoIPManager from 'components/utility/VoIPManager';
 import { Colors } from 'variables';
 
 declare const global: {HermesInternal: null | {}};
@@ -21,6 +22,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <BackgroundTasksManager />
+      <VoIPManager />
       <SocketEventListeners />
       <AppStateManager>
         <PushNotificationsManager>

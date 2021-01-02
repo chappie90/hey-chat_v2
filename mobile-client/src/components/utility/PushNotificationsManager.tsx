@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import eventHandlers from 'socket/eventHandlers';
+import { chatsHandlers } from 'socket/eventHandlers';
 import { navigate } from 'navigation/NavigationRef';
 import { chatsActions } from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
@@ -14,7 +14,8 @@ import { Platform } from 'react-native';
 type PushNotificationsManagerProps = { children: ReactNode };
 
 const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) => {
-  const { userId, username, currentScreen, socketState } = useSelector(state => state.auth);
+  const { currentScreen, socketState } = useSelector(state => state.app);
+  const { userId, username } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
   const dispatch = useDispatch();
   const usernameRef = useRef('');
@@ -79,14 +80,21 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
+      console.log('received push notif')
       console.log(notification)
 
       // Update recipient app state while in background
       if (notification.data.silent) {
+        // Send local notification Android background
+        if (Platform.OS === 'android') {
+          const { newMessage } = JSON.parse(notification.data.payload);
+          sendLocalPushNotification("hey-chat-id-1", newMessage.sender, newMessage.message.text);
+        }
+
         switch (notification.data.type) {
           case 'message_received':
             // Update recipient's chats list and add new message to chat history
-            eventHandlers.onMessageReceived(
+            chatsHandlers.onMessageReceived(
               notification.data.payload, 
               usernameRef.current,
               chatHistoryRef.current,
@@ -96,18 +104,18 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             );
             break;
           case 'first_message_received':
-            eventHandlers.onFirstMessageReceived(notification.data.payload, dispatch);
+            chatsHandlers.onFirstMessageReceived(notification.data.payload, dispatch);
           case 'message_deleted':
             // Delete message for recipient
-            eventHandlers.onMessageDeleted(notification.data.payload, dispatch);
+            chatsHandlers.onMessageDeleted(notification.data.payload, dispatch);
             break;
           case 'message_liked':
             // Update recipient's chat messages with liked message
-            eventHandlers.onMessageLiked(notification.data.payload, dispatch);
+            chatsHandlers.onMessageLiked(notification.data.payload, dispatch);
             break;
           case 'messages_marked_as_read_sender':
             // Mark all sender's chat history messages as read
-            eventHandlers.onMessagesMarkedAsReadSender(notification.data.payload, dispatch);
+            chatsHandlers.onMessagesMarkedAsReadSender(notification.data.payload, dispatch);
             break;
           default:
             return;
@@ -119,15 +127,20 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
         sendLocalPushNotification("hey-chat-id-1", notification.title, notification.message);
       }
 
+      // // Serve local notification
+      // if (Platform.OS === 'ios') {
+      //   if (notification.title) {
+      //     console.log(notification.title)
+      //     PushNotification.localNotification({
+      //       title: notification.title,
+      //       message: notification.message
+      //     });
+      //   }
+      // }
+
       // Handle user tap on notification
       if (notification.userInteraction) { 
         const { chat, senderId } = JSON.parse(notification.data.payload);
-
-        console.log(notification.data.payload)
-
-        console.log(chat)
-        console.log(senderId)
-        
         if (chat.chatType === 'private') {
           console.log('private chat')
           // Send signal to sender message has been read and mark recipient's chat as read
@@ -147,14 +160,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
         }
       }
 
-      // Serve local notification
-      if (!notification.foreground) {
-        PushNotification.localNotification({
-          title: notification.data.title,
-          message: notification.data.message
-        });
-      }
-
       // const isClicked = notification.getData().userInteraction === 1;
 
       // if (isClicked) {
@@ -170,8 +175,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     onAction: function (notification) {
       // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
-      // console.log("ACTION:", notification.action);
-      // console.log("NOTIFICATION:", notification);
+      console.log("ACTION:", notification.action);
+      console.log("NOTIFICATION:", notification);
     },
 
     onRegistrationError: function (err) {

@@ -13,8 +13,9 @@ import {
 const SocketEventListeners = () => {
   const { socketState, currentScreen } = useSelector(state => state.app);
   const { userId, username } = useSelector(state => state.auth);
+  const { profileImage } = useSelector(state => state.profile);
   const { chatHistory } = useSelector(state => state.chats);
-  const { localStream, RTCConnection } = useSelector(state => state.video);
+  const { call: { localStream, RTCConnection } } = useSelector(state => state.video);
   const currentScreenRef = useRef('');
   const RTCPeerConnectionRef = useRef<any>(null);
   const localStreamRef = useRef<any>(null);
@@ -115,7 +116,7 @@ const SocketEventListeners = () => {
 
       // Recipient has received video call offer
       socketState.on('video_call_offer_received', (data: string) => {
-        videoCallHandlers.onVideoCallOfferReceived(data, userId, socketState, dispatch);
+        videoCallHandlers.onVideoCallOfferReceived(data, dispatch);
       });
 
       // User has received contact's ice candidate

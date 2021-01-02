@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Platform } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -27,7 +27,6 @@ type ChatsScreenProps = {
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   const { userId } = useSelector(state => state.auth);
   const { chats } = useSelector(state => state.chats);
-  const { incomingCall: { callerId } } = useSelector(state => state.video);
   const [showNewGroup, setShowNewGroup] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
@@ -45,7 +44,6 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <IncomingCallNotification />
       <ChatsHeader openModal={openModal} />
       {isLoading ? 
         (

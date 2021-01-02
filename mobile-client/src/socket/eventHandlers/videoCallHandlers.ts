@@ -1,12 +1,14 @@
 import { Dispatch } from 'redux';
+import { PermissionsAndroid, Platform } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'react-native-webrtc';
 import InCallManager from 'react-native-incall-manager';
+import RNCallKeep from 'react-native-callkeep';
 
 import { videoCallActions } from 'reduxStore/actions';
 import { emitSendICECandidate } from 'socket/eventEmitters';
 
-const onVideoCallOfferReceived = (data: string, userId: string, socketState: any, dispatch: Dispatch) => {
-  const { chatType, chatId, callerId, callerName, callerProfile, offer } = JSON.parse(data);
+const onVideoCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
+  const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
 
   // Create RTC peer connection
   const configuration = {iceServers: [
@@ -20,8 +22,42 @@ const onVideoCallOfferReceived = (data: string, userId: string, socketState: any
   ]};
   const peerConn = new RTCPeerConnection(configuration);
   dispatch(videoCallActions.setRTCPeerConnection(peerConn));
-  
-  dispatch(videoCallActions.receiveIncomingCall(chatType, chatId, callerId, callerName, callerProfile, offer));
+
+  const initRNCallKeep = async (): Promise<void> => {
+    const options = {
+      ios: {
+        appName: 'Hey',
+        imageName: 'sim_icon',
+        supportsVideo: false,
+        maximumCallGroups: '1',
+        maximumCallsPerCallGroup: '1'
+      },
+      android: {
+        alertTitle: 'Permissions Required',
+        alertDescription:
+          'This application needs to access your phone calling accounts to make calls',
+        cancelButton: 'Cancel',
+        okButton: 'ok',
+        imageName: 'sim_icon',
+        additionalPermissions: [PermissionsAndroid.PERMISSIONS.READ_CONTACTS]
+      }
+    };
+
+    try {
+      await RNCallKeep.setup(options);
+
+      if (Platform.OS === 'android') RNCallKeep.setAvailable(true);
+    } catch (err) {
+      console.error('Initialize CallKeep method error:', err.message);
+    }
+  };
+
+  dispatch(videoCallActions.receiveCall(callId, chatId, caller, callee, offer, type));
+
+  await initRNCallKeep();
+
+  const hasVideo = type === 'video' ? true : false;
+  RNCallKeep.displayIncomingCall(callId, caller._id, caller.username, 'generic', hasVideo);
 
   // Start playing ringtone
   InCallManager.start({media: 'audio/video'});

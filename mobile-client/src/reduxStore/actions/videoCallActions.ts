@@ -4,15 +4,13 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import api from 'api';
 
 type VideoCallState = {
-  localStream: any | null;
-  RTCConnection: any | null;
-  incomingCall: TIncomingCall;
-  activeCall: TActiveCall
+  call: TCall;
 };
 
 type VideoCallAction =
   | { type: 'set_rtc_peer_connection'; payload: any }
-  | { type: 'set_incoming_call'; payload: { chatId: string; caller: TContact, offer: any } }
+  | { type: 'initiate_call'; payload: { uuid: string, chatId: string, caller: TContact, callee: TContact, type: string } }
+  | { type: 'receive_call'; payload: { callId: string, chatId: string; caller: TContact,  offer: any, type: string } }
   | { type: 'unset_incoming_call' }
   | { type: 'set_local_stream'; payload: any }
   | { type: 'set_remote_stream'; payload: any }
@@ -22,15 +20,26 @@ type VideoCallAction =
 
 const setRTCPeerConnection = (connection: any) => ({ type: 'set_rtc_peer_connection', payload: connection }); 
 
-const setIncomingCall = (
+const initiateCall = (
+  callId: string,
   chatId: string,
   caller: TContact,
-  offer: any
+  callee: TContact,
+  type: string
+) => ({ type: 'initiate_call', payload: { callId, chatId, caller, callee, type } });
+
+const receiveCall = (
+  callId: string,
+  chatId: string,
+  caller: TContact,
+  callee: TContact,
+  offer: any,
+  type: string
 ) => {
-  return { type: 'set_incoming_call', payload: { chatId, caller, offer } }
+  return { type: 'receive_call', payload: { callId, chatId, caller, callee, offer, type } }
 };
 
-const unsetIncomingCall = () => ({ type: 'unset_incoming_call' }); 
+const unsetCall = () => ({ type: 'unset_call' }); 
 
 const setLocalStream = (localStream: any) => ({ type: 'set_local_stream', payload: localStream }); 
 
@@ -44,8 +53,9 @@ const toggleMuteActiveCall = () => ({ type: 'toggle_mute_call' });
 
 export default {
   setRTCPeerConnection,
-  setIncomingCall,
-  unsetIncomingCall,
+  initiateCall,
+  receiveCall,
+  unsetCall,
   setLocalStream,
   setRemoteStream,
   startActiveCall,

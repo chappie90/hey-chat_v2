@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Image, useWindowDimensions } from 'react-native';
+import {
+  StyleSheet, 
+  View, 
+  Image, 
+  useWindowDimensions,
+  Platform
+} from 'react-native';
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -18,6 +24,8 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import config from 'react-native-config';
 import Draggable from 'react-native-draggable';
+import uuid from 'react-native-uuid';
+import RNCallKeep from 'react-native-callkeep';
 
 import { 
   emitMakeVideoCallOffer, 
@@ -37,11 +45,16 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { socketState } = useSelector(state => state.app);
   const { userId, username } = useSelector(state => state.auth);
   const { profileImage } = useSelector(state => state.profile);
-  const { 
-    RTCConnection, 
+  const { call: {
+    callId,
+    isActive,
+    isInitiatingCall,
+    RTCConnection,
     localStream, 
-    activeCall: { status: isCallActive, muted, cameraFacingMode, remoteStream } 
-  } = useSelector(state => state.video);
+    remoteStream,
+    muted,
+    cameraFacingMode,
+  } } = useSelector(state => state.video);
   const dispatch = useDispatch();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -77,70 +90,13 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     }
   };
 
-  const startCall = async (): Promise<void> => {
-    const configuration = {iceServers: [
-      {
-        url: 'stun:stun.l.google.com:19302',  
-      }, {
-        url: 'stun:stun1.l.google.com:19302',    
-      }, {
-        url: 'stun:stun2.l.google.com:19302',    
-      },
-    ]};
-    const peerConn = new RTCPeerConnection(configuration);
-    dispatch(videoCallActions.setRTCPeerConnection(peerConn));
-
-    // Reattempt connection if unintentionally disconnected?
-    peerConn.oniceconnectionstatechange = (event) => {
-      console.log('Ice connection state: ' + event.target.iceConnectionState);
-    };
-
-    peerConn.onnegotiationneeded = (): void => {
-      console.log('Negotiation needed');
-    };
-
-    peerConn.onaddstream = (event) => {
-      try {
-        if (event.stream && remoteStream !== event.stream) {
-            dispatch(videoCallActions.setRemoteStream(event.stream));
-        }
-      } catch (err) {
-        console.error(`Error adding remote stream: ${err}`);
-      }
-    };
-
-    const stream = await startLocalStream();
-    peerConn.addStream(stream);
-
-    try {
-      const offer = await peerConn.createOffer();
-
-      await peerConn.setLocalDescription(offer);
-
-      const data = { 
-        chatType,
-        chatId,
-        callerId: userId, 
-        callerName: username, 
-        callerProfile: profileImage,
-        recipientId: contactId, 
-        offer 
-      };
-      emitMakeVideoCallOffer(JSON.stringify(data), socketState);
-    } catch (err) {
-      console.error(err);
-    }
-
-    InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
-  };
-
   const stopLocalStream = () => {
     localStream.getTracks().forEach((t: any) => t.stop());
     localStream.release();
     dispatch(videoCallActions.setLocalStream(null));
   };
 
-  const onEndCall = (): void => {
+  const onEndCallOld = (): void => {
     InCallManager.stop();
 
     stopLocalStream();
@@ -152,7 +108,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     
     dispatch(videoCallActions.setRTCPeerConnection(null));
 
-    if (isCallActive) {
+    if (isActive) {
       dispatch(videoCallActions.setRemoteStream(null));
       const data = { 
         chatType, 
@@ -187,21 +143,96 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
         track.enabled = !muteMic
       }
     } );
-    setMuteMic(!muteMic);
+    // setMuteMic(!muteMic);
    };
 
-  useEffect(() => {
-    if (!isCallActive) {
-      startCall();
+  const startCall = async (
+    callId: string, 
+    callerName: string, 
+    calleeName: string,
+    callType: string
+  ): Promise<void> => {
+    RNCallKeep.startCall(callId, callerName, calleeName);
+
+    const caller = {
+      _id: userId,
+      username,
+      profile: { image: { small: { name: profileImage } } },
+      online: true
+    };
+
+    const callee = {
+      _id: contactId,
+      username: contactName,
+      profile: { image: { small: { name: contactProfile ? contactProfile : '' } } },
+      online: true
+    };
+
+    dispatch(videoCallActions.initiateCall(callId, chatId, caller, callee, callType));
+
+    // Establish RTC Peer Connection
+    const configuration = {iceServers: [
+      {
+        url: 'stun:stun.l.google.com:19302',  
+      }, {
+        url: 'stun:stun1.l.google.com:19302',    
+      }, {
+        url: 'stun:stun2.l.google.com:19302',    
+      },
+    ]};
+    const peerConn = new RTCPeerConnection(configuration);
+    dispatch(videoCallActions.setRTCPeerConnection(peerConn));
+
+    // Reattempt connection if unintentionally disconnected?
+    peerConn.oniceconnectionstatechange = (event) => {
+      console.log('Ice connection state: ' + event.target.iceConnectionState);
+    };
+
+    peerConn.onnegotiationneeded = (): void => {
+      console.log('Negotiation needed');
+    };
+
+    peerConn.onaddstream = (event) => {
+      try {
+        if (event.stream && remoteStream !== event.stream) {
+            dispatch(videoCallActions.setRemoteStream(event.stream));
+        }
+      } catch (err) {
+        console.error(`Error adding remote stream: ${err}`);
+      }
+    };
+
+    // Add local stream to peer connection
+    const stream = await startLocalStream();
+    peerConn.addStream(stream);
+
+    // Send sdp offer to callee
+    try {
+      const offer = await peerConn.createOffer();
+
+      await peerConn.setLocalDescription(offer);
+
+      const data = { callId, chatId, caller, callee, offer, type: callType };
+      emitMakeVideoCallOffer(JSON.stringify(data), socketState);
+    } catch (err) {
+      console.error(err);
     }
+
+    // Start ringback tone
+    InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
+  };  
+
+  useEffect(() => {
+    (async () => {
+      if (!RTCConnection)  {
+        startCall(uuid.v4(), username, contactName, 'video');
+      }
+    })();
   }, []);
 
   useEffect(() => {
-    // console.log('remote stream caller')
-    // console.log(remoteStream)
-    // console.log('local stream caller')
-    // console.log(localStream)
-  }, [remoteStream, localStream])
+    console.log(localStream)
+  }, [localStream])
 
   return (
     <View style={styles.container}>
@@ -241,7 +272,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
           <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode}>
             <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
           </CustomButton>
-          <CustomButton layout={styles.actionBtnLayout} onPress={onEndCall}>
+          <CustomButton layout={styles.actionBtnLayout} onPress={onEndCallOld}>
             <MaterialCommunityIcon name="phone-hangup" size={50} color={Colors.red} /> 
           </CustomButton>
           <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode1}>
@@ -249,36 +280,12 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
           </CustomButton>
           <CustomButton layout={styles.actionBtnLayout} onPress={toggleMuteMicrophone}>
             <FontAwesomeIcon 
-              name={muteMic ? "microphone-slash" : "microphone"} 
+              name={true ? "microphone-slash" : "microphone"} 
               size={50} 
               color={Colors.red} 
             /> 
           </CustomButton>
         </View>
-      }
-      {localStream && !remoteStream &&
-        <>
-          <View style={styles.videoDetailsBackground} />
-          <View style={styles.videoDetails}>
-            <View style={styles.imageContainer}>
-              {contactProfile ? (
-                <Image 
-                  source={{ uri: `${S3_BUCKET_PATH}/${contactProfile}` }} 
-                  style={styles.image} 
-                />
-              ) : (
-                <Image
-                  source={Images.avatarSmall} 
-                  style={styles.image} />
-              )}
-            </View>
-            <CustomText color={Colors.purpleDark} fontSize={Headings.headingExtraLarge}>{contactName}</CustomText>
-            <CustomText color={Colors.purpleDark}  fontSize={Headings.headingSmall}>Ringing...</CustomText>
-            <CustomButton layout={styles.endCallButtonLayout} onPress={onEndCall}>
-              <MaterialCommunityIcon name="phone-hangup" size={50} color={Colors.red} /> 
-            </CustomButton>
-          </View>
-        </>
       }
     </View>
   );
@@ -305,39 +312,7 @@ const styles = StyleSheet.create({
   localStream: {
     width: '100%',
     height: '100%'
-  },  
-  videoDetailsBackground: {
-    width: 250,
-    height: 260,
-    opacity: 0.8,
-    backgroundColor: Colors.purpleLight,
-    paddingVertical: 20,
-    paddingHorizontal: 50,
-    borderRadius: 25,
-    position: 'absolute',
-    alignSelf: 'center',
-    top: '17%',
-    alignItems: 'center',
-    zIndex: 1
-  },  
-  videoDetails: { 
-    position: 'absolute',
-    alignSelf: 'center',
-    top: '20%',
-    alignItems: 'center',
-    zIndex: 2
-  },
-  imageContainer: {
-    overflow: 'hidden', 
-    width: 100, 
-    height: 100, 
-    borderRadius: 15, 
-    backgroundColor: Colors.greyLight
-  },
-  image: {
-    width: '100%', 
-    height: '100%'
-  },
+  },   
   endCallButtonLayout: {
     marginTop: 20
   },

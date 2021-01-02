@@ -102,7 +102,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
       contactProfile: callerProfile 
     };
 
-    dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
+    dispatch(videoCallActions.unsetIncomingCall());
     dispatch(videoCallActions.setActiveCallStatus(true));
 
     InCallManager.start({media: 'audio/video'});
@@ -114,7 +114,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
     InCallManager.stopRingtone();
     InCallManager.stop();
 
-    dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
+    dispatch(videoCallActions.unsetIncomingCall());
 
     const data = { callerId };
     emitRejectVideoCall(JSON.stringify(data), socketState);

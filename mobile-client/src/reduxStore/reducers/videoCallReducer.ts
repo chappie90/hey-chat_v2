@@ -1,20 +1,18 @@
 import { Reducer } from 'redux';
 
 type VideoCallState = {
-  localStream: any | null;
-  RTCConnection: any | null;
-  incomingCall: TIncomingCall;
-  activeCall: TActiveCall
+  call: TCall;
 };
 
 const INITIAL_STATE: VideoCallState = {
-  localStream: null,
-  RTCConnection: null,
-  incomingCall: {
-    status: false,
+  call: {
+    callId: '',
+    isActive: false,
+    isInitiatingCall: false,
+    isReceivingCall: false,
+    offer: null,
     chat: { chatType: 'private', chatId: '' },
     caller: {
-      chatId: '',
       _id: 0,
       username: '',
       profile: {
@@ -22,13 +20,7 @@ const INITIAL_STATE: VideoCallState = {
       },
       online: true
     },
-    offer: null
-  },
-  activeCall: {
-    status: false,
-    chat: { chatType: 'private', chatId: '' },
-    contact: {
-      chatId: '',
+    callee: {
       _id: 0,
       username: '',
       profile: {
@@ -36,7 +28,9 @@ const INITIAL_STATE: VideoCallState = {
       },
       online: true
     },
+    localStream: null,
     remoteStream: null,
+    RTCConnection: null,
     type: '',
     muted: false,
     cameraFacingMode: 'front',
@@ -49,44 +43,92 @@ export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
     case 'set_rtc_peer_connection':
       return {
         ...state,
-        RTCConnection: action.payload
+        call: {
+          ...state.call,
+          RTCConnection: action.payload
+        }
       };
-    case 'set_incoming_call':
+    case 'initiate_call':
       return {
         ...state,
-        incomingCall: {
-          status: true,
+        call: {
+          ...state.call,
+          uuid: action.payload.uuid,
+          isInitiatingCall: true,
           chat: {
-            ...state.incomingCall.chat,
+            ...state.call.chat,
             chatId: action.payload.chatId
           },
-          contact: {
-            ...state.incomingCall.caller,
-            chatId: action.payload.chatId,
-            _id: action.payload.caller.callerId,
-            username: action.payload.caller.callerName,
+          caller: {
+            ...state.call.caller,
+            _id: action.payload.caller._id,
+            username: action.payload.caller.username,
             profile: {
-              image: { small: { name: action.payload.caller.callerProfile } }
+              image: { small: { name: action.payload.caller.profile.image.small.name } }
+            }
+          },
+          callee: {
+            ...state.call.callee,
+            _id: action.payload.callee._id,
+            username: action.payload.callee.username,
+            profile: {
+              image: { small: { name: action.payload.callee.profile.image.small.name } }
+            }
+          },
+          type: action.payload.type
+        }
+      };
+    case 'receive_call':
+      return {
+        ...state,
+        call: {
+          isReceivingCall: true,
+          chat: {
+            ...state.call.chat,
+            chatId: action.payload.chatId
+          },
+          caller: {
+            ...state.call.caller,
+            chatId: action.payload.chatId,
+            _id: action.payload.caller._id,
+            username: action.payload.caller.username,
+            profile: {
+              image: { small: { name: action.payload.caller.profile.image.small.name } }
+            }
+          },
+          callee: {
+            ...state.call.callee,
+            _id: action.payload.callee._id,
+            username: action.payload.callee.username,
+            profile: {
+              image: { small: { name: action.payload.callee.profile.image.small.name } }
             }
           },
           offer: action.payload.offer,
+          type: action.payload.type
         }
       };
-    case 'unset_incoming_call':
+    case 'unset_call':
       return {
         ...state,
-        incomingCall: {
-          ...INITIAL_STATE.incomingCall
+        call: {
+          ...INITIAL_STATE.call
         }
       };
     case 'set_local_stream':
-      return { ...state, localStream: action.payload };
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          localStream: action.payload
+        }
+      };
     case 'set_remote_stream':
-      return { 
-        ...state, 
-        activeCall: {
-          ...state.activeCall,
-          remoteStream: action.payload 
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          remoteStream: action.payload
         }
       };
     case 'start_active_call':
