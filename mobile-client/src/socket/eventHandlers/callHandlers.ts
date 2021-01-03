@@ -4,10 +4,10 @@ import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'react
 import InCallManager from 'react-native-incall-manager';
 import RNCallKeep from 'react-native-callkeep';
 
-import { videoCallActions } from 'reduxStore/actions';
+import { callActions } from 'reduxStore/actions';
 import { emitSendICECandidate } from 'socket/eventEmitters';
 
-const onVideoCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
+const onCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
   const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
 
   // Create RTC peer connection
@@ -21,7 +21,7 @@ const onVideoCallOfferReceived = async (data: string, dispatch: Dispatch): Promi
     },
   ]};
   const peerConn = new RTCPeerConnection(configuration);
-  dispatch(videoCallActions.setRTCPeerConnection(peerConn));
+  dispatch(callActions.setRTCPeerConnection(peerConn));
 
   const initRNCallKeep = async (): Promise<void> => {
     const options = {
@@ -52,7 +52,7 @@ const onVideoCallOfferReceived = async (data: string, dispatch: Dispatch): Promi
     }
   };
 
-  dispatch(videoCallActions.receiveCall(callId, chatId, caller, callee, offer, type));
+  dispatch(callActions.receiveCall(callId, chatId, caller, callee, offer, type));
 
   await initRNCallKeep();
 
@@ -75,7 +75,7 @@ const onICECandidateReceived = (data: string, RTCPeerConnection: any, dispatch: 
   }
 };
 
-const onVideoCallAccepted = (data: string,  userId: string, socketState: any, RTCPeerConnection: any, dispatch: Dispatch) => {
+const onCallAccepted = (data: string,  userId: string, socketState: any, RTCPeerConnection: any, dispatch: Dispatch) => {
   const { recipientId, recipientName, recipientProfile, answer } = JSON.parse(data);
   RTCPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
 
@@ -87,14 +87,14 @@ const onVideoCallAccepted = (data: string,  userId: string, socketState: any, RT
       emitSendICECandidate(JSON.stringify(data), socketState);
     }
   };
-  dispatch(videoCallActions.setActiveCallStatus(true));
+  dispatch(callActions.setActiveCallStatus(true));
 
   // When callee answers, stop ringback
   InCallManager.stopRingback();
 };
 
-const onVideoCallRejected = (navigate: any, dispatch: Dispatch) => {
-  dispatch(videoCallActions.setRTCPeerConnection(null));
+const onCallRejected = (navigate: any, dispatch: Dispatch) => {
+  dispatch(callActions.setRTCPeerConnection(null));
 
   // If callee rejects call, stop ringback
   InCallManager.stopRingback();
@@ -103,15 +103,15 @@ const onVideoCallRejected = (navigate: any, dispatch: Dispatch) => {
   navigate('CurrentChat', {});
 };
 
-const onVideoCallCancelled = (dispatch: Dispatch) => {
+const onCallCancelled = (dispatch: Dispatch) => {
   // Stop ringing if caller cancells call
   InCallManager.stopRingtone();
   InCallManager.stop();
   
-  dispatch(videoCallActions.receiveIncomingCall('', '', '', '', '', null));
+  dispatch(callActions.receiveIncomingCall('', '', '', '', '', null));
 };
 
-const onVideoCallEnded = (
+const onCallEnded = (
   data: string, 
   localStream: any,
   RTCPeerConnection: any, 
@@ -124,16 +124,16 @@ const onVideoCallEnded = (
   // Stop local stream
   localStream.getTracks().forEach((t: any) => t.stop());
   localStream.release();
-  dispatch(videoCallActions.setLocalStream(null));
+  dispatch(callActions.setLocalStream(null));
 
   // Close Peer connection and clean up event listeners
   RTCPeerConnection.close();
   // RTCPeerConnection.onicecandidate = null; 
   // RTCPeerConnection.onaddstream = null; 
-  dispatch(videoCallActions.setRTCPeerConnection(null));
+  dispatch(callActions.setRTCPeerConnection(null));
 
-  dispatch(videoCallActions.setRemoteStream(null));
-  dispatch(videoCallActions.setActiveCallStatus(false));
+  dispatch(callActions.setRemoteStream(null));
+  dispatch(callActions.setActiveCallStatus(false));
 
   const routeParams = { 
     chatType, 
@@ -146,10 +146,10 @@ const onVideoCallEnded = (
 };
 
 export default {
-  onVideoCallOfferReceived,
+  onCallOfferReceived,
   onICECandidateReceived,
-  onVideoCallAccepted,
-  onVideoCallRejected,
-  onVideoCallCancelled,
-  onVideoCallEnded
+  onCallAccepted,
+  onCallRejected,
+  onCallCancelled,
+  onCallEnded
 };

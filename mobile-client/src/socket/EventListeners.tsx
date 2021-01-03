@@ -113,9 +113,9 @@ const SocketEventListeners = () => {
         chatsHandlers.onChatRestored(data, dispatch);
       });
 
-      // Recipient has received video call offer
-      socketState.on('video_call_offer_received', (data: string) => {
-        callHandlers.onVideoCallOfferReceived(data, dispatch);
+      // Recipient has received call offer
+      socketState.on('call_offer_received', (data: string) => {
+        callHandlers.onCallOfferReceived(data, dispatch);
       });
 
       // User has received contact's ice candidate
@@ -123,25 +123,25 @@ const SocketEventListeners = () => {
         callHandlers.onICECandidateReceived(data,  RTCPeerConnectionRef.current, dispatch);
       });
 
-      // Recipient has accepted video call
-      socketState.on('video_call_accepted', (data: string) => {
-        callHandlers.onVideoCallAccepted(data, userId, socketState, RTCPeerConnectionRef.current, dispatch);
+      // Recipient has accepted call
+      socketState.on('call_accepted', (data: string) => {
+        callHandlers.onCallAccepted(data, userId, socketState, RTCPeerConnectionRef.current, dispatch);
       });
 
-      // Recipient has rejected video call
-      socketState.on('video_call_rejected', () => {
-        callHandlers.onVideoCallRejected(navigate, dispatch);
+      // Recipient has rejected call
+      socketState.on('call_rejected', () => {
+        callHandlers.onCallRejected(navigate, dispatch);
       });
 
-      // Caller has cancelled video call
-      socketState.on('video_call_cancelled', () => {
-        callHandlers.onVideoCallCancelled(dispatch);
+      // Caller has cancelled call
+      socketState.on('call_cancelled', () => {
+        callHandlers.onCallCancelled(dispatch);
       });
 
-      // Either user ends video call
+      // Either user ends call
       // Stop local stream
-      socketState.on('video_call_ended', (data: string) => {
-        callHandlers.onVideoCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
+      socketState.on('call_ended', (data: string) => {
+        callHandlers.onCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
       });
 
     }
