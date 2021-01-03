@@ -1,19 +1,10 @@
 import React from 'react';
-import { 
-  View, 
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import { View, StyleSheet } from 'react-native';
 
 import { Colors, Headings, Fonts } from 'variables';
 import CustomText from 'components/CustomText';
 
-type ChatsHeaderProps = {
-  openModal: () => void;
-};
-
-const ChatsHeader = ({ openModal }: ChatsHeaderProps) => {
+const ChatsHeader = () => {
   return (
     <View style={styles.header}>
       <View style={styles.top}>
@@ -24,9 +15,6 @@ const ChatsHeader = ({ openModal }: ChatsHeaderProps) => {
         >
           My Chats
         </CustomText>
-        {/* <TouchableOpacity style={styles.addButton} onPress={openModal}>
-          <MaterialIcon name="group-add" size={37} color={Colors.white} />
-        </TouchableOpacity> */}
       </View>
       <View style={styles.bottom}></View>
     </View>

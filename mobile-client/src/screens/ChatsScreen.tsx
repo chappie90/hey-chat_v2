@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useSelector, useDispatch } from 'react-redux';
 
-import IncomingCallNotification from 'components/video/IncomingCallNotification';
 import { Colors } from 'variables';
 import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
@@ -27,13 +26,8 @@ type ChatsScreenProps = {
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
   const { userId } = useSelector(state => state.auth);
   const { chats } = useSelector(state => state.chats);
-  const [showNewGroup, setShowNewGroup] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const dispatch = useDispatch();
-
-  const openModal = (): void => {
-    setShowNewGroup(true);
-  };
+  const dispatch = useDispatch();;
 
   useEffect(() => {
     (async () => {
@@ -44,7 +38,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <ChatsHeader openModal={openModal} />
+      <ChatsHeader />
       {isLoading ? 
         (
           <View style={styles.spinnerContainer}>

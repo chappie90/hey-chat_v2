@@ -1,10 +1,10 @@
 import { Reducer } from 'redux';
 
-type VideoCallState = {
+type CallState = {
   call: TCall;
 };
 
-const INITIAL_STATE: VideoCallState = {
+const INITIAL_STATE: CallState = {
   call: {
     callId: '',
     isActive: false,
@@ -34,7 +34,7 @@ const INITIAL_STATE: VideoCallState = {
   }
 };
 
-export const videoCallReducer: Reducer = (state = INITIAL_STATE, action) => {
+export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'set_rtc_peer_connection':
       return {

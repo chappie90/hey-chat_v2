@@ -10,13 +10,19 @@ type AuthState = {
   userId: number | null;
   username: string | null;
   token: string | null;
+  user: {
+    avatar?: string;
+  };
 };
 
 type AuthAction = 
   | { type: 'signin'; payload: TUser }
   | { type: 'is_authenticating'; payload: boolean }
   | { type: 'set_auth_error'; payload: string }
-  | { type: 'sign_out'; };
+  | { type: 'sign_out' }
+  | { type: 'get_avatar_image'; payload: string }
+  | { type: 'update_avatar_image'; payload: string }
+  | { type: 'delete_avatar_image' };
 
 const signup = (username: string, password: string) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
@@ -111,11 +117,42 @@ const signOut = (userId: string, socketInstance: any) => async (dispatch: ThunkD
   } 
 };
 
+const getAvatarImage = (userId: number) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
+  const params = { userId };
+
+  try {
+    const response = await api.get('/image', { params });
+
+    dispatch({ type: 'get_avatar_image', payload: response.data.profileImage });
+  } catch (error) {
+    console.log('Get profile image method error');
+    if (error.response) console.log(error.response.data.message);
+    if (error.message) console.log(error.message);
+  }
+};
+
+const updateAvatarImage = (image: string) => ({ type: 'update_avatar_image', payload: image });
+
+const deleteAvatarImage = (userId: number) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
+  try {
+    const response = await api.patch('/image/delete', { userId });
+
+    dispatch({ type: 'delete_avatar_image' });
+  } catch (error) {
+    console.log('Delete profile image method error');
+    if (error.response) console.log(error.response.data.message);
+    if (error.message) console.log(error.message);
+  }
+};
+
 export default {
   signup,
   signin,
   isAuthenticating,
   setAuthError,
   autoSignin,
-  signOut
+  signOut,
+  getAvatarImage,
+  updateAvatarImage,
+  deleteAvatarImage
 };  

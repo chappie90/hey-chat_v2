@@ -7,7 +7,7 @@ import InCallManager from 'react-native-incall-manager';
 
 import CustomText from 'components/CustomText';
 import { Colors, Fonts, Headings } from 'variables';
-import { videoCallActions } from 'reduxStore/actions';
+import { callActions } from 'reduxStore/actions';
 import { emitRejectVideoCall, emitAcceptVideoCall, emitSendICECandidate } from 'socket/eventEmitters';
 import { navigate } from 'navigation/NavigationRef';
 
@@ -15,13 +15,12 @@ type IncomingCallNotificationProps = {};
 
 const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
   const { socketState } = useSelector(state => state.app);
-  const { userId, username } = useSelector(state => state.auth);
-  const { profileImage } = useSelector(state => state.profile);
+  const { userId, username, user: { avatar } } = useSelector(state => state.auth);
   const { 
     RTCConnection,
     incomingCall: { chatType, chatId, callerId, callerName, callerProfile, offer },
     activeCall: { remoteStream  }
-  } = useSelector(state => state.video);
+  } = useSelector(state => state.call);
   const dispatch = useDispatch();
 
   const startLocalStream = async (): Promise<any> => {
@@ -48,7 +47,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
 
       const newStream = await mediaDevices.getUserMedia(constraints);
 
-      dispatch(videoCallActions.setLocalStream(newStream));
+      dispatch(callActions.setLocalStream(newStream));
 
       return newStream;
     } catch (err) {
@@ -63,7 +62,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
 
     RTCConnection.onaddstream = (event: any) => {
       if (event.stream && remoteStream !== event.stream) {
-        dispatch(videoCallActions.setRemoteStream(event.stream));
+        dispatch(callActions.setRemoteStream(event.stream));
       }
     };
 
@@ -77,7 +76,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
         callerId, 
         recipientId: userId, 
         recipientName: username, 
-        recipientProfile: profileImage, 
+        recipientProfile: avatar, 
         answer 
       };
       emitAcceptVideoCall(JSON.stringify(data), socketState);
@@ -102,8 +101,8 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
       contactProfile: callerProfile 
     };
 
-    dispatch(videoCallActions.unsetIncomingCall());
-    dispatch(videoCallActions.setActiveCallStatus(true));
+    dispatch(callActions.unsetIncomingCall());
+    dispatch(callActions.setActiveCallStatus(true));
 
     InCallManager.start({media: 'audio/video'});
 
@@ -114,7 +113,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
     InCallManager.stopRingtone();
     InCallManager.stop();
 
-    dispatch(videoCallActions.unsetIncomingCall());
+    dispatch(callActions.unsetIncomingCall());
 
     const data = { callerId };
     emitRejectVideoCall(JSON.stringify(data), socketState);

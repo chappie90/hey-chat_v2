@@ -3,11 +3,11 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import api from 'api';
 
-type VideoCallState = {
+type CallState = {
   call: TCall;
 };
 
-type VideoCallAction =
+type CallAction =
   | { type: 'set_rtc_peer_connection'; payload: any }
   | { type: 'initiate_call'; payload: { uuid: string, chatId: string, caller: TContact, callee: TContact, type: string } }
   | { type: 'receive_call'; payload: { callId: string, chatId: string; caller: TContact,  offer: any, type: string } }

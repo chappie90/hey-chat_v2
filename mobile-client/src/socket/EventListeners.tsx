@@ -7,15 +7,14 @@ import {
   contactsHandlers,
   chatsHandlers,
   profileHandlers,
-  videoCallHandlers
+  callHandlers
 } from './eventHandlers';
 
 const SocketEventListeners = () => {
   const { socketState, currentScreen } = useSelector(state => state.app);
   const { userId, username } = useSelector(state => state.auth);
-  const { profileImage } = useSelector(state => state.profile);
   const { chatHistory } = useSelector(state => state.chats);
-  const { call: { localStream, RTCConnection } } = useSelector(state => state.video);
+  const { call: { localStream, RTCConnection } } = useSelector(state => state.call);
   const currentScreenRef = useRef('');
   const RTCPeerConnectionRef = useRef<any>(null);
   const localStreamRef = useRef<any>(null);
@@ -116,33 +115,33 @@ const SocketEventListeners = () => {
 
       // Recipient has received video call offer
       socketState.on('video_call_offer_received', (data: string) => {
-        videoCallHandlers.onVideoCallOfferReceived(data, dispatch);
+        callHandlers.onVideoCallOfferReceived(data, dispatch);
       });
 
       // User has received contact's ice candidate
       socketState.on('ice_candidate_received', (data: string) => {
-        videoCallHandlers.onICECandidateReceived(data,  RTCPeerConnectionRef.current, dispatch);
+        callHandlers.onICECandidateReceived(data,  RTCPeerConnectionRef.current, dispatch);
       });
 
       // Recipient has accepted video call
       socketState.on('video_call_accepted', (data: string) => {
-        videoCallHandlers.onVideoCallAccepted(data, userId, socketState, RTCPeerConnectionRef.current, dispatch);
+        callHandlers.onVideoCallAccepted(data, userId, socketState, RTCPeerConnectionRef.current, dispatch);
       });
 
       // Recipient has rejected video call
       socketState.on('video_call_rejected', () => {
-        videoCallHandlers.onVideoCallRejected(navigate, dispatch);
+        callHandlers.onVideoCallRejected(navigate, dispatch);
       });
 
       // Caller has cancelled video call
       socketState.on('video_call_cancelled', () => {
-        videoCallHandlers.onVideoCallCancelled(dispatch);
+        callHandlers.onVideoCallCancelled(dispatch);
       });
 
       // Either user ends video call
       // Stop local stream
       socketState.on('video_call_ended', (data: string) => {
-        videoCallHandlers.onVideoCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
+        callHandlers.onVideoCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
       });
 
     }

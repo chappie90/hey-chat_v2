@@ -21,7 +21,7 @@ type ProfileImageProps = {
 };
 
 const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: ProfileImageProps) => {
-  const { profileImage } = useSelector(state => state.profile);
+  const { user: { avatar } } = useSelector(state => state.auth);
   const opacityAnim = useRef(new Animated.Value(0));
   const pulsateAnim = useRef(new Animated.Value(0));
   const indicatorRef = useRef<AnimatedProgressWheel>(null);
@@ -84,12 +84,12 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
   useEffect(() => {
     if (uploadFinished) {
       setTimeout(() => {
-        setImage(profileImage);
+        setImage(avatar);
       }, 4000);
     } else {
-      setImage(profileImage);
+      setImage(avatar);
     }
-  }, [profileImage]);
+  }, [avatar]);
  
   return (
     <TouchableWithoutFeedback onPress={() => onToggleImageActions ()}>
@@ -111,7 +111,7 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
           ]}
         />
         <View style={styles.imageContainer}>
-          {profileImage ?
+          {avatar ?
             <Animated.Image 
               key={image}
               source={{ uri: `${S3_BUCKET_PATH}/${image}` }}

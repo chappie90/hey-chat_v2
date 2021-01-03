@@ -1,4 +1,3 @@
-import { act } from 'react-test-renderer';
 import { Reducer } from 'redux';
 
 type AuthState = {
@@ -7,6 +6,9 @@ type AuthState = {
   userId: number | null;
   username: string | null;
   token: string | null;
+  user: {
+    avatar?: string;
+  }
 };
 
 const INITIAL_STATE: AuthState = {
@@ -15,6 +17,9 @@ const INITIAL_STATE: AuthState = {
   userId: null,
   username: null,
   token: null,
+  user: {
+    avatar: ''
+  }
 };
 
 export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -36,6 +41,30 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
         username: null, 
         token: null,
         // socketState: null
+      };
+    case 'get_avatar_image':
+      return { 
+        ...state, 
+        user: {
+          ...state.user,
+          avatar: action.payload 
+        }
+      };
+    case 'update_avatar_image':
+      return { 
+        ...state, 
+        user: {
+          ...state.user,
+          avatar: action.payload 
+        }
+      };
+    case 'delete_avatar_image':
+      return { 
+        ...state, 
+        user: {
+          ...state.user,
+          avatar: '' 
+        }
       };
     default: 
       return state;

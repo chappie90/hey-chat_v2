@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 
 import api from 'api';
-import { authActions, profileActions } from 'reduxStore/actions';
+import { authActions } from 'reduxStore/actions';
 import { Colors, Headings, Fonts } from 'variables';
 import CustomText from 'components/CustomText';
 import ProfileHeader from 'components/profile/ProfileHeader';
@@ -102,7 +102,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
           setUploadFinished(false);
         }, 1200);
 
-        dispatch(profileActions.updateProfileImage(response.data.profileImage));
+        dispatch(authActions.updateAvatarImage(response.data.profileImage));
         emitUpdateProfileImage(JSON.stringify({ userId }), socketState);
       }
     })
@@ -114,12 +114,12 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   };
 
   const onDeleteImage = (): void => {
-    dispatch(profileActions.deleteProfileImage(userId));
+    dispatch(authActions.deleteAvatarImage(userId));
     hideImageActions();
   };
 
   useEffect(() => {
-    dispatch(profileActions.getProfileImage(userId));
+    dispatch(authActions.getAvatarImage(userId));
   }, []);
 
   useFocusEffect(

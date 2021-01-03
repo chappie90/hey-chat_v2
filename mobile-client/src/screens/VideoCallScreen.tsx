@@ -33,7 +33,7 @@ import {
   emitCancelVideoCall,
   emitEndVideoCall
 } from 'socket/eventEmitters';
-import { videoCallActions } from 'reduxStore/actions';
+import { callActions } from 'reduxStore/actions';
 import CustomButton from 'components/common/CustomButton';
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
@@ -43,8 +43,7 @@ type CallScreenProps = StackScreenProps<ChatsStackParams, 'VideoCall'>;
 const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
   const { socketState } = useSelector(state => state.app);
-  const { userId, username } = useSelector(state => state.auth);
-  const { profileImage } = useSelector(state => state.profile);
+  const { userId, username, user: { avatar } } = useSelector(state => state.auth);
   const { call: {
     callId,
     isActive,
@@ -54,7 +53,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     remoteStream,
     muted,
     cameraFacingMode,
-  } } = useSelector(state => state.video);
+  } } = useSelector(state => state.call);
   const dispatch = useDispatch();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -81,7 +80,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
         }
       };
       const newStream = await mediaDevices.getUserMedia(constraints);
-      dispatch(videoCallActions.setLocalStream(newStream));
+      dispatch(callActions.setLocalStream(newStream));
 
       return newStream;
     } catch (err) {
@@ -93,7 +92,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const stopLocalStream = () => {
     localStream.getTracks().forEach((t: any) => t.stop());
     localStream.release();
-    dispatch(videoCallActions.setLocalStream(null));
+    dispatch(callActions.setLocalStream(null));
   };
 
   const onEndCallOld = (): void => {
@@ -106,16 +105,16 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     // RTCConnection.onicecandidate = null; 
     // RTCConnection.onaddstream = null; 
     
-    dispatch(videoCallActions.setRTCPeerConnection(null));
+    dispatch(callActions.setRTCPeerConnection(null));
 
     if (isActive) {
-      dispatch(videoCallActions.setRemoteStream(null));
+      dispatch(callActions.setRemoteStream(null));
       const data = { 
         chatType, 
         chatId, 
         senderId: userId, 
         senderName: username,
-        senderProfile: profileImage,
+        senderProfile: avatar,
         recipientId: contactId
       };
       console.log('end')
@@ -157,18 +156,18 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     const caller = {
       _id: userId,
       username,
-      profile: { image: { small: { name: profileImage } } },
+      avatar: { small: avatar },
       online: true
     };
 
     const callee = {
       _id: contactId,
       username: contactName,
-      profile: { image: { small: { name: contactProfile ? contactProfile : '' } } },
+      avatar: { small: contactProfile ? contactProfile : '' },
       online: true
     };
 
-    dispatch(videoCallActions.initiateCall(callId, chatId, caller, callee, callType));
+    dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));
 
     // Establish RTC Peer Connection
     const configuration = {iceServers: [
@@ -181,7 +180,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
       },
     ]};
     const peerConn = new RTCPeerConnection(configuration);
-    dispatch(videoCallActions.setRTCPeerConnection(peerConn));
+    dispatch(callActions.setRTCPeerConnection(peerConn));
 
     // Reattempt connection if unintentionally disconnected?
     peerConn.oniceconnectionstatechange = (event) => {
@@ -195,7 +194,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     peerConn.onaddstream = (event) => {
       try {
         if (event.stream && remoteStream !== event.stream) {
-            dispatch(videoCallActions.setRemoteStream(event.stream));
+            dispatch(callActions.setRemoteStream(event.stream));
         }
       } catch (err) {
         console.error(`Error adding remote stream: ${err}`);

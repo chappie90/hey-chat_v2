@@ -317,7 +317,7 @@ const Chat = ({
       // Get messages if no previous chat history loaded
       if (!chatHistory[chatIdRef.current]) {
         setIsLoading(true);
-        const response = await dispatch(chatsActions.getMessages(username, chatIdRef.current, contactProfile));
+        const response = await dispatch(chatsActions.getMessages(username, chatIdRef.current, contactProfile?.small));
         if (response) setIsLoading(false);
       }
     })();

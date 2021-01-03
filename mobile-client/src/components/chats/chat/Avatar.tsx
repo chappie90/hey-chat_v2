@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
+import config from 'react-native-config';
 
 import { Images } from 'assets';
 import { Colors } from 'variables';
@@ -9,12 +10,14 @@ type AvatarProps = {
 };
 
 const Avatar = ({ avatar }: AvatarProps) => {
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
+
   return (
     <View style={styles.imageContainer}>
       {avatar ?
         <Image 
           style={styles.image} 
-          source={{ uri: avatar }}
+          source={{ uri: `${S3_BUCKET_PATH}/${avatar}` }}
           /> : 
         <Image style={styles.image} source={ Images.avatarSmall } />
       }
@@ -26,7 +29,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'absolute',
     bottom: 16,
-    left: -45,
+    left: 10,
     zIndex: 5,
     overflow: 'hidden', 
     width: 38, 
