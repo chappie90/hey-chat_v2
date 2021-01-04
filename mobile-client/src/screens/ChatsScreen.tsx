@@ -24,7 +24,7 @@ type ChatsScreenProps = {
 };
 
 const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
-  const { userId } = useSelector(state => state.auth);
+  const { user: { _id: userId } } = useSelector(state => state.auth);
   const { chats } = useSelector(state => state.chats);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();;

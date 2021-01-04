@@ -12,7 +12,7 @@ import {
 
 const SocketEventListeners = () => {
   const { socketState, currentScreen } = useSelector(state => state.app);
-  const { userId, username } = useSelector(state => state.auth);
+  const { user: { _id: userId, username } } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
   const { call: { localStream, RTCConnection } } = useSelector(state => state.call);
   const currentScreenRef = useRef('');

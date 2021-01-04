@@ -31,7 +31,7 @@ type ContactsScreenProps = {
 };
 
 const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
-  const { userId } = useSelector(state => state.auth);
+  const { user: { _id: userId } } = useSelector(state => state.auth);
   const { contacts, onlineContacts, contactsFetched } = useSelector(state => state.contacts);
   const [showAddContact, setShowAddContact] = useState(false);
   const [showActiveUsers, setShowActiveUsers] = useState(false);

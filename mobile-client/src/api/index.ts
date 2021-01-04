@@ -11,18 +11,17 @@ axiosRetry(instance, { retries: 3 });
 
 instance.interceptors.request.use(
   async (config) => {
-    const user = async () => {
-      try { 
-        const jsonValue = await AsyncStorage.getItem('user');
-        return jsonValue !== null ? JSON.parse(jsonValue) : null;
-      } catch (e) {
-        console.log('Could not read user data from async storage inside axios interceptor: ' + e);
-      }
-    };
-
-    if (user && user.token) {
-      config.headers.Authorization = `Bearer ${user.token}`; 
+    try {
+      const jsonValue = await AsyncStorage.getItem('user')
+      const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
+  
+      if (user && user.authToken) {
+        config.headers.Authorization = `Bearer ${user.authToken}`; 
+      } 
+    } catch(err) {
+      console.log('Could not read user data from async storage inside axios interceptor: ' + err);
     }
+
     return config;
   }, 
   (err) => {

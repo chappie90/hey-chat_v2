@@ -4,7 +4,6 @@ import renderer from 'react-test-renderer';
 import { cleanup, render, fireEvent, waitFor } from '@testing-library/react-native';
 
 import Navigator from './Navigator';
-import { Provider as AuthProvider } from 'context/AuthContext';
 
 describe('Navigation', () => {
   beforeEach(() => jest.useFakeTimers());
@@ -13,9 +12,7 @@ describe('Navigation', () => {
   it('renders Navigator correctly', async () => {
     const state = { token: 'Fake token' };
     const component = render(
-      <AuthProvider state={state}>
         <Navigator />
-      </AuthProvider>
     );
      
     expect(component).toBeTruthy();

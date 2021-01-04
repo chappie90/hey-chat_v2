@@ -3,21 +3,16 @@ import { Reducer } from 'redux';
 type AuthState = {
   isAuthenticating: boolean;
   authError: string;
-  userId: number | null;
-  username: string | null;
-  token: string | null;
-  user: {
-    avatar?: string;
-  }
+  user: TUser;
 };
 
 const INITIAL_STATE: AuthState = {
   isAuthenticating: false,
   authError: '',
-  userId: null,
-  username: null,
-  token: null,
   user: {
+    _id: null,
+    username: '',
+    authToken: '',
     avatar: ''
   }
 };
@@ -27,21 +22,18 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
     case 'signin':
       return { 
         ...state,
-        userId: action.payload.userId,
-        username: action.payload.username, 
-        token: action.payload.token
+        user: {
+          ...state.user,
+          _id: action.payload._id,
+          username: action.payload.username,
+          authToken: action.payload.authToken
+        }
       };
     case 'is_authenticating':
       return { ...state, isAuthenticating: action.payload };
     case 'set_auth_error':
       return { ...state, authError: action.payload };
-    case 'sign_out':
-      return {
-        userId: null,  
-        username: null, 
-        token: null,
-        // socketState: null
-      };
+    case 'sign_out':return { ...state, ...INITIAL_STATE };
     case 'get_avatar_image':
       return { 
         ...state, 

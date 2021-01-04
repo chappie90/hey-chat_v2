@@ -7,12 +7,7 @@ import api from 'api';
 type AuthState = {
   isAuthenticating: boolean;
   authError: string;
-  userId: number | null;
-  username: string | null;
-  token: string | null;
-  user: {
-    avatar?: string;
-  };
+  user: TUser;
 };
 
 type AuthAction = 
@@ -27,11 +22,11 @@ type AuthAction =
 const signup = (username: string, password: string) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
     const response = await api.post('/signup', { username, password });
-
+    
     const user = { 
-      userId: response.data.userId,
+      _id: response.data._id,
       username: response.data.username, 
-      token: response.data.token 
+      authToken: response.data.authToken 
     };
     await AsyncStorage.setItem('user', JSON.stringify(user));
 
@@ -61,9 +56,9 @@ const signin = (username: string, password: string) => async (dispatch: ThunkDis
     const response = await api.post('/signin', { username, password });
 
     const user = { 
-      userId: response.data.userId,
+      _id: response.data._id,
       username: response.data.username, 
-      token: response.data.token 
+      authToken: response.data.authToken 
     };
     await AsyncStorage.setItem('user', JSON.stringify(user));
 
@@ -96,7 +91,7 @@ const autoSignin = () => async (dispatch: ThunkDispatch<AuthState, undefined, Au
     const jsonValue = await AsyncStorage.getItem('user')
     const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
 
-    if (user && user.token) {
+    if (user && user.authToken) {
       dispatch({ type: 'signin', payload: user });
     } 
   } catch(err) {

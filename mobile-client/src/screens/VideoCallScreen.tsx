@@ -28,10 +28,10 @@ import uuid from 'react-native-uuid';
 import RNCallKeep from 'react-native-callkeep';
 
 import { 
-  emitMakeVideoCallOffer, 
+  emitMakeCallOffer, 
   emitSendICECandidate, 
-  emitCancelVideoCall,
-  emitEndVideoCall
+  emitCancelCall,
+  emitEndCall
 } from 'socket/eventEmitters';
 import { callActions } from 'reduxStore/actions';
 import CustomButton from 'components/common/CustomButton';
@@ -43,7 +43,7 @@ type CallScreenProps = StackScreenProps<ChatsStackParams, 'VideoCall'>;
 const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
   const { socketState } = useSelector(state => state.app);
-  const { userId, username, user: { avatar } } = useSelector(state => state.auth);
+  const { user: { _id: userId, username, avatar } } = useSelector(state => state.auth);
   const { call: {
     callId,
     isActive,
@@ -119,10 +119,10 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
       };
       console.log('end')
       console.log(data)
-      emitEndVideoCall(JSON.stringify(data), socketState);
+      emitEndCall(JSON.stringify(data), socketState);
     } else {
       const data = { recipientId: contactId };
-      emitCancelVideoCall(JSON.stringify(data), socketState);
+      emitCancelCall(JSON.stringify(data), socketState);
     }
 
     navigation.navigate('CurrentChat', { chatType, chatId, contactId, contactName, contactProfile });
@@ -212,7 +212,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
       await peerConn.setLocalDescription(offer);
 
       const data = { callId, chatId, caller, callee, offer, type: callType };
-      emitMakeVideoCallOffer(JSON.stringify(data), socketState);
+      emitMakeCallOffer(JSON.stringify(data), socketState);
     } catch (err) {
       console.error(err);
     }

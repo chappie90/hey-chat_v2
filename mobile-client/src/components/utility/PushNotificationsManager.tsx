@@ -15,7 +15,7 @@ type PushNotificationsManagerProps = { children: ReactNode };
 
 const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) => {
   const { currentScreen, socketState } = useSelector(state => state.app);
-  const { userId, username } = useSelector(state => state.auth);
+  const { user: { _id: userId, username } } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
   const dispatch = useDispatch();
   const usernameRef = useRef('');

@@ -20,7 +20,7 @@ import { contactsActions } from 'reduxStore/actions';
 type AddContactScreenProps = { visible: boolean };
 
 const AddContactScreen = ({ visible }: AddContactScreenProps) => {
-  const { userId, username } = useSelector(state => state.auth);
+  const { user: { _id: userId, username } } = useSelector(state => state.auth);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState<TContact[]>([]);
   const [isFirstRender, setIsFirstRender] = useState(true);

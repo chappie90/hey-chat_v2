@@ -47,9 +47,9 @@ type ContactsStackParams = {
 
 // User
 type TUser = {
-  userId: number;
+  _id: number | null;
   username: string;
-  token: string;
+  authToken: string;
   avatar?: string;
 };
 

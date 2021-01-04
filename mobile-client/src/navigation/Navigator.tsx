@@ -11,7 +11,7 @@ import SplashScreen from 'screens/SplashScreen';
 
 const Navigator = () => {
   const { initialLoad } = useSelector(state => state.app);
-  const { token } = useSelector(state => state.auth);
+  const { user: { authToken } } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Navigator = () => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {token ? (
+      {authToken ? (
         <MainFlow />
       ) : (
         <AuthenticationFlow />

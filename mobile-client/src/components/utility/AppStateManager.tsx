@@ -9,7 +9,7 @@ import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters'
 type AppStateManagerProps = { children: ReactNode };
 
 const AppStateManager = ({ children }: AppStateManagerProps) => {
-  const { userId, token } = useSelector(state => state.auth);
+  const { user: { _id: userId, authToken } } = useSelector(state => state.auth);
   const { socketState, currentScreen, userConnected } = useSelector(state => state.app);
   const { chats, chatHistory, activeChat } = useSelector(state => state.chats);
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   const chatsRef = useRef<TChat[] | []>([]);
 
   const createSocketConnection = (): void => {
-    if (token && userId) {
+    if (authToken && userId) {
       socket.current = connectToSocket(userId);
       dispatch(appActions.setSocketState(socket.current));
     //   // if (Platform.OS === 'ios') {
@@ -73,7 +73,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (authToken) {
       createSocketConnection();
       AppState.addEventListener('change', handleAppStateChange);
     } else {
@@ -83,7 +83,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
     return () => {
       AppState.removeEventListener('change', handleAppStateChange);
     };
-  }, [token]);
+  }, [authToken]);
 
   useEffect(() => {
     // Check socket connection

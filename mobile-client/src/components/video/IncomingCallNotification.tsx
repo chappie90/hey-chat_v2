@@ -8,14 +8,14 @@ import InCallManager from 'react-native-incall-manager';
 import CustomText from 'components/CustomText';
 import { Colors, Fonts, Headings } from 'variables';
 import { callActions } from 'reduxStore/actions';
-import { emitRejectVideoCall, emitAcceptVideoCall, emitSendICECandidate } from 'socket/eventEmitters';
+import { emitRejectCall, emitAcceptCall, emitSendICECandidate } from 'socket/eventEmitters';
 import { navigate } from 'navigation/NavigationRef';
 
 type IncomingCallNotificationProps = {};
 
 const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
   const { socketState } = useSelector(state => state.app);
-  const { userId, username, user: { avatar } } = useSelector(state => state.auth);
+  const { user: { _id: userId, username, avatar } } = useSelector(state => state.auth);
   const { 
     RTCConnection,
     incomingCall: { chatType, chatId, callerId, callerName, callerProfile, offer },
@@ -79,7 +79,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
         recipientProfile: avatar, 
         answer 
       };
-      emitAcceptVideoCall(JSON.stringify(data), socketState);
+      emitAcceptCall(JSON.stringify(data), socketState);
 
       // Send candidates to caller
       RTCConnection.onicecandidate = (event: any) => {
@@ -116,7 +116,7 @@ const IncomingCallNotification = ({ }: IncomingCallNotificationProps) => {
     dispatch(callActions.unsetIncomingCall());
 
     const data = { callerId };
-    emitRejectVideoCall(JSON.stringify(data), socketState);
+    emitRejectCall(JSON.stringify(data), socketState);
   };
 
   if (!callerId) return <></>;

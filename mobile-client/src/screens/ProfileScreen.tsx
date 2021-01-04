@@ -19,7 +19,7 @@ type ProfileScreenProps = BottomTabScreenProps<MainStackParams, 'Profile'>;
 
 const ProfileScreen = ({ }: ProfileScreenProps) => {
   const { socketState } = useSelector(state => state.app);
-  const { username, userId } = useSelector(state => state.auth);
+  const { user: { _id: userId, username } } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [showImageActions, setShowImageActions] = useState(false);
   const [showCamera, setShowCamera] = useState(false);

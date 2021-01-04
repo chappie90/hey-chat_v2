@@ -26,7 +26,7 @@ type ChatsListProps = {
 
 const ChatsList = ({ chats }: ChatsListProps) => {
   const { socketState } = useSelector(state => state.app);
-  const { userId } = useSelector(state => state.auth);
+  const { user: { _id: userId } } = useSelector(state => state.auth);
   const rowOpenValue = useRef(0);
   const isRowOpen = useRef(false);
   const rowTranslateAnimatedValues = useRef({}).current;
