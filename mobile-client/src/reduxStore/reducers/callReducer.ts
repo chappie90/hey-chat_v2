@@ -49,7 +49,7 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state,
         call: {
           ...state.call,
-          uuid: action.payload.uuid,
+          callId: action.payload.callId,
           isInitiatingCall: true,
           chat: {
             ...state.call.chat,
@@ -78,6 +78,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         call: {
+          ...state.call,
+          callId: action.payload.callId,
           isReceivingCall: true,
           chat: {
             ...state.call.chat,
@@ -104,13 +106,6 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           type: action.payload.type
         }
       };
-    case 'unset_call':
-      return {
-        ...state,
-        call: {
-          ...INITIAL_STATE.call
-        }
-      };
     case 'set_local_stream':
       return {
         ...state,
@@ -127,31 +122,20 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           remoteStream: action.payload
         }
       };
-    case 'start_active_call':
+    case 'start_call':
       return {
         ...state,
-        activeCall: {
-          ...state.activeCall,
-          status: true,
-          chat: {
-            ...state.activeCall.chat,
-            chatId: action.payload.chatId
-          },
-          caller: {
-            ...state.activeCall.contact,
-            chatId: action.payload.chatId,
-            _id: action.payload.contact.contactId,
-            username: action.payload.contact.contactName,
-            avatar: {
-              small: action.payload.caller.avatar.small
-            }
-          },
+        call: {
+          ...state.call,
+          isActive: true,
+          isInitiatingCall: false,
+          isReceivingCall: false
         }
       };
-    case 'end_active_call':
+    case 'end_call':
       return {
         ...state,
-        activeCall: {
+        call: {
           ...INITIAL_STATE.call
         }
       };

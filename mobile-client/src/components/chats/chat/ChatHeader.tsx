@@ -4,11 +4,21 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import config from 'react-native-config';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import RNCallKeep from 'react-native-callkeep';
+import { RTCPeerConnection, mediaDevices } from 'react-native-webrtc';
+import InCallManager from 'react-native-incall-manager';
 
+import { 
+  emitMakeCallOffer, 
+  emitCancelCall,
+  emitEndCall
+} from 'socket/eventEmitters';
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
 import { Colors, Fonts } from 'variables';
+import uuid from 'react-native-uuid';
+import { callActions } from 'reduxStore/actions';
 
 type ChatHeaderProps = {
   chatType: string;
@@ -20,13 +30,140 @@ type ChatHeaderProps = {
 
 const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }: ChatHeaderProps) => {
   const { typingContacts } = useSelector(state => state.chats);
+  const { socketState } = useSelector(state => state.app);
+  const { user: { _id: userId, username, avatar } } = useSelector(state => state.auth);
+  const { call: {
+    callId,
+    isActive,
+    isInitiatingCall,
+    RTCConnection,
+    localStream, 
+    remoteStream,
+    muted,
+    cameraFacingMode,
+  } } = useSelector(state => state.call);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
-  const onCallConctact = (): void => {
+  const onCallConctact = async (): Promise<void> => {
     const routeParams = { chatType, chatId, contactId, contactName, contactProfile };
 
-    navigation.navigate('VideoCall', routeParams);
+    startCall(uuid.v4(), username, contactName, 'video');
+    // navigation.navigate('VideoCall', routeParams);
+  };
+
+  const startCall = async (
+    callId: string, 
+    callerName: string, 
+    calleeName: string,
+    callType: string
+  ): Promise<void> => {
+    const caller = {
+      _id: userId,
+      username,
+      avatar: { small: avatar },
+      online: true
+    };
+
+    const callee = {
+      _id: contactId,
+      username: contactName,
+      avatar: { small: contactProfile ? contactProfile : '' },
+      online: true
+    };
+
+    dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));
+
+    RNCallKeep.startCall(callId, callerName, calleeName);
+
+    // Establish RTC Peer Connection
+    const configuration = {iceServers: [
+      {
+        url: 'stun:stun.l.google.com:19302',  
+      }, {
+        url: 'stun:stun1.l.google.com:19302',    
+      }, {
+        url: 'stun:stun2.l.google.com:19302',    
+      },
+    ]};
+    const peerConn = new RTCPeerConnection(configuration);
+    dispatch(callActions.setRTCPeerConnection(peerConn));
+
+    // Reattempt connection if unintentionally disconnected?
+    peerConn.oniceconnectionstatechange = (event) => {
+      console.log('Ice connection state: ' + event.target.iceConnectionState);
+    };
+
+    peerConn.onnegotiationneeded = (): void => {
+      console.log('Negotiation needed');
+    };
+
+    peerConn.onaddstream = (event) => {
+      try {
+        if (event.stream && remoteStream !== event.stream) {
+            dispatch(callActions.setRemoteStream(event.stream));
+        }
+      } catch (err) {
+        console.error(`Error adding remote stream: ${err}`);
+      }
+    };
+
+    // Add local stream to peer connection
+    const stream = await startLocalStream();
+    peerConn.addStream(stream);
+
+    // Send sdp offer to callee
+    try {
+      const offer = await peerConn.createOffer();
+
+      await peerConn.setLocalDescription(offer);
+
+      const data = { callId, chatId, caller, callee, offer, type: callType };
+      emitMakeCallOffer(JSON.stringify(data), socketState);
+    } catch (err) {
+      console.error(err);
+    }
+
+    // Start ringback tone
+    InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
+  }; 
+
+  const startLocalStream = async (): Promise<any> => {
+    try {
+      // isFront will determine if the initial camera should face user or environment
+      const isFront = true;
+      const devices = await mediaDevices.enumerateDevices();
+
+      const facing = isFront ? 'front' : 'environment';
+      const videoSourceId = devices.find((device: any) => device.kind === 'videoinput' && device.facing === facing);
+      const facingMode = isFront ? 'user' : 'environment';
+      const constraints: any = {
+        audio: true,
+        video: {
+          mandatory: {
+            minWidth: 500, // Provide your own width, height and frame rate here
+            minHeight: 300,
+            minFrameRate: 30,
+          },
+          facingMode,
+          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
+        }
+      };
+      const newStream = await mediaDevices.getUserMedia(constraints);
+      dispatch(callActions.setLocalStream(newStream));
+
+      return newStream;
+    } catch (err) {
+      console.log('Start local stream caller method error');
+      console.log(err);
+    }
+  };
+
+  const stopLocalStream = () => {
+    localStream.getTracks().forEach((t: any) => t.stop());
+    localStream.release();
+    dispatch(callActions.setLocalStream(null));
   };
 
   useEffect(() => {

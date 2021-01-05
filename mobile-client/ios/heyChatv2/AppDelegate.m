@@ -14,8 +14,11 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 
-// VOIP
+// VoIP
 #import "RNCallKeep.h"
+// VoIP Push Notifications
+#import <PushKit/PushKit.h>
+#import "RNVoipPushNotificationManager.h"
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -48,8 +51,13 @@ static void InitializeFlipper(UIApplication *application) {
   [AppCenterReactNative register];
   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
   [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+  
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+
+   // VoIP Push Notifications
+  [RNVoipPushNotificationManager voipRegistration];
+
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"heyChatv2"
                                             initialProperties:nil];
@@ -113,14 +121,57 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 }
 /* End Push Notifications */
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
-#if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-#else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
+/* VoIP Push Notifications */
+
+// --- Handle updated push credentials
+- (void)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(PKPushType)type {
+  // Register VoIP push token (a property of PKPushCredentials) with server
+  [RNVoipPushNotificationManager didUpdatePushCredentials:credentials forType:(NSString *)type];
 }
+
+- (void)pushRegistry:(PKPushRegistry *)registry didInvalidatePushTokenForType:(PKPushType)type
+{
+  // --- The system calls this method when a previously provided push token is no longer valid for use. No action is necessary on your part to reregister the push type. Instead, use this method to notify your server not to send push notifications using the matching push token.
+}
+
+// --- Handle incoming pushes
+- (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(PKPushType)type withCompletionHandler:(void (^)(void))completion {
+  
+
+  // --- NOTE: apple forced us to invoke callkit ASAP when we receive voip push
+  // --- see: react-native-callkeep
+
+  // --- Retrieve information from your voip push payload
+  NSString *uuid = payload.dictionaryPayload[@"uuid"];
+  NSString *callerName = [NSString stringWithFormat:@"%@ (Connecting...)", payload.dictionaryPayload[@"callerName"]];
+  NSString *handle = payload.dictionaryPayload[@"handle"];
+
+  // --- this is optional, only required if you want to call `completion()` on the js side
+//  [RNVoipPushNotificationManager addCompletionHandler:uuid completionHandler:completion];
+
+  // --- Process the received push
+  [RNVoipPushNotificationManager didReceiveIncomingPushWithPayload:payload forType:(NSString *)type];
+
+  // --- You should make sure to report to callkit BEFORE execute `completion()`
+  [RNCallKeep reportNewIncomingCall: uuid
+                               handle: handle
+                           handleType: @"generic"
+                             hasVideo: NO
+                  localizedCallerName: callerName
+                      supportsHolding: YES
+                         supportsDTMF: YES
+                     supportsGrouping: YES
+                   supportsUngrouping: YES
+                          fromPushKit: YES
+                              payload: nil
+                withCompletionHandler: completion];
+  
+  // --- You don't need to call it if you stored `completion()` and will call it on the js side.
+  completion();
+}
+
+/* End VoIP Push Notifications */
+
 
 /* VoIP */
 - (BOOL)application:(UIApplication *)application
@@ -132,5 +183,15 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   
 }
 /* End VoIP */
+
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
 
 @end

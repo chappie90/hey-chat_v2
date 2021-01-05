@@ -50,6 +50,7 @@
     "react-native-swipe-list-view": "^3.2.4",
     "react-native-uuid": "^1.4.9",
     "react-native-vector-icons": "^7.1.0",
+    "react-native-voip-push-notification": "^3.0.0",
     "react-native-webrtc": "^1.87.2",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",

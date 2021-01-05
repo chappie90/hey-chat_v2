@@ -7,6 +7,12 @@ import RNCallKeep from 'react-native-callkeep';
 import { callActions } from 'reduxStore/actions';
 import { emitSendICECandidate } from 'socket/eventEmitters';
 
+const onVoipPushNotificationReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
+  const { callId, chatId, caller, callee, type } = JSON.parse(data);
+
+  console.log('voip push notification received')
+};
+
 const onCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
   const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
 
@@ -23,38 +29,7 @@ const onCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<vo
   const peerConn = new RTCPeerConnection(configuration);
   dispatch(callActions.setRTCPeerConnection(peerConn));
 
-  const initRNCallKeep = async (): Promise<void> => {
-    const options = {
-      ios: {
-        appName: 'Hey',
-        imageName: 'sim_icon',
-        supportsVideo: false,
-        maximumCallGroups: '1',
-        maximumCallsPerCallGroup: '1'
-      },
-      android: {
-        alertTitle: 'Permissions Required',
-        alertDescription:
-          'This application needs to access your phone calling accounts to make calls',
-        cancelButton: 'Cancel',
-        okButton: 'ok',
-        imageName: 'sim_icon',
-        additionalPermissions: [PermissionsAndroid.PERMISSIONS.READ_CONTACTS]
-      }
-    };
-
-    try {
-      await RNCallKeep.setup(options);
-
-      if (Platform.OS === 'android') RNCallKeep.setAvailable(true);
-    } catch (err) {
-      console.error('Initialize CallKeep method error:', err.message);
-    }
-  };
-
   dispatch(callActions.receiveCall(callId, chatId, caller, callee, offer, type));
-
-  await initRNCallKeep();
 
   const hasVideo = type === 'video' ? true : false;
   RNCallKeep.displayIncomingCall(callId, caller._id, caller.username, 'generic', hasVideo);
@@ -87,7 +62,8 @@ const onCallAccepted = (data: string,  userId: string, socketState: any, RTCPeer
       emitSendICECandidate(JSON.stringify(data), socketState);
     }
   };
-  dispatch(callActions.setActiveCallStatus(true));
+
+  dispatch(callActions.startCall());
 
   // When callee answers, stop ringback
   InCallManager.stopRingback();
@@ -146,6 +122,7 @@ const onCallEnded = (
 };
 
 export default {
+  onVoipPushNotificationReceived,
   onCallOfferReceived,
   onICECandidateReceived,
   onCallAccepted,

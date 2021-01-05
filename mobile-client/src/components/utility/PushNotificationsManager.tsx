@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from 'api';
-import { chatsHandlers } from 'socket/eventHandlers';
+import { chatsHandlers, callHandlers } from 'socket/eventHandlers';
 import { navigate } from 'navigation/NavigationRef';
 import { chatsActions } from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
@@ -217,7 +217,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
   useEffect(() => {
     usernameRef.current = username;
-    chatHistoryRef.current = chatHistoryRef;
+    chatHistoryRef.current = chatHistory;
     currentScreenRef.current = currentScreen;
   }, [username, chatHistory, currentScreen]);
 
