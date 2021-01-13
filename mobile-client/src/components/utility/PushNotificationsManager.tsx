@@ -3,6 +3,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
+import config from 'react-native-config';
 
 import api from 'api';
 import { chatsHandlers, callHandlers } from 'socket/eventHandlers';
@@ -21,6 +22,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   const usernameRef = useRef('');
   const chatHistoryRef = useRef({});
   const currentScreenRef = useRef('');
+  const socketStateRef = useRef<any>(null);
 
   const createNotificationsChannel = (
     channelId: string, 
@@ -76,17 +78,20 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
         });
 
       // Create notifications channel - Android
-      createNotificationsChannel('hey-chat-id-1', 'hey-chat-channel')
+      createNotificationsChannel(config.RN_APP_ID, `${config.RN_APP_ID}.notifications-channel`)
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
       console.log('received push notif')
       console.log(notification)
 
+      console.log(notification.data.type)
+
       // Update recipient app state while in background
       if (notification.data.silent) {
         // Send local notification Android background
-        if (Platform.OS === 'android') {
+        if (Platform.OS === 'android' && notification.data.type !== 'voip_notification_received') {
+          console.log('inside local notif')
           const { newMessage } = JSON.parse(notification.data.payload);
           sendLocalPushNotification("hey-chat-id-1", newMessage.sender, newMessage.message.text);
         }
@@ -116,6 +121,10 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
           case 'messages_marked_as_read_sender':
             // Mark all sender's chat history messages as read
             chatsHandlers.onMessagesMarkedAsReadSender(notification.data.payload, dispatch);
+            break;
+          case 'voip_notification_received':
+            // Wake up device and handle incoming call
+            callHandlers.onVoipPushNotificationReceived(notification.data.payload, socketStateRef.current, dispatch);
             break;
           default:
             return;
@@ -219,7 +228,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     usernameRef.current = username;
     chatHistoryRef.current = chatHistory;
     currentScreenRef.current = currentScreen;
-  }, [username, chatHistory, currentScreen]);
+    socketStateRef.current = socketState;
+  }, [username, chatHistory, currentScreen, socketState]);
 
   useEffect(() => {
     configure();

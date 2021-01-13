@@ -119,10 +119,10 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
       };
       console.log('end')
       console.log(data)
-      emitEndCall(JSON.stringify(data), socketState);
+      // emitEndCall(JSON.stringify(data), socketState);
     } else {
       const data = { recipientId: contactId };
-      emitCancelCall(JSON.stringify(data), socketState);
+      // emitCancelCall(JSON.stringify(data), socketState);
     }
 
     navigation.navigate('CurrentChat', { chatType, chatId, contactId, contactName, contactProfile });
@@ -205,18 +205,6 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     const stream = await startLocalStream();
     peerConn.addStream(stream);
 
-    // Send sdp offer to callee
-    try {
-      const offer = await peerConn.createOffer();
-
-      await peerConn.setLocalDescription(offer);
-
-      const data = { callId, chatId, caller, callee, offer, type: callType };
-      emitMakeCallOffer(JSON.stringify(data), socketState);
-    } catch (err) {
-      console.error(err);
-    }
-
     // Start ringback tone
     InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
   };  
@@ -224,18 +212,18 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   useEffect(() => {
     (async () => {
       if (!RTCConnection)  {
-        startCall(uuid.v4(), username, contactName, 'video');
+        // startCall(uuid.v4(), username, contactName, 'video');
       }
     })();
   }, []);
 
   useEffect(() => {
-    console.log(localStream)
+
   }, [localStream])
 
   return (
     <View style={styles.container}>
-      {remoteStream &&
+      {/* {remoteStream &&
         <RTCView streamURL={remoteStream.toURL()} style={styles.remoteStream} objectFit="cover" />
       }
       {remoteStream &&
@@ -244,18 +232,18 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
             {contactName}
           </CustomText>
         </View>
-      }
+      } */}
      {localStream && 
-      <Draggable 
-        x={windowWidth - 150} 
-        y={20} 
-        touchableOpacityProps={{ activeOpacity: 1 }}
-        minX={20}
-        minY={20}
-        maxX={windowWidth - 20}
-        maxY={windowHeight - 40}
-        onShortPressRelease={()=> console.log('touched!!')}
-      >
+      // <Draggable 
+      //   x={windowWidth - 150} 
+      //   y={20} 
+      //   touchableOpacityProps={{ activeOpacity: 1 }}
+      //   minX={20}
+      //   minY={20}
+      //   maxX={windowWidth - 20}
+      //   maxY={windowHeight - 40}
+      //   onShortPressRelease={()=> console.log('touched!!')}
+      // >
         <View 
           style={remoteStream ?
             styles.partialLocalStreamContainer :
@@ -264,9 +252,9 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
         >
           <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
         </View>
-      </Draggable>
+      // </Draggable>
       }
-      {remoteStream && 
+      {/* {remoteStream && 
         <View style={styles.actions}>
           <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode}>
             <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
@@ -285,7 +273,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
             /> 
           </CustomButton>
         </View>
-      }
+      } */}
     </View>
   );
 };
@@ -300,7 +288,8 @@ const styles = StyleSheet.create({
     zIndex: -2
   }, 
   fullLocalStreamContainer: {
-    flex: 1
+    flex: 1,
+    backgroundColor: 'blue'
   },
   partialLocalStreamContainer: {
     width: 140,

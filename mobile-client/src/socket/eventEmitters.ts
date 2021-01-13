@@ -27,7 +27,12 @@ export const emitStopTyping = (data: string, socket: any) => {
   socket.emit('stop_typing', data);
 };
 
+export const emitVoipPushReceived = (data: string, socket: any) => {
+  socket.emit('receive_voip_push', data);
+};
+
 export const emitMakeCallOffer = (data: string, socket: any) => {
+  console.log('emiting call offer')
   socket.emit('make_call_offer', data);
 };
 

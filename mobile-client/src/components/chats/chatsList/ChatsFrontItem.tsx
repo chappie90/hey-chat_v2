@@ -92,8 +92,8 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
           </View>
           <View style={styles.divider} />
         </View>
-        {onlineContacts.length > 0 &&
-          onlineContacts.filter((contact: TContact) => contact.chatId === chat.chatId)[0].online &&
+        {onlineContacts?.length > 0 &&
+          onlineContacts.filter((contact: TContact) => contact.chatId === chat.chatId)[0]?.online &&
           <View style={styles.isOnlineBadge} />
         }
         </View>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -14,6 +14,7 @@ import {
   emitCancelCall,
   emitEndCall
 } from 'socket/eventEmitters';
+import api from 'api';
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
 import { Colors, Fonts } from 'variables';
@@ -49,8 +50,12 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
   const onCallConctact = async (): Promise<void> => {
     const routeParams = { chatType, chatId, contactId, contactName, contactProfile };
 
-    startCall(uuid.v4(), username, contactName, 'video');
-    // navigation.navigate('VideoCall', routeParams);
+    await startCall(uuid.v4(), username, contactName, 'video');
+    
+    // iOS Callkit doesn't provide a native UI outgoing call screen so we are using our own
+    if (Platform.OS === 'ios') {
+      navigation.navigate('VideoCall', routeParams);
+    }
   };
 
   const startCall = async (
@@ -75,7 +80,12 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
 
     dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));
 
-    RNCallKeep.startCall(callId, callerName, calleeName);
+    if (Platform.OS === 'ios') {
+      RNCallKeep.startCall(callId, callerName, calleeName, 'generic', callType === 'video' ? true : false);
+    }
+    if (Platform.OS === 'android') {
+      RNCallKeep.startCall(callId, callerName, calleeName);
+    }
 
     // Establish RTC Peer Connection
     const configuration = {iceServers: [
@@ -119,8 +129,10 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
 
       await peerConn.setLocalDescription(offer);
 
-      const data = { callId, chatId, caller, callee, offer, type: callType };
-      emitMakeCallOffer(JSON.stringify(data), socketState);
+      const data = { callId, chatId, caller, callee, callType };
+      // emitMakeCallOffer(JSON.stringify(data), socketState);
+
+      await api.post('/push-notifications/voip/send', data); 
     } catch (err) {
       console.error(err);
     }
@@ -165,10 +177,6 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
     localStream.release();
     dispatch(callActions.setLocalStream(null));
   };
-
-  useEffect(() => {
-    console.log(contactProfile)
-  }, [])
 
   return (
     <View style={styles.container}>

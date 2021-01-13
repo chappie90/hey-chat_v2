@@ -42,7 +42,7 @@ const ChatsStackNavigator = () => {
       <ChatsStack.Screen 
         name="VideoCall" 
         component={VideoCallScreen} 
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
     </ChatsStack.Navigator>
   );

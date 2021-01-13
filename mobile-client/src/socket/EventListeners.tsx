@@ -14,17 +14,15 @@ const SocketEventListeners = () => {
   const { socketState, currentScreen } = useSelector(state => state.app);
   const { user: { _id: userId, username } } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
-  const { call: { localStream, RTCConnection } } = useSelector(state => state.call);
+  const { call } = useSelector(state => state.call);
   const currentScreenRef = useRef('');
-  const RTCPeerConnectionRef = useRef<any>(null);
-  const localStreamRef = useRef<any>(null);
+  const callRef = useRef<TCall | null>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     currentScreenRef.current = currentScreen;
-    localStreamRef.current = localStream;
-    RTCPeerConnectionRef.current = RTCConnection;
-  }, [currentScreen, localStream, RTCConnection]);
+    callRef.current = call;
+  }, [currentScreen, call]);
 
   useEffect(() => {
     // Add event listeners
@@ -113,19 +111,24 @@ const SocketEventListeners = () => {
         chatsHandlers.onChatRestored(data, dispatch);
       });
 
-      // Recipient has received call offer
+      // Callee has confirmed receiving voip push 
+      socketState.on('voip_push_received', (data: string) => {
+        callHandlers.onConfirmVoipPushReceived(data, callRef.current?.RTCConnection, socketState, dispatch);
+      });
+
+      // Calee has received call offer
       socketState.on('call_offer_received', (data: string) => {
-        callHandlers.onCallOfferReceived(data, dispatch);
+        if (callRef.current) callHandlers.onCallOfferReceived(data, callRef.current, dispatch);
       });
 
       // User has received contact's ice candidate
       socketState.on('ice_candidate_received', (data: string) => {
-        callHandlers.onICECandidateReceived(data,  RTCPeerConnectionRef.current, dispatch);
+        callHandlers.onICECandidateReceived(data,  callRef.current?.RTCConnection, dispatch);
       });
 
-      // Recipient has accepted call
+      // Callee has accepted call
       socketState.on('call_accepted', (data: string) => {
-        callHandlers.onCallAccepted(data, userId, socketState, RTCPeerConnectionRef.current, dispatch);
+        callHandlers.onCallAccepted(data, userId, socketState, callRef.current?.RTCConnection, dispatch);
       });
 
       // Recipient has rejected call
@@ -141,7 +144,7 @@ const SocketEventListeners = () => {
       // Either user ends call
       // Stop local stream
       socketState.on('call_ended', (data: string) => {
-        callHandlers.onCallEnded(data, localStreamRef.current , RTCPeerConnectionRef.current, navigate, dispatch);
+        callHandlers.onCallEnded(data, callRef.current?.localStream, callRef.current?.RTCConnection, navigate, dispatch);
       });
 
     }

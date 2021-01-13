@@ -137,7 +137,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 // --- Handle incoming pushes
 - (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(PKPushType)type withCompletionHandler:(void (^)(void))completion {
   
-
   // --- NOTE: apple forced us to invoke callkit ASAP when we receive voip push
   // --- see: react-native-callkeep
 

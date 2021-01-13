@@ -5,16 +5,13 @@ import InCallManager from 'react-native-incall-manager';
 import RNCallKeep from 'react-native-callkeep';
 
 import { callActions } from 'reduxStore/actions';
-import { emitSendICECandidate } from 'socket/eventEmitters';
+import { emitVoipPushReceived, emitMakeCallOffer, emitSendICECandidate } from 'socket/eventEmitters';
 
-const onVoipPushNotificationReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
-  const { callId, chatId, caller, callee, type } = JSON.parse(data);
+const onVoipPushNotificationReceived = async (data: string, socketState: any, dispatch: Dispatch): Promise<void> => {
+  const { callId, chatId, caller, callee, callType } = JSON.parse(data);
 
-  console.log('voip push notification received')
-};
-
-const onCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<void> => {
-  const { callId, chatId, caller, callee, offer, type } = JSON.parse(data);
+  const emitData = { callerId: caller._id, calleeId: callee._id };
+  emitVoipPushReceived(JSON.stringify(emitData), socketState);
 
   // Create RTC peer connection
   const configuration = {iceServers: [
@@ -29,10 +26,43 @@ const onCallOfferReceived = async (data: string, dispatch: Dispatch): Promise<vo
   const peerConn = new RTCPeerConnection(configuration);
   dispatch(callActions.setRTCPeerConnection(peerConn));
 
-  dispatch(callActions.receiveCall(callId, chatId, caller, callee, offer, type));
+  dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));
 
-  const hasVideo = type === 'video' ? true : false;
-  RNCallKeep.displayIncomingCall(callId, caller._id, caller.username, 'generic', hasVideo);
+  // Call after answering / creating webrtc connection?
+  // RNCallKeep.backToForeground();
+};
+
+const onConfirmVoipPushReceived = async (
+  data: string, 
+  RTCPeerConnection: any, 
+  socketState: any, 
+  dispatch: Dispatch
+): Promise<void> => {
+  const { calleeId } = JSON.parse(data);
+
+   // Send sdp offer to callee
+   try {
+    const offer = await RTCPeerConnection.createOffer();
+
+    await RTCPeerConnection.setLocalDescription(offer);
+
+    const data = { calleeId, offer };
+    emitMakeCallOffer(JSON.stringify(data), socketState);
+  } catch (err) {
+    console.error(err);
+  }
+
+};
+
+const onCallOfferReceived = async (data: string, call: TCall, dispatch: Dispatch): Promise<void> => {
+  const { offer } = JSON.parse(data);
+
+  console.log('on call offer received')
+
+  const { callId, caller, callee } = call;
+
+  // const hasVideo = type === 'video' ? true : false;
+  RNCallKeep.displayIncomingCall(callId, caller._id.toString(), caller.username, 'generic', false);
 
   // Start playing ringtone
   InCallManager.start({media: 'audio/video'});
@@ -123,6 +153,7 @@ const onCallEnded = (
 
 export default {
   onVoipPushNotificationReceived,
+  onConfirmVoipPushReceived,
   onCallOfferReceived,
   onICECandidateReceived,
   onCallAccepted,

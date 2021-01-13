@@ -28,16 +28,7 @@ const initiateCall = (
   type: string
 ) => ({ type: 'initiate_call', payload: { callId, chatId, caller, callee, type } });
 
-const receiveCall = (
-  callId: string,
-  chatId: string,
-  caller: TContact,
-  callee: TContact,
-  offer: any,
-  type: string
-) => {
-  return { type: 'receive_call', payload: { callId, chatId, caller, callee, offer, type } }
-};
+const setCallOffer = (offer: any) => ({ type: 'set_call_offer', payload: offer }); 
 
 const endCall = () => ({ type: 'end_call' }); 
 
@@ -54,7 +45,7 @@ const toggleMuteActiveCall = () => ({ type: 'toggle_mute_call' });
 export default {
   setRTCPeerConnection,
   initiateCall,
-  receiveCall,
+  setCallOffer,
   endCall,
   setLocalStream,
   setRemoteStream,
