@@ -4,69 +4,90 @@ import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'react
 import InCallManager from 'react-native-incall-manager';
 import RNCallKeep from 'react-native-callkeep';
 
+import { navigate } from 'navigation/NavigationRef';
 import { callActions } from 'reduxStore/actions';
-import { emitVoipPushReceived, emitMakeCallOffer, emitSendICECandidate } from 'socket/eventEmitters';
+import { emitSendICECandidate, emitSendSdpAnswer } from 'socket/eventEmitters';
 
-const onVoipPushNotificationReceived = async (data: string, socketState: any, dispatch: Dispatch): Promise<void> => {
-  const { callId, chatId, caller, callee, callType } = JSON.parse(data);
+// const onVoipPushNotificationReceived = async (data: string, socketState: any, dispatch: Dispatch): Promise<void> => {
+//   const { callId, chatId, caller, callee, callType } = JSON.parse(data);
 
-  const emitData = { callerId: caller._id, calleeId: callee._id };
-  emitVoipPushReceived(JSON.stringify(emitData), socketState);
+//   const emitData = { callerId: caller._id, calleeId: callee._id };
+//   emitVoipPushReceived(JSON.stringify(emitData), socketState);
 
-  // Create RTC peer connection
-  const configuration = {iceServers: [
-    {
-      url: 'stun:stun.l.google.com:19302',  
-    }, {
-      url: 'stun:stun1.l.google.com:19302',    
-    }, {
-      url: 'stun:stun2.l.google.com:19302',    
-    },
-  ]};
-  const peerConn = new RTCPeerConnection(configuration);
-  dispatch(callActions.setRTCPeerConnection(peerConn));
+//   // Create RTC peer connection
+//   const configuration = {iceServers: [
+//     {
+//       url: 'stun:stun.l.google.com:19302',  
+//     }, {
+//       url: 'stun:stun1.l.google.com:19302',    
+//     }, {
+//       url: 'stun:stun2.l.google.com:19302',    
+//     },
+//   ]};
+//   const peerConn = new RTCPeerConnection(configuration);
+//   dispatch(callActions.setRTCPeerConnection(peerConn));
 
-  dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));
+//   dispatch(callActions.receiveCall(callId, chatId, caller, callee, callType));
+// };
 
-  // Call after answering / creating webrtc connection?
-  // RNCallKeep.backToForeground();
-};
+// const onConfirmVoipPushReceived = async (
+//   data: string, 
+//   RTCPeerConnection: any, 
+//   socketState: any, 
+//   dispatch: Dispatch
+// ): Promise<void> => {
+//   const { calleeId } = JSON.parse(data);
 
-const onConfirmVoipPushReceived = async (
-  data: string, 
-  RTCPeerConnection: any, 
-  socketState: any, 
-  dispatch: Dispatch
-): Promise<void> => {
-  const { calleeId } = JSON.parse(data);
+//    // Send sdp offer to callee
+//    try {
+//     const offer = await RTCPeerConnection.createOffer();
 
-   // Send sdp offer to callee
-   try {
-    const offer = await RTCPeerConnection.createOffer();
+//     await RTCPeerConnection.setLocalDescription(offer);
 
-    await RTCPeerConnection.setLocalDescription(offer);
+//     const data = { calleeId, offer };
+//     emitMakeCallOffer(JSON.stringify(data), socketState);
+//   } catch (err) {
+//     console.error(err);
+//   }
 
-    const data = { calleeId, offer };
-    emitMakeCallOffer(JSON.stringify(data), socketState);
-  } catch (err) {
-    console.error(err);
-  }
+// };
 
-};
-
-const onCallOfferReceived = async (data: string, call: TCall, dispatch: Dispatch): Promise<void> => {
+const onSdpOfferReceived = async (data: string, call: TCall, socketState: any, dispatch: Dispatch): Promise<void> => {
   const { offer } = JSON.parse(data);
 
-  console.log('on call offer received')
+  const { callee, RTCConnection } = call;
 
-  const { callId, caller, callee } = call;
+  callActions.setCallOffer(offer);
 
-  // const hasVideo = type === 'video' ? true : false;
-  RNCallKeep.displayIncomingCall(callId, caller._id.toString(), caller.username, 'generic', false);
+  try {
+    await RTCConnection.setRemoteDescription(new RTCSessionDescription(offer))
 
-  // Start playing ringtone
-  InCallManager.start({media: 'audio/video'});
-  InCallManager.startRingtone('_DEFAULT_');
+    const answer = await RTCConnection.createAnswer();
+    await RTCConnection.setLocalDescription(answer);
+
+    const data = { calleeId: callee._id, answer };
+
+    emitSendSdpAnswer(JSON.stringify(data), socketState);
+
+    // Send candidates to caller
+    RTCConnection.onicecandidate = (event: any) => {
+      if (event.candidate) {
+        const data = { contactId: callee._id, candidate: event.candidate };
+        console.log('sending ice candidate')
+        console.log(data)
+        emitSendICECandidate(JSON.stringify(data), socketState);
+      }
+    };
+    
+  } catch (err) {
+    console.log('Offer Error', err);
+  }
+
+  if (Platform.OS === 'android') RNCallKeep.setCurrentCallActive(call.callId);
+  dispatch(callActions.startCall());
+
+  // When callee answers, stop ringback
+  InCallManager.stopRingback();
 };
 
 const onICECandidateReceived = (data: string, RTCPeerConnection: any, dispatch: Dispatch) => {
@@ -80,84 +101,54 @@ const onICECandidateReceived = (data: string, RTCPeerConnection: any, dispatch: 
   }
 };
 
-const onCallAccepted = (data: string,  userId: string, socketState: any, RTCPeerConnection: any, dispatch: Dispatch) => {
+const onSdpAnswerReceived = (data: string,  callState: TCall, socketState: any, dispatch: Dispatch) => {
   const { recipientId, recipientName, recipientProfile, answer } = JSON.parse(data);
-  RTCPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+  callState.RTCConnection.setRemoteDescription(new RTCSessionDescription(answer));
 
    // Send candidates to caller
    // MAKE SURE TO SET REMOTE DESCRIPTION BEFORE ADDING ICE CANDIDATES
-   RTCPeerConnection.onicecandidate = (event: any) => {
+   callState.RTCConnection.onicecandidate = (event: any) => {
     if (event.candidate) {
-      const data = { userId, contactId: recipientId, candidate: event.candidate };
+      const data = { userId: callState.callee._id, contactId: recipientId, candidate: event.candidate };
       emitSendICECandidate(JSON.stringify(data), socketState);
     }
   };
 
+  if (Platform.OS === 'android') RNCallKeep.setCurrentCallActive(callState.callId);
   dispatch(callActions.startCall());
-
-  // When callee answers, stop ringback
-  InCallManager.stopRingback();
 };
 
-const onCallRejected = (navigate: any, dispatch: Dispatch) => {
-  dispatch(callActions.setRTCPeerConnection(null));
+const onCallEnded = (userId: number, callState: TCall, navigate: any,  dispatch: Dispatch) => {
+  const callId = callState.callId;
 
-  // If callee rejects call, stop ringback
-  InCallManager.stopRingback();
-  InCallManager.stop();
+  dispatch(callActions.endCall());
 
-  navigate('CurrentChat', {});
-};
+  console.log(userId)
+  console.log(callId)
 
-const onCallCancelled = (dispatch: Dispatch) => {
-  // Stop ringing if caller cancells call
-  InCallManager.stopRingtone();
-  InCallManager.stop();
+  RNCallKeep.rejectCall(callId);
+  RNCallKeep.endAllCalls();
+  RNCallKeep.endCall(callId);
   
-  dispatch(callActions.receiveIncomingCall('', '', '', '', '', null));
-};
+  // If iOS inititated call navigate back to current chat screen
+  if (Platform.OS === 'ios') {
+    const contact = userId === callState.caller._id ? callState.callee : callState.caller;
 
-const onCallEnded = (
-  data: string, 
-  localStream: any,
-  RTCPeerConnection: any, 
-  navigate: any, 
-  dispatch: Dispatch
-) => {
-  const { chatType, chatId, senderId, senderName, senderProfile } = JSON.parse(data);
-  InCallManager.stop();
-
-  // Stop local stream
-  localStream.getTracks().forEach((t: any) => t.stop());
-  localStream.release();
-  dispatch(callActions.setLocalStream(null));
-
-  // Close Peer connection and clean up event listeners
-  RTCPeerConnection.close();
-  // RTCPeerConnection.onicecandidate = null; 
-  // RTCPeerConnection.onaddstream = null; 
-  dispatch(callActions.setRTCPeerConnection(null));
-
-  dispatch(callActions.setRemoteStream(null));
-  dispatch(callActions.setActiveCallStatus(false));
-
-  const routeParams = { 
-    chatType, 
-    chatId, 
-    contactId: senderId,
-    contactName: senderName, 
-    contactProfile: senderProfile 
-  }; 
-  navigate('CurrentChat', routeParams);
+    const routeParams = { 
+      chatType: 'private', 
+      chatId: callState.chat.chatId,
+      contactId: contact._id,
+      contactName: contact.username,
+      contactProfile: contact.avatar?.small
+    };
+    navigate('CurrentChat', routeParams);
+  }
 };
 
 export default {
-  onVoipPushNotificationReceived,
-  onConfirmVoipPushReceived,
-  onCallOfferReceived,
+  // onConfirmVoipPushReceived,
+  onSdpOfferReceived,
   onICECandidateReceived,
-  onCallAccepted,
-  onCallRejected,
-  onCallCancelled,
+  onSdpAnswerReceived,
   onCallEnded
 };

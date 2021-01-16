@@ -1,28 +1,22 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, SafeAreaView, StatusBar, View } from 'react-native';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 
-import rootReducer from 'reduxStore/reducers';
+import { store } from 'reduxStore';
 import Navigator from 'navigation/Navigator';
 import AppStateManager from 'components/utility/AppStateManager';
 import PushNotificationsManager from 'components/utility/PushNotificationsManager';
 import SocketEventListeners from 'socket/EventListeners';
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
-import VoIPManager from 'components/utility/VoIPManager';
 import { Colors } from 'variables';
 
 declare const global: {HermesInternal: null | {}};
-
-const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const App = () => {
   return (
     <Provider store={store}>
       <BackgroundTasksManager />
-      <VoIPManager />
       <SocketEventListeners />
       <AppStateManager>
         <PushNotificationsManager>

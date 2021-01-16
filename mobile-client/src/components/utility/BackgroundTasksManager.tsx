@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react'
 import BackgroundFetch from 'react-native-background-fetch';
+import { connectToSocket } from 'socket/connection';
+import { appActions } from 'reduxStore/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
 
 const BackgroundTasksManager = () => {
+  const dispatch = useDispatch();
 
   useEffect(() => {
     BackgroundFetch.configure({
@@ -17,6 +22,25 @@ const BackgroundTasksManager = () => {
       requiresStorageNotLow: false  // Default
     }, async (taskId) => {
       console.log("[js] Received background-fetch event: ", taskId);
+
+      if (taskId === 'connect_socket') {
+        console.log('scheduling background socket event');
+
+        (async () => {
+          try {
+            const jsonValue = await AsyncStorage.getItem('user')
+            const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
+
+            if (user) {
+              const socket = connectToSocket(user._id);
+              dispatch(appActions.setSocketState(socket));
+            }
+        
+          } catch(err) {
+            console.log('Could not read user data from async storage inside voip switch: ' + err);
+          }
+        })();
+      }
 
       // Potential way to process tasks is to save them with async storage while app
       // in foreground and send the list to a server to process

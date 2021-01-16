@@ -10,6 +10,7 @@ const INITIAL_STATE: CallState = {
     isActive: false,
     isInitiatingCall: false,
     isReceivingCall: false,
+    hasEnded: true,
     offer: null,
     chat: { chatType: 'private', chatId: '' },
     caller: {
@@ -45,12 +46,15 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
         }
       };
     case 'initiate_call':
+      console.log('initiating call reducer')
+      console.log(action.payload)
       return {
         ...state,
         call: {
           ...state.call,
           callId: action.payload.callId,
           isInitiatingCall: true,
+          hasEnded: false,
           chat: {
             ...state.call.chat,
             chatId: action.payload.chatId
@@ -81,6 +85,7 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           ...state.call,
           callId: action.payload.callId,
           isReceivingCall: true,
+          hasEnded: false,
           chat: {
             ...state.call.chat,
             chatId: action.payload.chatId
@@ -102,8 +107,15 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
               small: action.payload.callee.avatar.small
             }
           },
-          offer: action.payload.offer,
           type: action.payload.type
+        }
+      };
+    case 'set_offer':
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          offer: action.payload
         }
       };
     case 'set_local_stream':

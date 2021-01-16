@@ -9,7 +9,7 @@ import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters'
 type AppStateManagerProps = { children: ReactNode };
 
 const AppStateManager = ({ children }: AppStateManagerProps) => {
-  const { user: { _id: userId, authToken } } = useSelector(state => state.auth);
+  const { user: { _id: userId, username, authToken } } = useSelector(state => state.auth);
   const { socketState, currentScreen, userConnected } = useSelector(state => state.app);
   const { chats, chatHistory, activeChat } = useSelector(state => state.chats);
   const dispatch = useDispatch();
@@ -39,6 +39,9 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   };
 
   const handleAppStateChange = (nextAppState: string) => {
+    console.log('app state changing')
+    console.log(nextAppState)
+    console.log(username)
     // Connect to socket on app active
     if (
       appState.current.match(/inactive|background/) && 

@@ -130,6 +130,7 @@ type TCall = {
   isActive: boolean;
   isInitiatingCall: boolean;
   isReceivingCall: boolean;
+  hasEnded: boolean;
   offer: any,
   chat: { 
     chatType: string;

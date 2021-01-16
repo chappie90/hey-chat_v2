@@ -9,11 +9,6 @@ import RNCallKeep from 'react-native-callkeep';
 import { RTCPeerConnection, mediaDevices } from 'react-native-webrtc';
 import InCallManager from 'react-native-incall-manager';
 
-import { 
-  emitMakeCallOffer, 
-  emitCancelCall,
-  emitEndCall
-} from 'socket/eventEmitters';
 import api from 'api';
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
@@ -123,22 +118,12 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
     const stream = await startLocalStream();
     peerConn.addStream(stream);
 
-    // Send sdp offer to callee
     try {
-      const offer = await peerConn.createOffer();
-
-      await peerConn.setLocalDescription(offer);
-
       const data = { callId, chatId, caller, callee, callType };
-      // emitMakeCallOffer(JSON.stringify(data), socketState);
-
       await api.post('/push-notifications/voip/send', data); 
     } catch (err) {
       console.error(err);
     }
-
-    // Start ringback tone
-    InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
   }; 
 
   const startLocalStream = async (): Promise<any> => {
@@ -170,12 +155,6 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
       console.log('Start local stream caller method error');
       console.log(err);
     }
-  };
-
-  const stopLocalStream = () => {
-    localStream.getTracks().forEach((t: any) => t.stop());
-    localStream.release();
-    dispatch(callActions.setLocalStream(null));
   };
 
   return (

@@ -27,31 +27,19 @@ export const emitStopTyping = (data: string, socket: any) => {
   socket.emit('stop_typing', data);
 };
 
-export const emitVoipPushReceived = (data: string, socket: any) => {
-  socket.emit('receive_voip_push', data);
-};
-
-export const emitMakeCallOffer = (data: string, socket: any) => {
-  console.log('emiting call offer')
-  socket.emit('make_call_offer', data);
+export const emitSendSdpOffer = (data: string, socket: any) => {
+  socket.emit('send_sdp_offer', data);
 };
 
 export const emitSendICECandidate = (data: string, socket: any) => {
   socket.emit('send_ice_candidate', data);
 };
 
-export const emitAcceptCall = (data: string, socket: any) => {
-  socket.emit('accept_call', data);
-};
-
-export const emitRejectCall = (data: string, socket: any) => {
-  socket.emit('reject_call', data);
-};
-
-export const emitCancelCall = (data: string, socket: any) => {
-  socket.emit('cancel_call', data);
+export const emitSendSdpAnswer = (data: string, socket: any) => {
+  socket.emit('send_sdp_answer', data);
 };
 
 export const emitEndCall = (data: string, socket: any) => {
+  console.log('emitting end call')
   socket.emit('end_call', data);
 };

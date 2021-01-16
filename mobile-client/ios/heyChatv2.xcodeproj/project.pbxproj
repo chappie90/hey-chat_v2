@@ -25,6 +25,7 @@
 		9030DC74259FB9DB00E3AFFF /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9030DC73259FB9DB00E3AFFF /* CallKit.framework */; };
 		9030DC76259FB9EF00E3AFFF /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9030DC75259FB9EF00E3AFFF /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		903B2C6C2561C403003E6E6E /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 903B2C6B2561C403003E6E6E /* AppCenter-Config.plist */; };
+		90967ACB25B23A0500D59FF3 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 90967ACA25B23A0500D59FF3 /* main.jsbundle */; };
 		AC047AD768FB7E59FB47B771 /* libPods-heyChatv2-heyChatv2Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED66BE527B35F64B88C6B564 /* libPods-heyChatv2-heyChatv2Tests.a */; };
 /* End PBXBuildFile section */
 
@@ -80,6 +81,7 @@
 		9030DC73259FB9DB00E3AFFF /* CallKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CallKit.framework; path = System/Library/Frameworks/CallKit.framework; sourceTree = SDKROOT; };
 		9030DC75259FB9EF00E3AFFF /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		903B2C6B2561C403003E6E6E /* AppCenter-Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AppCenter-Config.plist"; path = "heyChatv2/AppCenter-Config.plist"; sourceTree = "<group>"; };
+		90967ACA25B23A0500D59FF3 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = main.jsbundle; path = heyChatv2/main.jsbundle; sourceTree = "<group>"; };
 		90CB370E2571F352002D4B6C /* heyChatv2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = heyChatv2.entitlements; path = heyChatv2/heyChatv2.entitlements; sourceTree = "<group>"; };
 		A05C93E8F7F876E0478B56F4 /* Pods-heyChatv2-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-heyChatv2-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-heyChatv2-tvOS/Pods-heyChatv2-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		AC6965E616A0AB045DF6435D /* libPods-heyChatv2-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-heyChatv2-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -219,6 +221,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				90967ACA25B23A0500D59FF3 /* main.jsbundle */,
 				903B2C6B2561C403003E6E6E /* AppCenter-Config.plist */,
 				13B07FAE1A68108700A75B9A /* heyChatv2 */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -410,6 +413,7 @@
 				903B2C6C2561C403003E6E6E /* AppCenter-Config.plist in Resources */,
 				2AE0982A207F41B1BD556CD1 /* OpenSans-Bold.ttf in Resources */,
 				20128A34E7F549879B7D3B87 /* OpenSans-Regular.ttf in Resources */,
+				90967ACB25B23A0500D59FF3 /* main.jsbundle in Resources */,
 				2136D00167C94F37AF44E7EE /* OpenSans-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -885,6 +889,7 @@
 					"$(SRCROOT)/../node_modules/react-native-callkeep/ios/RNCallKeep",
 				);
 				INFOPLIST_FILE = heyChatv2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -911,6 +916,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 98NC42735Y;
+				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -966,6 +972,7 @@
 					"$(SRCROOT)/../node_modules/react-native-callkeep/ios/RNCallKeep",
 				);
 				INFOPLIST_FILE = heyChatv2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

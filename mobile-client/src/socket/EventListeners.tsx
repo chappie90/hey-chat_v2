@@ -111,14 +111,9 @@ const SocketEventListeners = () => {
         chatsHandlers.onChatRestored(data, dispatch);
       });
 
-      // Callee has confirmed receiving voip push 
-      socketState.on('voip_push_received', (data: string) => {
-        callHandlers.onConfirmVoipPushReceived(data, callRef.current?.RTCConnection, socketState, dispatch);
-      });
-
-      // Calee has received call offer
-      socketState.on('call_offer_received', (data: string) => {
-        if (callRef.current) callHandlers.onCallOfferReceived(data, callRef.current, dispatch);
+      // Caller has received sdp offer
+      socketState.on('sdp_offer_received', (data: string) => {
+        if (callRef.current) callHandlers.onSdpOfferReceived(data, callRef.current, socketState, dispatch);
       });
 
       // User has received contact's ice candidate
@@ -126,25 +121,16 @@ const SocketEventListeners = () => {
         callHandlers.onICECandidateReceived(data,  callRef.current?.RTCConnection, dispatch);
       });
 
-      // Callee has accepted call
-      socketState.on('call_accepted', (data: string) => {
-        callHandlers.onCallAccepted(data, userId, socketState, callRef.current?.RTCConnection, dispatch);
-      });
-
-      // Recipient has rejected call
-      socketState.on('call_rejected', () => {
-        callHandlers.onCallRejected(navigate, dispatch);
-      });
-
-      // Caller has cancelled call
-      socketState.on('call_cancelled', () => {
-        callHandlers.onCallCancelled(dispatch);
+      // Callee has received sdp answer
+      socketState.on('sdp_answer_received', (data: string) => {
+        if (callRef.current) callHandlers.onSdpAnswerReceived(data, callRef.current, socketState, dispatch);
       });
 
       // Either user ends call
       // Stop local stream
       socketState.on('call_ended', (data: string) => {
-        callHandlers.onCallEnded(data, callRef.current?.localStream, callRef.current?.RTCConnection, navigate, dispatch);
+        console.log('on call ended listener')
+        if (callRef.current) callHandlers.onCallEnded(userId, callRef.current, navigate, dispatch);
       });
 
     }

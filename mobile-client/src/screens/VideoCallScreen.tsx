@@ -24,19 +24,10 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import config from 'react-native-config';
 import Draggable from 'react-native-draggable';
-import uuid from 'react-native-uuid';
 import RNCallKeep from 'react-native-callkeep';
 
-import { 
-  emitMakeCallOffer, 
-  emitSendICECandidate, 
-  emitCancelCall,
-  emitEndCall
-} from 'socket/eventEmitters';
 import { callActions } from 'reduxStore/actions';
 import CustomButton from 'components/common/CustomButton';
-import CustomText from 'components/CustomText';
-import { Images } from 'assets';
 
 type CallScreenProps = StackScreenProps<ChatsStackParams, 'VideoCall'>;
 
@@ -46,6 +37,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { user: { _id: userId, username, avatar } } = useSelector(state => state.auth);
   const { call: {
     callId,
+    caller,
+    callee,
     isActive,
     isInitiatingCall,
     RTCConnection,
@@ -96,36 +89,18 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   };
 
   const onEndCallOld = (): void => {
-    InCallManager.stop();
+    console.log('on end call video screen')
+    RNCallKeep.endCall(callId);
 
-    stopLocalStream();
+    console.log(callee)
 
-    // Close Peer connection and clean up event listeners
-    RTCConnection.close(); 
-    // RTCConnection.onicecandidate = null; 
-    // RTCConnection.onaddstream = null; 
-    
-    dispatch(callActions.setRTCPeerConnection(null));
-
-    if (isActive) {
-      dispatch(callActions.setRemoteStream(null));
-      const data = { 
-        chatType, 
-        chatId, 
-        senderId: userId, 
-        senderName: username,
-        senderProfile: avatar,
-        recipientId: contactId
-      };
-      console.log('end')
-      console.log(data)
-      // emitEndCall(JSON.stringify(data), socketState);
-    } else {
-      const data = { recipientId: contactId };
-      // emitCancelCall(JSON.stringify(data), socketState);
-    }
-
-    navigation.navigate('CurrentChat', { chatType, chatId, contactId, contactName, contactProfile });
+    navigation.navigate('CurrentChat', { 
+      chatType, 
+      chatId, 
+      contactId: callee._id, 
+      contactName: callee.username, 
+      contactProfile: callee.avatar.small 
+    });
   };
 
   const toggleCameraFacingMode = async (): Promise<void> => {
@@ -250,12 +225,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
             styles.fullLocalStreamContainer
           }
         >
-          <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
-        </View>
-      // </Draggable>
-      }
-      {/* {remoteStream && 
-        <View style={styles.actions}>
+           <View style={styles.actions}>
           <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode}>
             <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
           </CustomButton>
@@ -273,7 +243,13 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
             /> 
           </CustomButton>
         </View>
-      } */}
+          <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
+        </View>
+      // </Draggable>
+      }
+      {/* {remoteStream &&  */}
+       
+      {/* } */}
     </View>
   );
 };
@@ -312,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    zIndex: -1
+    zIndex: 2
   },
   actionBtnLayout: {
 
