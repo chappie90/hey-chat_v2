@@ -19,15 +19,13 @@ import { Colors, Headings } from 'variables';
 import { useSelector, useDispatch } from 'react-redux';
 import InCallManager from 'react-native-incall-manager';
 import { StackScreenProps } from '@react-navigation/stack';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Ionicon from 'react-native-vector-icons/Ionicons';
 import config from 'react-native-config';
 import Draggable from 'react-native-draggable';
 import RNCallKeep from 'react-native-callkeep';
 
 import { callActions } from 'reduxStore/actions';
-import CustomButton from 'components/common/CustomButton';
+import CustomText from 'components/CustomText';
+import VideoCallActions from 'components/video/VideoCallActions';
 
 type CallScreenProps = StackScreenProps<ChatsStackParams, 'VideoCall'>;
 
@@ -88,11 +86,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     dispatch(callActions.setLocalStream(null));
   };
 
-  const onEndCallOld = (): void => {
-    console.log('on end call video screen')
+  const onEndCall = (): void => {
     RNCallKeep.endCall(callId);
-
-    console.log(callee)
 
     navigation.navigate('CurrentChat', { 
       chatType, 
@@ -107,7 +102,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     localStream.getVideoTracks()[0]._switchCamera();
   };
 
-  const toggleCameraFacingMode1 = async (): Promise<void> => {
+  const endCall = async (): Promise<void> => {
  
    };
 
@@ -184,72 +179,40 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
   };  
 
-  useEffect(() => {
-    (async () => {
-      if (!RTCConnection)  {
-        // startCall(uuid.v4(), username, contactName, 'video');
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-
-  }, [localStream])
-
   return (
     <View style={styles.container}>
-      {/* {remoteStream &&
+      {remoteStream &&
         <RTCView streamURL={remoteStream.toURL()} style={styles.remoteStream} objectFit="cover" />
       }
-      {remoteStream &&
-        <View style={{ position:'absolute', bottom: 100, alignSelf: 'center', zIndex: 10 }}>
-          <CustomText color={Colors.purpleDark} fontSize={Headings.headingExtraLarge}>
-            {contactName}
-          </CustomText>
-        </View>
-      } */}
-     {localStream && 
-      // <Draggable 
-      //   x={windowWidth - 150} 
-      //   y={20} 
-      //   touchableOpacityProps={{ activeOpacity: 1 }}
-      //   minX={20}
-      //   minY={20}
-      //   maxX={windowWidth - 20}
-      //   maxY={windowHeight - 40}
-      //   onShortPressRelease={()=> console.log('touched!!')}
-      // >
-        <View 
-          style={remoteStream ?
-            styles.partialLocalStreamContainer :
-            styles.fullLocalStreamContainer
-          }
-        >
-           <View style={styles.actions}>
-          <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode}>
-            <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
-          </CustomButton>
-          <CustomButton layout={styles.actionBtnLayout} onPress={onEndCallOld}>
-            <MaterialCommunityIcon name="phone-hangup" size={50} color={Colors.red} /> 
-          </CustomButton>
-          <CustomButton layout={styles.actionBtnLayout} onPress={toggleCameraFacingMode1}>
-            <Ionicon name="camera-reverse" size={50} color={Colors.red} /> 
-          </CustomButton>
-          <CustomButton layout={styles.actionBtnLayout} onPress={toggleMuteMicrophone}>
-            <FontAwesomeIcon 
-              name={true ? "microphone-slash" : "microphone"} 
-              size={50} 
-              color={Colors.red} 
-            /> 
-          </CustomButton>
-        </View>
-          <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
-        </View>
-      // </Draggable>
+      {localStream &&
+        <RTCView streamURL={localStream.toURL()} style={styles.fullLocalStreamContainer} objectFit="cover" />
       }
-      {/* {remoteStream &&  */}
-       
-      {/* } */}
+      <View style={styles.calleeName}>
+        <CustomText color={Colors.purpleDark} fontSize={Headings.headingExtraLarge}>
+          {contactName}
+        </CustomText>
+      </View>
+     {remoteStream && localStream && 
+        <Draggable 
+          x={windowWidth - 150} 
+          y={20} 
+          touchableOpacityProps={{ activeOpacity: 1 }}
+          minX={20}
+          minY={20}
+          maxX={windowWidth - 20}
+          maxY={windowHeight - 40}
+          onShortPressRelease={()=> console.log('touched!!')}
+        >
+          <View style={styles.partialLocalStreamContainer}>
+            <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
+          </View>
+        </Draggable>
+      }
+      <VideoCallActions 
+        onToggleCameraFacingMode={toggleCameraFacingMode}
+        onEndCall={endCall}
+        onToggleMuteMicrophone={toggleMuteMicrophone}
+      />
     </View>
   );
 };
@@ -261,11 +224,15 @@ const styles = StyleSheet.create({
   },
   remoteStream: {
     flex: 1,
-    zIndex: -2
   }, 
+  calleeName: {
+    position:'absolute', 
+    top: 40, 
+    alignSelf: 'center', 
+    zIndex: 3
+  },
   fullLocalStreamContainer: {
-    flex: 1,
-    backgroundColor: 'blue'
+    flex: 1
   },
   partialLocalStreamContainer: {
     width: 140,
@@ -279,19 +246,6 @@ const styles = StyleSheet.create({
   },   
   endCallButtonLayout: {
     marginTop: 20
-  },
-  actions: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20, 
-    right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    zIndex: 2
-  },
-  actionBtnLayout: {
-
   }
 });
 
