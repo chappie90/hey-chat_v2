@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import config from 'react-native-config';
 import { useSelector, useDispatch } from 'react-redux';
@@ -21,7 +22,7 @@ type ChatHeaderProps = {
   chatId: string | undefined;
   contactId: number;
   contactName: string;
-  contactProfile?: string;
+  contactProfile: { small: string, medium: string };
 };
 
 const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }: ChatHeaderProps) => {
@@ -42,14 +43,13 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
   const navigation = useNavigation();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
-  const onCallConctact = async (): Promise<void> => {
-    const routeParams = { chatType, chatId, contactId, contactName, contactProfile };
+  const onStartCall = async (callType: string): Promise<void> => {
 
-    await startCall(uuid.v4(), username, contactName, 'video');
+    await startCall(uuid.v4(), username, contactName, callType);
     
     // iOS Callkit doesn't provide a native UI outgoing call screen so we are using our own
     if (Platform.OS === 'ios') {
-      navigation.navigate('VideoCall', routeParams);
+      navigation.navigate('Call');
     }
   };
 
@@ -59,20 +59,19 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
     calleeName: string,
     callType: string
   ): Promise<void> => {
+
     const caller = {
       _id: userId,
       username,
       avatar: { small: avatar },
       online: true
     };
-
     const callee = {
       _id: contactId,
       username: contactName,
-      avatar: { small: contactProfile ? contactProfile : '' },
+      avatar: { small: contactProfile.small },
       online: true
     };
-
     dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));
 
     if (Platform.OS === 'ios') {
@@ -156,7 +155,7 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
       console.log(err);
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.top}>
@@ -181,11 +180,18 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
           {contactName}
           {typingContacts.includes(contactId) && ' is typing...'}
         </CustomText>
-        <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={onCallConctact}>
-          <View style={styles.callButton}>
-            <MaterialIcon name="call" size={32} color={Colors.yellowDark} /> 
-          </View>
-        </TouchableOpacity>
+        <View style={styles.callButtons}>
+          <TouchableOpacity onPress={() => onStartCall('audio')}>
+            <View style={styles.audioBtn}>
+              <MaterialIcon name="call" size={32} color={Colors.yellowDark} /> 
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onStartCall('video')}>
+            <View style={styles.backButton}>
+              <FontAwesomeIcon name="video-camera" size={28} color={Colors.yellowDark} /> 
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.bottom}></View>
     </View>
@@ -226,7 +232,13 @@ const styles = StyleSheet.create({
     width: '100%', 
     height: '100%'
   },
-  callButton: {
+  callButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 'auto'
+  },
+  audioBtn: {
+    marginRight: 8
   }
 });
 

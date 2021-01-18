@@ -50,7 +50,7 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
         chatId={chatId}
         contactId={contactId}
         contactName={contactName} 
-        contactProfile={contactProfile?.small} 
+        contactProfile={contactProfile} 
       />
       <Chat 
         chatType={chatType} 

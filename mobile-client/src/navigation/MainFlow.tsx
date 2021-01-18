@@ -8,7 +8,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import ChatsScreen from 'screens/ChatsScreen';
 import CurrentChatScreen from 'screens/CurrentChatScreen';
-import VideoCallScreen from 'screens/VideoCallScreen';
+import CallScreen from 'screens/CallScreen';
 import ContactsScreen from 'screens/ContactsScreen';
 import ProfileScreen from 'screens/ProfileScreen';
 import CustomTabBar from './CustomTabBar';
@@ -17,7 +17,7 @@ import { Colors } from 'variables';
 // Hide bottom tab navigator on current chat screen
 const hideTabBar = (route: any) => {
   const routeName = getFocusedRouteNameFromRoute(route);
-  if (routeName === 'CurrentChat' || routeName === 'VideoCall') return false;
+  if (routeName === 'CurrentChat' || routeName === 'Call') return false;
 
   return true;
 };
@@ -40,9 +40,9 @@ const ChatsStackNavigator = () => {
         options={{ headerShown: false }}
       />
       <ChatsStack.Screen 
-        name="VideoCall" 
-        component={VideoCallScreen} 
-        options={{ headerShown: true }}
+        name="Call" 
+        component={CallScreen} 
+        options={{ headerShown: false }}
       />
     </ChatsStack.Navigator>
   );
@@ -62,8 +62,8 @@ const ContactsStackNavigator = () => {
         options={{ headerShown: false }}
       />
       <ContactsStack.Screen 
-        name="VideoCall" 
-        component={VideoCallScreen} 
+        name="Call" 
+        component={CallScreen} 
         options={{ headerShown: false }}
       />
     </ContactsStack.Navigator>

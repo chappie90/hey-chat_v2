@@ -28,7 +28,8 @@ const INITIAL_STATE: CallState = {
     localStream: null,
     remoteStream: null,
     RTCConnection: null,
-    type: '',
+    localVideoEnabled: false,
+    remoteVideoEnabled: false,
     muted: false,
     cameraFacingMode: 'front',
     speaker: false
@@ -46,8 +47,6 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
         }
       };
     case 'initiate_call':
-      console.log('initiating call reducer')
-      console.log(action.payload)
       return {
         ...state,
         call: {
@@ -154,9 +153,17 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
     case 'toggle_mute_call':
       return {
         ...state,
-        activeCall: {
-          ...state.activeCall,
-          muted: !state.activeCall.muted
+        call: {
+          ...state.call,
+          muted: !state.call.muted
+        }
+      };
+    case 'toggle_video_mode':
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          localVideoEnabled: !state.call.localVideoEnabled
         }
       };
     default:

@@ -14,17 +14,11 @@ type ChatsStackParams = {
   CurrentChat: {
     chatType: string;
     chatId: string;
-    contactId?: number;
-    contactName?: string;
-    contactProfile?: { small: string, medium: string };
-  };
-  VideoCall: {
-    chatType: string;
-    chatId: string;
     contactId: number;
     contactName: string;
-    contactProfile?: string;
+    contactProfile: { small: string, medium: string };
   };
+  Call: undefined;
 };
 
 type ContactsStackParams = {
@@ -34,15 +28,9 @@ type ContactsStackParams = {
     chatId: string | undefined;
     contactId: number;
     contactName: string;
-    contactProfile?: { small: string, medium: string };
+    contactProfile: { small: string, medium: string };
   };
-  VideoCall: {
-    chatType: string;
-    chatId: string | undefined;
-    contactId: number;
-    contactName: string;
-    contactProfile?: string;
-  };
+  Call: undefined;
 };
 
 // User
@@ -141,7 +129,8 @@ type TCall = {
   RTCConnection: any | null;
   localStream: any | null;
   remoteStream: any | null;
-  type: string; // Audio or Video
+  localVideoEnabled: boolean;
+  remoteVideoEnabled: boolean;
   muted: boolean;
   cameraFacingMode: string; // Front or Back
   speaker: boolean;

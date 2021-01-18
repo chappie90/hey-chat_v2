@@ -16,7 +16,8 @@ type CallAction =
   | { type: 'set_local_stream'; payload: any }
   | { type: 'set_remote_stream'; payload: any }
   | { type: 'start_active_call'; payload: { chatId: string; contact: TContact } }
-  | { type: 'toggle_mute_call' };
+  | { type: 'toggle_mute_call' }
+  | { type: 'toggle_video_mode' };
 
 const setRTCPeerConnection = (connection: any) => ({ type: 'set_rtc_peer_connection', payload: connection }); 
 
@@ -46,7 +47,9 @@ const startCall = () => ({ type: 'start_call' });
 
 const endCall = () => ({ type: 'end_call' }); 
 
-const toggleMuteActiveCall = () => ({ type: 'toggle_mute_call' }); 
+const toggleMuteCall = () => ({ type: 'toggle_mute_call' }); 
+
+const toggleVideoMode = () => ({ type: 'toggle_video_mode' }); 
 
 export default {
   setRTCPeerConnection,
@@ -57,5 +60,6 @@ export default {
   setLocalStream,
   setRemoteStream,
   startCall,
-  toggleMuteActiveCall
+  toggleMuteCall,
+  toggleVideoMode
 };
