@@ -64,7 +64,7 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
                 numberOfLines={2}
                 ellipsize="tail"
                 fontSize={13}
-                fontWeight={chat.lastMessage.read ? Fonts.regular : Fonts.bold}
+                fontWeight={chat.unreadMessagesCount > 0 ? Fonts.bold : Fonts.regular}
                 style={styles.messageText}
               >
                 {typingContacts.includes(contact?._id) ? 'is typing...' : chat.lastMessage.message.text}

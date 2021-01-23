@@ -98,8 +98,11 @@ const ChatsList = ({ chats }: ChatsListProps) => {
       if (contact) {
         // Send signal to sender message has been read and mark recipient's chat as read
         dispatch(chatsActions.markMessagesAsReadRecipient(chat.chatId));
-        const eventData = { chatId: chat.chatId, senderId: contact._id };
-        emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+
+        if (chat.unreadMessagesCount > 1) {
+          const eventData = { chatId: chat.chatId, senderId: contact._id };
+          emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+        } 
 
         routeParams = {
           chatType: chat.type,
@@ -111,10 +114,6 @@ const ChatsList = ({ chats }: ChatsListProps) => {
       }
     }
     
-    if (chat.type === 'group') {
-
-    }
-
     navigation.navigate('CurrentChat', routeParams);
   };
 

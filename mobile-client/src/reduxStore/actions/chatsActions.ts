@@ -42,7 +42,7 @@ const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, 
 
   try {
     const response = await api.get('/chats', { params });
-    const chats: TChat[] = response.data.chats.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+    const chats: TChat[] = response.data.chats.sort((a, b) => new Date(b.lastMessage.message.createDate) - new Date(a.lastMessage.message.createDate));
 
     dispatch({ type: 'get_chats', payload: chats });
 
