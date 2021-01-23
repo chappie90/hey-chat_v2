@@ -5,23 +5,33 @@ import { emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 
 const onFirstMessageSent = (data: string, dispatch: Dispatch) => {
   const { newChat, newMessage, pendingContact } = JSON.parse(data);
+
   dispatch(chatsActions.markMessageAsDelivered(newChat.chatId, newMessage.message.id));
+
   const chat = { ...newChat, lastMessage: newMessage };
   dispatch(chatsActions.addChat(chat));
+  
   dispatch(contactsActions.addPendingContact(pendingContact));
 };
 
 const onFirstMessageReceived = (data: string, dispatch: Dispatch) => {
   const { newChat, newMessage } = JSON.parse(data);
+
   const chat = { ...newChat, lastMessage: newMessage, unreadMessagesCount: 1 };
   dispatch(chatsActions.addChat(chat));
 };
 
 const onMessageSent = (data: string, dispatch: Dispatch) => {
-  const { chat, newMessage } = JSON.parse(data);
+  const { chat, newMessage, addNewContact, newContact } = JSON.parse(data);
+
   dispatch(chatsActions.markMessageAsDelivered(chat.chatId, newMessage.message.id));
+
   const updatedChat = { ...chat, lastMessage: newMessage };
   dispatch(chatsActions.updateChat(updatedChat));
+
+  if (addNewContact) {
+    dispatch(contactsActions.addContact(newContact));
+  }
 };
 
 const onMessageReceived = async (
@@ -32,19 +42,21 @@ const onMessageReceived = async (
   socketState = null, 
   currentScreen = ''
 ) => {
-  const { chat, newMessage, newTMessage, senderId, unreadMessagesCount } = JSON.parse(data);
+  const { chat, newMessage, newTMessage, senderId, unreadMessagesCount, addNewContact } = JSON.parse(data);
         
   const updatedChat = { 
     ...chat, 
     lastMessage: newMessage,
     unreadMessagesCount: unreadMessagesCount
   };
+
   dispatch(chatsActions.updateChat(updatedChat));
+
   dispatch(chatsActions.contactStoppedTyping(senderId));
 
   // Fetch chat messages if not loaded yet
   if (!chatHistory[chat.chatId]) {
-    await dispatch(chatsActions.getMessages(username, '', chat.chatId));
+    dispatch(chatsActions.getMessages(username, '', chat.chatId));
   } else {
     // Append last message if chat loaded
     dispatch(chatsActions.addMessage(
@@ -67,6 +79,10 @@ const onMessageReceived = async (
     dispatch(chatsActions.markMessagesAsReadRecipient(newMessage.chatId));
     const eventData = { chatId: newMessage.chatId, senderId };
     emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+  }
+
+  if (addNewContact) {
+    dispatch(contactsActions.updatePendingContact(senderId));
   }
 };
 

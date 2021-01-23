@@ -22,6 +22,22 @@ export const contactsReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state, 
         contacts: [ ...state.contacts, action.payload ]
       };
+    case 'update_pending_contact':
+      updatedContacts = (state.contacts as TContact[]).map((contact: TContact) => {
+        return contact._id === action.payload ?
+          { ...contact, pending: false } :
+          contact
+      });
+
+      return  {
+        ...state, 
+        contacts: updatedContacts
+      };
+    case 'add_contact':
+      return  {
+        ...state, 
+        contacts: [ ...state.contacts, action.payload ]
+      };
     case 'get_contacts':
       return { ...state, contacts: action.payload };
     case 'get_online_contacts':
