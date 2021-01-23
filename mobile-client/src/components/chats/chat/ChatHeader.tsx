@@ -119,6 +119,8 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
 
     try {
       const data = { callId, chatId, caller, callee, callType };
+
+      console.log(data)
       await api.post('/push-notifications/voip/send', data); 
     } catch (err) {
       console.error(err);
@@ -159,7 +161,7 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
   return (
     <View style={styles.container}>
       <View style={styles.top}>
-        <TouchableOpacity onPress={() => navigation.navigate('Chats')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <View style={styles.backButton}>
             <MaterialCommunityIcon name="arrow-left" size={38} color={Colors.yellowDark} /> 
           </View>

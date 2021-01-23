@@ -13,7 +13,7 @@ const onFirstMessageSent = (data: string, dispatch: Dispatch) => {
 
 const onFirstMessageReceived = (data: string, dispatch: Dispatch) => {
   const { newChat, newMessage } = JSON.parse(data);
-  const chat = { ...newChat, lastMessage: newMessage };
+  const chat = { ...newChat, lastMessage: newMessage, unreadMessagesCount: 1 };
   dispatch(chatsActions.addChat(chat));
 };
 
