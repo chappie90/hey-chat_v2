@@ -24,8 +24,6 @@ const searchContacts = (username: string, search: string) => async (dispatch: Th
     const response = await api.get('/contacts/search', { params });
     const contacts = response.data.contacts.sort((a, b) => a.username.localeCompare(b.username));
 
-    console.log(contacts)
-
     return contacts;
   } catch (error) {
     console.log('Search contacts method error');

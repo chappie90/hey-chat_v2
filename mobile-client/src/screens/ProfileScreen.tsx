@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -132,36 +132,38 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
   );
 
   return (
-    <View style={styles.container}>
-      <ProfileHeader onSignOut={onSignOut} />
-      <ProfileImage 
-        uploadProgress={uploadProgress} 
-        uploadFinished={uploadFinished}
-        onToggleImageActions={onToggleImageActions} 
-      />
-      <CustomText 
-        fontSize={Headings.headingExtraLarge}
-        fontWeight={Fonts.regular}
-        style={styles.username}>
-        {username}
-      </CustomText>
-      <ImageActions 
-        isVisible={showImageActions}
-        onShowCamera={onShowCamera}
-        onShowLibrary={onShowLibrary}
-        onDeleteImage={onDeleteImage}
-      />
-      <CameraWidget 
-        isVisible={showCamera}
-        onSelectPhoto={onSelectPhoto} 
-        onHideCamera={onHideCamera}
-      />
-      <PhotosLibraryWidget 
-        isVisible={showLibrary} 
-        onSelectPhoto={onSelectPhoto}
-        onHideLibrary={onHideLibrary}
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={() => hideImageActions()}>
+      <View style={styles.container}>
+        <ProfileHeader onSignOut={onSignOut} />
+        <ProfileImage 
+          uploadProgress={uploadProgress} 
+          uploadFinished={uploadFinished}
+          onToggleImageActions={onToggleImageActions} 
+        />
+        <CustomText 
+          fontSize={Headings.headingExtraLarge}
+          fontWeight={Fonts.regular}
+          style={styles.username}>
+          {username}
+        </CustomText>
+        <ImageActions 
+          isVisible={showImageActions}
+          onShowCamera={onShowCamera}
+          onShowLibrary={onShowLibrary}
+          onDeleteImage={onDeleteImage}
+        />
+        <CameraWidget 
+          isVisible={showCamera}
+          onSelectPhoto={onSelectPhoto} 
+          onHideCamera={onHideCamera}
+        />
+        <PhotosLibraryWidget 
+          isVisible={showLibrary} 
+          onSelectPhoto={onSelectPhoto}
+          onHideLibrary={onHideLibrary}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
