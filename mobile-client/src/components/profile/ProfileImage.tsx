@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: '105%',
+    height: '105%',
   },
   cameraIconContainer: {
     backgroundColor: Colors.greyLight,
