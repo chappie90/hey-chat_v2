@@ -15,6 +15,7 @@ const SocketEventListeners = () => {
   const { user: { _id: userId, username } } = useSelector(state => state.auth);
   const { chatHistory } = useSelector(state => state.chats);
   const { call } = useSelector(state => state.call);
+  const chatHistoryRef = useRef(null);
   const currentScreenRef = useRef('');
   const callRef = useRef<TCall | null>(null);
   const dispatch = useDispatch();
@@ -22,7 +23,8 @@ const SocketEventListeners = () => {
   useEffect(() => {
     currentScreenRef.current = currentScreen;
     callRef.current = call;
-  }, [currentScreen, call]);
+    chatHistoryRef.current = chatHistory;
+  }, [currentScreen, call, chatHistory]);
 
   useEffect(() => {
     // Add event listeners
@@ -57,7 +59,7 @@ const SocketEventListeners = () => {
 
       // Update recipient's chats list and add new message to chat history
       socketState.on('message_received', (data: string) => {
-        chatsHandlers.onMessageReceived(data, username, chatHistory, dispatch, socketState, currentScreenRef.current);
+        chatsHandlers.onMessageReceived(data, username, chatHistoryRef.current, dispatch, socketState, currentScreenRef.current);
       });
 
       // Mark all sender's chat history messages as read
