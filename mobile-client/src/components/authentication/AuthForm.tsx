@@ -7,13 +7,13 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { BallIndicator } from 'react-native-indicators';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { Colors, Fonts, Headings } from 'variables';
 import CustomText from 'components/CustomText';
 import CustomButton from 'components/common/CustomButton';
 import { authActions } from 'reduxStore/actions';
+import Spinner from 'components/common/Spinner';
 
 type AuthFormTypes = {
   heading: string;
@@ -97,11 +97,7 @@ const AuthForm = ({
 
   return (
     <View style={styles.container}>
-      {isAuthenticating &&
-        <View style={styles.spinner}>
-          <BallIndicator size={32} color={Colors.purpleDark} />
-        </View>
-      }
+      {isAuthenticating && <Spinner layout={styles.spinner} />}
       {!!authError &&
         <View style={styles.formError}>
           <CustomText fontSize={Headings.headingSmall} color={Colors.red}>
