@@ -18,9 +18,12 @@ const getCurrentScreen = (currentScreen: string) => ({ type: 'get_current_screen
 
 const setUserConnectionState = (state: boolean) => ({ type: 'set_user_connected', payload: state });
 
+const setBadgeCount = (count: number) => ({ type: 'set_badge_count', payload: count });
+
 export default {
   setIsInitialLoad,
   setSocketState,
   getCurrentScreen,
-  setUserConnectionState
+  setUserConnectionState,
+  setBadgeCount
 };

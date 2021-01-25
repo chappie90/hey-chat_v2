@@ -5,13 +5,15 @@ type AppState = {
   socketState: any | null;
   currentScreen: string;
   userConnected: boolean;
+  badgeCount: number;
 };
 
 const INITIAL_STATE: AppState = {
   initialLoad: true,
   socketState: null,
   currentScreen: '',
-  userConnected: false
+  userConnected: false,
+  badgeCount: 0
 };
 
 export const appReducer: Reducer = (state = INITIAL_STATE, action) => {
@@ -24,6 +26,8 @@ export const appReducer: Reducer = (state = INITIAL_STATE, action) => {
       return { ...state, currentScreen: action.payload };
     case 'set_user_connected':
       return { ...state, userConnected: action.payload };
+    case 'set_badge_count':
+      return { ...state, badgeCount: action.payload };
     default: 
       return state;
   }

@@ -9,7 +9,8 @@ import rootReducer from 'reduxStore/reducers';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  stateReconciler: autoMergeLevel2
+  stateReconciler: autoMergeLevel2,
+  whitelist: ['auth', 'chats']
 };
 
 const pReducer = persistReducer(persistConfig, rootReducer);

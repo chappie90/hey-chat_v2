@@ -6,16 +6,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import config from 'react-native-config';
 import RNCallKeep from 'react-native-callkeep';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { PermissionsAndroid, Platform, AppState } from 'react-native';
 import InCallManager from 'react-native-incall-manager';
 import { mediaDevices, RTCPeerConnection } from 'react-native-webrtc';
 import BackgroundFetch from 'react-native-background-fetch';
 
+import { connectToSocket } from 'socket/connection';
 import api from 'api';
 import { chatsHandlers, callHandlers } from 'socket/eventHandlers';
 import { navigate } from 'navigation/NavigationRef';
 import { chatsActions, appActions, callActions } from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead, emitSendSdpOffer, emitEndCall, emitSendICECandidate } from 'socket/eventEmitters';
+import { store } from 'reduxStore';
 
 type PushNotificationsManagerProps = { children: ReactNode };
 
@@ -29,6 +31,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   const chatHistoryRef = useRef({});
   const currentScreenRef = useRef('');
   const socketStateRef = useRef<any>(null);
+  const badgeCountRef = useRef(0);
   const callRef = useRef<any>(null);
 
   const createNotificationsChannel = (
@@ -93,7 +96,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     PushNotification.localNotification({
       channelId,
       title,
-      message: body
+      message: body,
+      number: 10
     });
   };
 
@@ -103,7 +107,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       ios: {
         appName: 'Hey',
         imageName: 'sim_icon',
-        supportsVideo: false,
+        supportsVideo: true,
         maximumCallGroups: '1',
         maximumCallsPerCallGroup: '1'
       },
@@ -140,31 +144,20 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   };
 
   const onDidReceiveStartCall = async (): Promise<void> => {
-    console.log('did receive call')
     const options = {
       ios: {
         hasVideo: true
       }
     };
 
-    if (callRef.current) {
-      RNCallKeep.updateDisplay(
-        callRef.current.callId, 
-        callRef.current.caller.username, 
-        callRef.current.callee.username, 
-        options
-      );
-    }
-
-    // const data = { 
-    //   callId: callIdRef.current, 
-    //   chatId: chatIdRef.current, 
-    //   caller: callerRef.current, 
-    //   callee: calleeRef.current, 
-    //   callType: 'video' 
-    // };
-    // console.log('hitting route')
-    // await api.post('/push-notifications/voip/send', data); 
+    // if (callRef.current && callRef.current.isInitiatingCall) {
+    //   RNCallKeep.updateDisplay(
+    //     callRef.current.callId,
+    //     callRef.current.caller.username, 
+    //     callRef.current.callee.username, 
+    //     options
+    //   );
+    // }
   };
 
   const onAnswerCall = async (): Promise<void> => {
@@ -230,17 +223,11 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
     InCallManager.start({media: 'audio/video'});
 
-    // If iOS inititated call navigate back to call screen
-    if (Platform.OS === 'ios') {
-      const routeParams = { 
-        chatType: 'private', 
-        chatId: callRef.current.chat.chatId,
-        contactId: callRef.current.caller._id,
-        contactName: callRef.current.caller.username,
-        contactProfile: callRef.current.caller.avatar?.small
-      };
-      navigate('VideoCall', routeParams);
+    if (Platform.OS === 'android') {
+      RNCallKeep.backToForeground();
     }
+
+    navigate('Call', {});
   };
 
   const stopLocalStream = () => {
@@ -250,8 +237,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
   };
 
   const onEndCall = async () => {
-    console.log('on end called push manager')
-
     const call = callRef.current;
 
     if (!callRef.current.hasEnded) {
@@ -293,6 +278,16 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
     // Close Peer connection and clean up event listeners
     callRef.current.RTCPeerConnection?.close();
+    
+    const contact = userRef.current._id === call.caller._id ? call.callee : call.caller;
+    const routeParams = { 
+      chatType: 'private', 
+      chatId: callRef.current.chat.chatId,
+      contactId: contact._id,
+      contactName: contact.username,
+      contactProfile: contact.avatar
+    };
+    navigate('CurrentChat', routeParams);
 
     if (!callRef.current.hasEnded) dispatch(callActions.endCall());
   };
@@ -340,29 +335,30 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
           if (error.message) console.log(error.message);
         }
 
-        // Clear badge number at start - iOS
-        PushNotification.getApplicationIconBadgeNumber(function (number) {
-          if (number > 0) {
-            PushNotification.setApplicationIconBadgeNumber(0);
-          }
-        });
-
       // Create notifications channel - Android
       createNotificationsChannel(config.RN_APP_ID, `${config.RN_APP_ID}.notifications-channel`)
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
-      console.log('received push notif')
-      console.log(notification)
+      // console.log(notification) 
 
-      console.log(notification.data.type)
+      // Set notifications badge. Doesn't work on all Android devices
+      const { chat: { chatId } } = notification.data.payload;
+      const { app: { badgeCount }, chats: { chats } } = store.getState();
+      const unreadMessagesCount = chats.filter((chat: TChat) => chat.chatId === chatId)[0].unreadMessagesCount;
+
+      // Increase badge count by 1 for every chat that has unread messages
+      if (AppState.currentState === 'background' && unreadMessagesCount === 0) {
+        PushNotification.setApplicationIconBadgeNumber(badgeCount + 1);
+        dispatch(appActions.setBadgeCount(badgeCount + 1));
+      } 
 
       // Update recipient app state while in background
       if (notification.data.silent) {
         // Send local notification Android background
-        if (Platform.OS === 'android' && JSON.parse(notification.data.payload) !== null) {
+        if (Platform.OS === 'android' && notification.data.payload !== null) {
           console.log(notification.data.payload)
-          const { newMessage } = JSON.parse(notification.data.payload);
+          const { newMessage } = notification.data.payload;
           if (newMessage) {
             sendLocalPushNotification("hey-chat-id-1", newMessage.sender, newMessage.message.text);
           }
@@ -396,18 +392,22 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             break;
           case 'voip_notification_received':
             // Wake up device and handle incoming call
+            const { callId, chatId, caller, callee, callType } = notification.data.payload;
+            dispatch(callActions.receiveCall(callId, chatId, caller, callee, callType));
 
-            console.log('voip received')
-              const { callId, chatId, caller, callee, callType } = JSON.parse(notification.data.payload);
-              dispatch(callActions.receiveCall(callId, chatId, caller, callee, callType));
+            const options = {};
 
-              RNCallKeep.displayIncomingCall(callId, caller._id.toString(), caller.username, 'generic', false);
+            RNCallKeep.displayIncomingCall(
+              callId, 
+              `Hey ${callType.charAt(0).toUpperCase() + callType.slice(1)}...`, 
+              caller.username
+            );
 
-              BackgroundFetch.scheduleTask({
-                taskId: "connect_socket",
-                forceAlarmManager: true,
-                delay: 0  // <-- milliseconds
-              });
+            BackgroundFetch.scheduleTask({
+              taskId: "connect_socket",
+              forceAlarmManager: true,
+              delay: 0  // <-- milliseconds
+            });
             break;
           case 'voip_call_ended':
             // End call on Android devices if caller hangs up before socket reconnection can be established
@@ -449,7 +449,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
       // Handle user tap on notification
       if (notification.userInteraction) { 
-        const { chat, senderId } = JSON.parse(notification.data.payload);
+        const { chat, senderId } = notification.data.payload;
         if (chat.chatType === 'private') {
           console.log('private chat')
           // Send signal to sender message has been read and mark recipient's chat as read
@@ -477,8 +477,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       //   // Do something else with push notification
       // }
 
-      // Get badge number
-      // PushNotification.getApplicationIconBadgeNumber(callback: Function
+     
       
       notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
@@ -547,7 +546,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     // When receive remote voip push, register your VoIP client, show local notification ... etc
     VoipPushNotification.addEventListener('notification', (notification: any) => {
       const { callId, chatId, caller, callee, callType } = JSON.parse(notification.data);
-      console.log('voip received notification listener madafukka')
+      console.log(notification.data)
+
       dispatch(callActions.receiveCall(callId, chatId, caller, callee, callType));
 
       (async () => {

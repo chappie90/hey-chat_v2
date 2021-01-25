@@ -1,14 +1,15 @@
 import { combineReducers } from 'redux';
-import { appReducer } from './appReducer';
-import { authReducer } from './authReducer';
-import { contactsReducer } from './contactsReducer';
-import { chatsReducer } from './chatsReducer';
-import { callReducer } from './callReducer';
+
+import { appReducer } from 'reduxStore/reducers/appReducer';
+import { authReducer } from 'reduxStore/reducers/authReducer';
+import { contactsReducer } from 'reduxStore/reducers/contactsReducer';
+import { chatsReducer } from 'reduxStore/reducers/chatsReducer';
+import { callReducer } from 'reduxStore/reducers/callReducer';
 
 export default combineReducers({
-    app: appReducer,
-    auth: authReducer,
-    contacts: contactsReducer,
-    chats: chatsReducer,
-    call: callReducer
+  app: appReducer,
+  auth: authReducer,
+  contacts: contactsReducer,
+  chats: chatsReducer,
+  call: callReducer
 });
