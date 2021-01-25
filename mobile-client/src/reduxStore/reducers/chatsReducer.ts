@@ -54,7 +54,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
             allMessagesLoaded: action.payload.allMessagesLoaded
           }
         } 
-    };
+      };
     case 'get_more_messages':
       return { 
         ...state, 
@@ -63,6 +63,17 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           [action.payload.chatId]: {
             messages: [ ...state.chatHistory[action.payload.chatId].messages, ...action.payload.messages ],
             allMessagesLoaded: action.payload.allMessagesLoaded
+          }
+        } 
+      };
+    case 'reset_messages':
+      return { 
+        ...state, 
+        chatHistory: { 
+          ...state.chatHistory, 
+          [action.payload.chatId]: {
+            messages: state.chatHistory[action.payload.chatId].messages.slice(0, 20),
+            allMessagesLoaded: false
           }
         } 
       };

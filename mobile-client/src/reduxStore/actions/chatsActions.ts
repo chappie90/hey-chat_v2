@@ -22,6 +22,7 @@ type ChatsAction =
   | { type: 'update_chat'; payload: TChat }
   | { type: 'get_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
   | { type: 'get_more_messages'; payload: { chatId: string, messages: TMessage[], allMessagesLoaded: boolean } }
+  | { type: 'reset_messages'; payload: { chatId: string } }
   | { type: 'add_message'; payload: { chatId: string, message: TMessage } }
   | { type: 'like_message'; payload: { chatId: string, messageId: string } }
   | { type: 'mark_message_for_deletion'; payload: { chatId: string, messageId: string } }
@@ -111,6 +112,8 @@ const getMoreMessages = (
   } 
 };
 
+const resetMessages = (chatId: string) => ({ type: 'reset_messages', payload: { chatId } });
+
 const addMessage = (chatId: string, message: TMessage) => ({ type: 'add_message', payload: { chatId, message } });
 
 const likeMessage = (chatId: string, messageId: string) => ({ type: 'like_message', payload: { chatId, messageId } });
@@ -177,6 +180,7 @@ export default {
   updateChat,
   getMessages,
   getMoreMessages,
+  resetMessages,
   addMessage,
   likeMessage,
   markMessageForDeletion,

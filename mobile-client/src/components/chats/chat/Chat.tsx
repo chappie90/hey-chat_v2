@@ -68,6 +68,7 @@ const Chat = ({
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [activeMsg, setActiveMsg] = useState<TMessage | null>(null);
   const chatIdRef = useRef<string>(chatId);
+  const chatHistoryRef = useRef<any>(null);
   const flatListRef = useRef<any>(null);
   const [showScrollBottomBtn, setShowScrollBottomBtn] = useState(false);
   const dispatch = useDispatch();
@@ -321,6 +322,13 @@ const Chat = ({
         if (response) setIsLoading(false);
       }
     })();
+
+    return () => {
+      // Reset chat history to first 20 messages if more messages previously loaded
+      if (chatHistoryRef.current[chatIdRef.current]?.messages.length > 20) {
+        dispatch(chatsActions.resetMessages(chatIdRef.current));
+      }
+    };
   }, []);
   
   useEffect(() => {
@@ -330,6 +338,10 @@ const Chat = ({
       onSendMessage('', messageImageData.uri);
     }
   }, [messageImageData]);
+
+  useEffect(() => {
+    chatHistoryRef.current = chatHistory;
+  }, [chatHistory]);
 
   return (
     <KeyboardAvoidingView 

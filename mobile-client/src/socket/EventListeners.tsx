@@ -131,7 +131,6 @@ const SocketEventListeners = () => {
       // Either user ends call
       // Stop local stream
       socketState.on('call_ended', (data: string) => {
-        console.log('on call ended listener')
         if (callRef.current) callHandlers.onCallEnded(userId, callRef.current, navigate, dispatch);
       });
 
