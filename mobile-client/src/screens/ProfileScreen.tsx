@@ -66,7 +66,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
     let imageUri;
 
     if (imageData.filename) {
-      imageUri = `${imageData.uri}/${imageData.filename}}`;
+      imageUri = `${imageData.uri}/${imageData.filename}`;
     } else {
       imageUri = imageData.uri;
     }
@@ -107,7 +107,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
       }
     })
     .catch(error => {
-      console.log('Upload image method error');
+      console.log('Upload image method error', error);
       if (error.response) console.log(error.response.data.message);
       if (error.message) console.log(error.message);
     });

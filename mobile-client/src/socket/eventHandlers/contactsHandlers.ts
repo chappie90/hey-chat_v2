@@ -10,7 +10,10 @@ const onGetContacts = (data: string, dispatch: Dispatch) => {
 
 const onGetOnlineContacts = (data: string, dispatch: Dispatch) => {
   const { onlineContacts } = JSON.parse(data);
+
   dispatch(contactsActions.getOnlineContacts(onlineContacts));
+
+  dispatch(chatsActions.setOnlineContacts(onlineContacts));
 };
 
 const onContactIsOnline = (data: string, userId: number, dispatch: Dispatch) => {
@@ -28,10 +31,14 @@ const onContactIsOnline = (data: string, userId: number, dispatch: Dispatch) => 
   user.online = true;
 
   dispatch(contactsActions.contactGoesOnline(user));
+
+  dispatch(chatsActions.contactGoesOnline(user));
 };
 
 const onContactIsOffline = (userId: string, dispatch: Dispatch) => {
   dispatch(contactsActions.contactGoesOffline(userId));
+
+  dispatch(chatsActions.contactGoesOffline(userId))
 };
 
 const onContactIsTyping = (contactId: string, dispatch: Dispatch) => {
@@ -42,11 +49,18 @@ const onContactStoppedTyping = (contactId: string, dispatch: Dispatch) => {
   dispatch(chatsActions.contactStoppedTyping(contactId));
 };
 
+const onProfileImageUpdated = (data: string, dispatch: Dispatch) => {
+  const { userId, profileImage } = JSON.parse(data);
+  dispatch(contactsActions.updateContactAvatar(userId, profileImage));
+  dispatch(chatsActions.updateContactAvatar(userId, profileImage));
+};
+
 export default {
   onGetContacts,
   onGetOnlineContacts,
   onContactIsOnline,
   onContactIsOffline,
   onContactIsTyping,
-  onContactStoppedTyping
+  onContactStoppedTyping,
+  onProfileImageUpdated
 };

@@ -28,6 +28,7 @@ const INITIAL_STATE: CallState = {
     localStream: null,
     remoteStream: null,
     RTCConnection: null,
+    type: '',
     localVideoEnabled: false,
     remoteVideoEnabled: false,
     muted: false,

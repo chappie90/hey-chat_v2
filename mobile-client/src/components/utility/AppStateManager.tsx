@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import PushNotification from "react-native-push-notification";
 
 import { connectToSocket } from 'socket/connection';
-import { appActions, authActions, chatsActions } from 'reduxStore/actions';
+import { appActions, chatsActions, contactsActions } from 'reduxStore/actions';
 import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
+import { store } from 'reduxStore';
 
 type AppStateManagerProps = { children: ReactNode };
 
@@ -23,13 +25,6 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
     if (authToken && userId) {
       socket.current = connectToSocket(userId);
       dispatch(appActions.setSocketState(socket.current));
-    //   // if (Platform.OS === 'ios') {
-    //   //   await Notifications.setBadgeNumberAsync(0);
-    //   // }
-    //   // if (Platform.OS === 'android') {
-    //   //   await Notifications.dismissAllNotificationsAsync();
-    //   // }
-    //   // resetBadgeCount(username);
     }   
   }; 
 
@@ -39,15 +34,21 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   };
 
   const handleAppStateChange = (nextAppState: string) => {
-    console.log('app state changing')
-    console.log(nextAppState)
-    console.log(username)
-    // Connect to socket on app active
+    // When app killed and first load 
+    if (appState.current.match(/unknown/) && nextAppState === 'active') {
+      PushNotification.setApplicationIconBadgeNumber(0);
+      dispatch(appActions.setBadgeCount(0));
+    }
+
     if (
       appState.current.match(/inactive|background/) && 
       nextAppState === 'active'
     ) {
       createSocketConnection();
+
+      // Clear badge
+      PushNotification.setApplicationIconBadgeNumber(0);
+      dispatch(appActions.setBadgeCount(0));
 
       // If app becomes active on CurrentChat screen mark recipient's chat as read
       if (activeChatRef.current && currentScreenRef.current === 'CurrentChat') {

@@ -1,3 +1,4 @@
+import { act } from 'react-test-renderer';
 import { Reducer } from 'redux';
 
 type ChatsState = {
@@ -78,6 +79,8 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
         } 
       };
     case 'add_message': 
+    console.log('adding message')
+    console.log(action.payload)
       // If there are previous messages in the chat
       if (state.chatHistory[action.payload.chatId]) {
         return { 
@@ -280,6 +283,60 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           }
         }
       };
+    case 'update_contact_avatar':
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return chat.participants.filter((p: any) => p._id === action.payload.contactId).length > 0 ?
+          { 
+            ...chat, 
+            participants: chat.participants.map((p: any) => {
+              return p._id === action.payload.contactId ?
+                {
+                  ...p,
+                  avatar: {
+                    ...state.avatar,
+                    small: action.payload.avatar
+                  }
+                } :
+                p
+            })
+          } : 
+          chat;
+      });
+      
+      return { ...state, chats: updatedChats };
+    case 'set_online_contacts':
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return action.payload.filter((contact: TContact) => contact.chatId === chat.chatId).length > 0 ?
+          { 
+            ...chat, 
+            online: true
+          } : 
+          chat;
+      });
+      
+      return { ...state, chats: updatedChats };
+    case 'contact_goes_online_chat':
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return chat.participants.filter((p: any) => p._id === action.payload._id).length > 0 ?
+          { 
+            ...chat, 
+            online: true
+          } : 
+          chat;
+      });
+      
+      return { ...state, chats: updatedChats };
+    case 'contact_goes_offline_chat':
+      updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
+        return chat.participants.filter((p: any) => p._id === action.payload).length > 0 ?
+          { 
+            ...chat, 
+            online: false
+          } : 
+          chat;
+      });
+
+      return { ...state, chats: updatedChats };
     default:
       return state;
   }

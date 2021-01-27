@@ -15,7 +15,7 @@ const onFirstMessageSent = (data: string, dispatch: Dispatch) => {
 };
 
 const onFirstMessageReceived = (data: string, dispatch: Dispatch) => {
-  const { newChat, newMessage } = typeof data === 'string' ? JSON.parse(data) : data;
+  const { newChat, newMessage } = JSON.parse(data);
 
   const chat = { ...newChat, lastMessage: newMessage, unreadMessagesCount: 1 };
   dispatch(chatsActions.addChat(chat));
@@ -42,9 +42,7 @@ const onMessageReceived = async (
   socketState = null, 
   currentScreen = ''
 ) => {
-  const {
-    chat, newMessage, newTMessage, senderId, unreadMessagesCount, addNewContact 
-  } = typeof data === 'string' ? JSON.parse(data) : data;
+  const { chat, newMessage, newTMessage, senderId, unreadMessagesCount, addNewContact } = JSON.parse(data);
         
   const updatedChat = { 
     ...chat, 

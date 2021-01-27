@@ -22,7 +22,6 @@ type ChatsFrontItemProps = {
 
 const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) => {
   const { typingContacts } = useSelector(state => state.chats);
-  const { onlineContacts } = useSelector(state => state.contacts);
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
   return (
@@ -92,12 +91,9 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
           </View>
           <View style={styles.divider} />
         </View>
-        {onlineContacts?.length > 0 &&
-          onlineContacts.filter((contact: TContact) => contact.chatId === chat.chatId)[0]?.online &&
-          <View style={styles.isOnlineBadge} />
-        }
-        </View>
-      </TouchableWithoutFeedback>
+        {chat.online && <View style={styles.isOnlineBadge} />}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

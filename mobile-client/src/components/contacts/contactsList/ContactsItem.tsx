@@ -5,6 +5,7 @@ import {
   Image,
   TouchableWithoutFeedback
 } from 'react-native';
+import config from 'react-native-config';
 
 import { Images } from 'assets';
 import CustomText from 'components/CustomText';
@@ -16,6 +17,8 @@ type ContactsItemProps = {
 };
 
 const ContactsItem = ({ item, onContactSelect }: ContactsItemProps) => {
+  const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
+
   return (
     <TouchableWithoutFeedback onPress={() => onContactSelect(item)}>
       <View style={styles.container}>
@@ -23,7 +26,7 @@ const ContactsItem = ({ item, onContactSelect }: ContactsItemProps) => {
           {item.avatar?.small ?
             <Image 
               style={styles.image} 
-              source={{ uri: item.avatar.small }}
+              source={{ uri: `${S3_BUCKET_PATH}/${item.avatar.small}` }} 
             /> : 
             <Image style={styles.image} source={ Images.avatarSmall } />
           }

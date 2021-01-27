@@ -11,14 +11,13 @@ import PushNotificationsManager from 'components/utility/PushNotificationsManage
 import SocketEventListeners from 'socket/EventListeners';
 import BackgroundTasksManager from 'components/utility/BackgroundTasksManager';
 import { Colors } from 'variables';
-import Spinner from 'components/common/Spinner';
 
 declare const global: {HermesInternal: null | {}};
 
 const App = () => {
   return (
     <Provider store={store}>
-      <PersistGate loading={<Spinner layout={styles.spinner} />} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <BackgroundTasksManager />
         <SocketEventListeners />
         <AppStateManager>
@@ -37,11 +36,6 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  spinner: {
-    position: 'absolute', 
-    alignSelf: 'center', 
-    top: 150 
   }
 });
 

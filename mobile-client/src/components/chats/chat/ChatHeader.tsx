@@ -121,7 +121,7 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
       const data = { callId, chatId, caller, callee, callType };
 
       console.log(data)
-      await api.post('/push-notifications/voip/send', data); 
+      await api.post('/call/start', data); 
     } catch (err) {
       console.error(err);
     }
@@ -167,9 +167,9 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
           </View>
         </TouchableOpacity>
         <View style={styles.imageContainer}>
-          {contactProfile ? (
+          {contactProfile?.small ? (
             <Image 
-              source={{ uri: `${S3_BUCKET_PATH}/${contactProfile}` }} 
+              source={{ uri: `${S3_BUCKET_PATH}/${contactProfile.small}` }} 
               style={styles.image} 
             />
           ) : (

@@ -40,6 +40,5 @@ export const emitSendSdpAnswer = (data: string, socket: any) => {
 };
 
 export const emitEndCall = (data: string, socket: any) => {
-  console.log('emitting end call')
   socket.emit('end_call', data);
 };

@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import config from 'react-native-config';
 import { useSelector, useDispatch } from 'react-redux';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
@@ -20,8 +22,9 @@ import { chatsActions } from 'reduxStore/actions';
 
 type MessageBubbleProps = {
   index: number;
-  userId: number;
+  senderId: number;
   content: TMessage;
+  contactName: string;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
   onShowMessageActions: (message: TMessage, coordinates: number[]) => void;
@@ -31,15 +34,16 @@ type MessageBubbleProps = {
 
 const MessageBubble = ({ 
   index,
-  userId,
+  senderId,
   content,
+  contactName,
   sameSenderPrevMsg,
   sameSenderNextMsg,
   onShowMessageActions,
   hideMessageActions,
   onCloseReplyBox
 }: MessageBubbleProps) => {
-  const { _id: messageId, text, reply, sender, image } = content;
+  const { _id: messageId, text, reply, sender, image, admin } = content;
   const { 
     activeChat, 
     activeMessage, 
@@ -52,11 +56,14 @@ const MessageBubble = ({
   const dispatch = useDispatch();
   const [updateImage, setUpdateImage] = useState(false);
   const [activeMsgId, setActiveMsgId] = useState('');
+  const [messageText, setMessageText] = useState('');
+  const [messageTextColor, setMessageTextColor] = useState('');
+  const [messageTextSize, setMessageTextSize] = useState(0);
 
   const onLongPress = (event: GestureResponderEvent) => {
     onCloseReplyBox();
     const { pageY } = event.nativeEvent;
-    const pageX = userId === 1 ? windowWidth - 260 : 40;
+    const pageX = senderId === 1 ? windowWidth - 260 : 40;
     onShowMessageActions(content, [pageX, pageY > 180 ? pageY : 180]);
   };
 
@@ -101,6 +108,35 @@ const MessageBubble = ({
     } 
   }, [msgImgUploadProgress, msgImgUploadFinished]);
 
+  useEffect(() => {
+    if (admin && text === 'Missed audio call') {
+      if (senderId === 1) {
+        setMessageText(`${contactName} missed an audio call from you`);
+        setMessageTextColor(Colors.greyDark);
+      } else {
+        setMessageText('You have a missed audio call');
+        setMessageTextColor(Colors.red);
+      }
+      setMessageTextSize(Headings.headingExtraSmall);
+    } else if (admin && text === 'Missed video call') {
+      if (senderId === 1) {
+        setMessageText(`${contactName} missed a video call from you`);
+        setMessageTextColor(Colors.greyDark);
+      } else {
+        setMessageText('You have a missed video call');
+        setMessageTextColor(Colors.red);
+      }
+      setMessageTextSize(Headings.headingExtraSmall);
+    } else {
+      setMessageText(text);
+      if (senderId === 1) {
+        setMessageTextColor(Colors.white);
+      } else {
+        setMessageTextColor(Colors.greyDark);
+      }
+      setMessageTextSize(Headings.headingSmall);
+    }
+  }, [text, senderId]);
 
   return (
     <TouchableWithoutFeedback
@@ -114,7 +150,7 @@ const MessageBubble = ({
         {reply?.origMsgId &&
           <View style={[
             styles.replyBubble,
-            userId === 1 ? styles.rightReplyBubble : styles.leftReplyBubble,
+            senderId === 1 ? styles.rightReplyBubble : styles.leftReplyBubble,
           ]}>
             <View style={styles.imageContainer}>
               {sender.avatar ?
@@ -138,21 +174,23 @@ const MessageBubble = ({
         <View 
           style={[
             image ? styles.imageBubble : styles.bubble,
-            userId === 1 ? styles.rightBubble : styles.leftBubble,
-            userId === 1 && sameSenderPrevMsg && styles.rightBubblePrevMsg,
-            userId === 1 && sameSenderNextMsg && styles.rightBubbleNextMsg,
-            userId === 2 && sameSenderPrevMsg && styles.leftBubblePrevMsg,
-            userId === 2 && sameSenderNextMsg && styles.leftBubbleNextMsg
+            senderId === 1 ? styles.rightBubble : styles.leftBubble,
+            senderId === 1 && sameSenderPrevMsg && styles.rightBubblePrevMsg,
+            senderId === 1 && sameSenderNextMsg && styles.rightBubbleNextMsg,
+            senderId === 2 && sameSenderPrevMsg && styles.leftBubblePrevMsg,
+            senderId === 2 && sameSenderNextMsg && styles.leftBubbleNextMsg,
+            admin && senderId === 1 && styles.adminBubbleSender,
+            admin && senderId === 2 && styles.adminBubbleRecipient
           ]}
         >
           {activeChat?.chatId && image ? 
             ( 
               <View style={[
                 styles.messageImageContainer,
-                userId === 1 && sameSenderPrevMsg && styles.rightImagePrevMsg,
-                userId === 1 && sameSenderNextMsg && styles.rightImageNextMsg,
-                userId === 2 && sameSenderPrevMsg && styles.leftImagePrevMsg,
-                userId === 2 && sameSenderNextMsg && styles.leftImageNextMsg
+                senderId === 1 && sameSenderPrevMsg && styles.rightImagePrevMsg,
+                senderId === 1 && sameSenderNextMsg && styles.rightImageNextMsg,
+                senderId === 2 && sameSenderPrevMsg && styles.leftImagePrevMsg,
+                senderId === 2 && sameSenderNextMsg && styles.leftImageNextMsg
               ]}>
                 <Image 
                   key={messageId === activeMsgId && updateImage ? 'true' : 'false'}
@@ -177,12 +215,24 @@ const MessageBubble = ({
               </View>
             ) :
             (
-              <CustomText 
-                color={userId === 1 ? Colors.white : Colors.greyDark}
-                fontSize={Headings.headingSmall}
-              >
-                {text}
-              </CustomText>
+              <View style={styles.bubbleText}>
+                {admin && text === 'Missed audio call' &&
+                  <View style={styles.bubbleTextIcon}>
+                    <FeatherIcon name='phone-missed' size={16} color={senderId === 1 ? Colors.greyDark : Colors.red} />
+                  </View>
+                }
+                {admin && text === 'Missed video call' &&
+                  <View style={styles.bubbleTextIcon}>
+                    <MaterialIcon name='missed-video-call' size={20} color={senderId === 1 ? Colors.greyDark : Colors.red} />
+                  </View>
+                }
+                <CustomText 
+                  color={messageTextColor}
+                  fontSize={messageTextSize}
+                >
+                  {messageText}
+                </CustomText>
+              </View>
             )
           }
         </View>
@@ -200,6 +250,18 @@ const styles = StyleSheet.create({
   imageBubble: {
     borderRadius: 35,
     padding: 2
+  },
+  adminBubbleSender: {
+    backgroundColor: Colors.greyLight,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    marginTop: 10
+  },
+  adminBubbleRecipient: {
+    backgroundColor: Colors.redLight,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    marginTop: 10
   },
   leftBubble: {
     backgroundColor: Colors.yellowLight,
@@ -241,6 +303,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 35,
     right: 8,
     alignSelf: 'flex-end'
+  },
+  bubbleText: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  bubbleTextIcon: {
+    marginRight: 6
   },
   imageContainer: {
     overflow: 'hidden', 

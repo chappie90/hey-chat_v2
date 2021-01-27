@@ -36,7 +36,11 @@ type ChatsAction =
   | { type: 'set_active_chat'; payload: { chat: TChat } }
   | { type: 'mute_chat'; payload: { chatId: string, newValue: boolean } }
   | { type: 'delete_chat'; payload: { chatId: string } }
-  | { type: 'update_message_image_source'; payload: { chatId: string, messageId: string, imageSource: string } };
+  | { type: 'update_message_image_source'; payload: { chatId: string, messageId: string, imageSource: string } }
+  | { type: 'update_contact_avatar'; payload: { contactId: string, avatar: string } }
+  | { type: 'set_online_contacts'; payload: TContact[] }
+  | { type: 'contact_goes_online_chat'; payload: TContact }
+  | { type: 'contact_goes_offline_chat'; payload: string };
 
 const getChats = (userId: number) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
   const params = { userId };
@@ -174,6 +178,14 @@ const messageImageIsUploading = (
 
 const updateMessageImageSrc = (chatId: string, messageId: string, imageName: string) => ({ type: 'update_message_image_source', payload: { chatId, messageId, imageName } });
 
+const updateContactAvatar = (contactId: string, avatar: string) => ({ type: 'update_contact_avatar', payload: { contactId, avatar } });
+
+const setOnlineContacts = (onlineContacts: TContact[]) => ({ type: 'set_online_contacts', payload: onlineContacts });
+
+const contactGoesOnline = (contact: TContact) => ({ type: 'contact_goes_online_chat', payload: contact });
+
+const contactGoesOffline = (contactId: string) => ({ type: 'contact_goes_offline_chat', payload: contactId });
+
 export default {
   getChats,
   addChat,
@@ -195,5 +207,9 @@ export default {
   muteChat,
   deleteChat,
   messageImageIsUploading,
-  updateMessageImageSrc
+  updateMessageImageSrc,
+  updateContactAvatar,
+  setOnlineContacts,
+  contactGoesOnline,
+  contactGoesOffline
 };

@@ -34,7 +34,7 @@ type ChatProps = {
   chatType: string;
   chatId: string;
   contactId?: number;
-  contactName?: string;
+  contactName: string;
   contactProfile?: { small: string; medium: string };
   showCamera: () => void;
   hideCamera: () => void;
@@ -376,6 +376,7 @@ const Chat = ({
                     <Message 
                       index={index}
                       content={item} 
+                      contactName={contactName}
                       sameSenderPrevMsg={sameSenderPrevMsg} 
                       sameSenderNextMsg={sameSenderNextMsg}
                       isLastMessage={isLastMessage}

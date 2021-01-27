@@ -3,9 +3,11 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'react-native-webrtc';
 import InCallManager from 'react-native-incall-manager';
 import RNCallKeep from 'react-native-callkeep';
+import uuid from 'react-native-uuid';
 
+import api from 'api';
 import { navigate } from 'navigation/NavigationRef';
-import { callActions } from 'reduxStore/actions';
+import { callActions, chatsActions } from 'reduxStore/actions';
 import { emitSendICECandidate, emitSendSdpAnswer } from 'socket/eventEmitters';
 
 // const onVoipPushNotificationReceived = async (data: string, socketState: any, dispatch: Dispatch): Promise<void> => {
@@ -114,34 +116,53 @@ const onSdpAnswerReceived = (data: string,  callState: TCall, socketState: any, 
     }
   };
 
-  if (Platform.OS === 'android') RNCallKeep.setCurrentCallActive(callState.callId);
+  if (Platform.OS === 'android') {
+     RNCallKeep.setCurrentCallActive(callState.callId);
+     RNCallKeep.backToForeground();
+  }
+  
   dispatch(callActions.startCall());
 };
 
-const onCallEnded = (userId: number, callState: TCall, navigate: any,  dispatch: Dispatch) => {
+const onCallEnded = async (userId: number, callState: TCall, navigate: any,  dispatch: Dispatch) => {
   const callId = callState.callId;
 
   dispatch(callActions.endCall());
 
-  console.log(userId)
-  console.log(callId)
-
   RNCallKeep.rejectCall(callId);
   RNCallKeep.endAllCalls();
   RNCallKeep.endCall(callId);
-  
-  // If iOS inititated call navigate back to current chat screen
-  if (Platform.OS === 'ios') {
-    const contact = userId === callState.caller._id ? callState.callee : callState.caller;
 
-    const routeParams = { 
-      chatType: 'private', 
-      chatId: callState.chat.chatId,
-      contactId: contact._id,
-      contactName: contact.username,
-      contactProfile: contact.avatar?.small
-    };
-    navigate('CurrentChat', routeParams);
+  const contact = userId === callState.caller._id ? callState.callee : callState.caller;
+
+  const routeParams = { 
+    chatType: 'private', 
+    chatId: callState.chat.chatId,
+    contactId: contact._id,
+    contactName: contact.username,
+    contactProfile: contact.avatar?.small
+  };
+  navigate('CurrentChat', routeParams);
+};
+
+const onMissedCall = (data: string, username: string, chatHistory: any, dispatch: Dispatch) => {
+  const { chatId, message } = JSON.parse(data);
+  // Fetch chat messages if not loaded yet
+  if (!chatHistory[chatId]) {
+    dispatch(chatsActions.getMessages(username, '', chatId));
+  } else {
+    // Append last message if chat loaded
+    dispatch(chatsActions.addMessage(
+      chatId, 
+      {
+        ...message,
+        sender: {
+          ...message.sender,
+          _id: 2
+        },
+        delivered: true
+      }
+    ));
   }
 };
 
@@ -150,5 +171,6 @@ export default {
   onSdpOfferReceived,
   onICECandidateReceived,
   onSdpAnswerReceived,
-  onCallEnded
+  onCallEnded,
+  onMissedCall
 };

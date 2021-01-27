@@ -12,10 +12,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNCallKeep from 'react-native-callkeep';
 
 AppRegistry.registerComponent(appName, () => App);
-AppRegistry.registerHeadlessTask('RNCallKeepBackgroundMessage', () => ({ name, callUUID, handle }) => {
+// AppRegistry.registerHeadlessTask("RNFirebaseBackgroundMessage", () => MyBackgroundService);
+AppRegistry.registerHeadlessTask('RNCallKeepBackgroundMessage', () => (info) => {
+  console.log(info)
+
   // Make your call here
   console.log('background service running');
-  console.log(name + ', ' + callUUID + ', ' + handle);
+  // console.log(name + ', ' + callUUID + ', ' + handle)
 
   // Reconnect to socket
   (async () => {
@@ -31,6 +34,7 @@ AppRegistry.registerHeadlessTask('RNCallKeepBackgroundMessage', () => ({ name, c
       console.log('Could not read user data from async storage inside voip switch: ' + err);
     }
   })();
+  // RNCallKeep.backToForeground();
 
   RNCallKeep.registerAndroidEvents();
 

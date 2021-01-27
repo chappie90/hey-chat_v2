@@ -25,18 +25,34 @@ export const contactsReducer: Reducer = (state = INITIAL_STATE, action) => {
     case 'update_pending_contact':
       updatedContacts = (state.contacts as TContact[]).map((contact: TContact) => {
         return contact._id === action.payload ?
-          { ...contact, pending: false } :
+          { 
+            ...contact, 
+            pending: false,
+            online: true 
+          } :
           contact
       });
 
+
+      updatedOnlineContacts = [ 
+        ...state.onlineContacts, 
+        updatedContacts.filter((contact: TContact) => contact._id === action.payload)[0]
+      ];
+
       return  {
         ...state, 
-        contacts: updatedContacts
+        contacts: updatedContacts,
+        onlineContacts: updatedOnlineContacts
       };
     case 'add_contact':
+      updatedOnlineContacts = action.payload.online ?
+        [ ...state.onlineContacts, action.payload ] :
+        state.onlineContacts;
+
       return  {
         ...state, 
-        contacts: [ ...state.contacts, action.payload ]
+        contacts: [ ...state.contacts, action.payload ],
+        onlineContacts: updatedOnlineContacts
       };
     case 'get_contacts':
       return { ...state, contacts: action.payload };
@@ -66,6 +82,36 @@ export const contactsReducer: Reducer = (state = INITIAL_STATE, action) => {
       updatedOnlineContacts = state.onlineContacts.filter((contact: TContact) => contact._id !== action.payload);
 
       return { 
+        ...state, 
+        contacts: updatedContacts,
+        onlineContacts: updatedOnlineContacts
+      };
+    case 'update_contact_avatar':
+      updatedContacts = (state.contacts as TContact[]).map((contact: TContact) => {
+        return contact._id === action.payload.contactId ?
+          { 
+            ...contact, 
+            avatar: {
+              ...state.avatar,
+              small: action.payload.avatar
+            }
+          } :
+          contact
+      });
+
+      updatedOnlineContacts = (state.onlineContacts as TContact[]).map((contact: TContact) => {
+        return contact._id === action.payload.contactId ?
+          { 
+            ...contact, 
+            avatar: {
+              ...state.avatar,
+              small: action.payload.avatar
+            }
+          } :
+          contact
+      });
+
+      return  {
         ...state, 
         contacts: updatedContacts,
         onlineContacts: updatedOnlineContacts

@@ -6,7 +6,6 @@ import {
   appHandlers,
   contactsHandlers,
   chatsHandlers,
-  profileHandlers,
   callHandlers
 } from './eventHandlers';
 
@@ -79,7 +78,7 @@ const SocketEventListeners = () => {
 
       // Update recipient's chat with new contact profile image
       socketState.on('profile_image_updated', (data: string) => {
-        profileHandlers.onProfileImageUpdated(data, dispatch);
+        contactsHandlers.onProfileImageUpdated(data, dispatch);
       });
 
       // Notify user when contact goes online
@@ -133,7 +132,6 @@ const SocketEventListeners = () => {
       socketState.on('call_ended', (data: string) => {
         if (callRef.current) callHandlers.onCallEnded(userId, callRef.current, navigate, dispatch);
       });
-
     }
   }, [socketState]);
 

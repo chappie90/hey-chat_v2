@@ -63,6 +63,7 @@ type TChat = {
   muted: boolean;
   lastMessage: TLastChatMessage;
   unreadMessagesCount: number;
+  online?: boolean;
 };
 
 // Message
@@ -129,10 +130,11 @@ type TCall = {
   RTCConnection: any | null;
   localStream: any | null;
   remoteStream: any | null;
+  type: string; // audio or video
   localVideoEnabled: boolean;
   remoteVideoEnabled: boolean;
   muted: boolean;
-  cameraFacingMode: string; // Front or Back
+  cameraFacingMode: string; // front or back
   speaker: boolean;
 };
 

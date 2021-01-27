@@ -10,13 +10,18 @@ import { PermissionsAndroid, Platform, AppState } from 'react-native';
 import InCallManager from 'react-native-incall-manager';
 import { mediaDevices, RTCPeerConnection } from 'react-native-webrtc';
 import BackgroundFetch from 'react-native-background-fetch';
+import uuid from 'react-native-uuid';
 
 import { connectToSocket } from 'socket/connection';
 import api from 'api';
 import { chatsHandlers, callHandlers } from 'socket/eventHandlers';
 import { navigate } from 'navigation/NavigationRef';
 import { chatsActions, appActions, callActions } from 'reduxStore/actions';
-import { emitMarkAllMessagesAsRead, emitSendSdpOffer, emitEndCall, emitSendICECandidate } from 'socket/eventEmitters';
+import { 
+  emitMarkAllMessagesAsRead, 
+  emitSendSdpOffer, 
+  emitEndCall
+} from 'socket/eventEmitters';
 import { store } from 'reduxStore';
 
 type PushNotificationsManagerProps = { children: ReactNode };
@@ -236,16 +241,41 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     dispatch(callActions.setLocalStream(null));
   };
 
-  const onEndCall = async () => {
+  const onEndCall = async (): Promise<void> => {
     const call = callRef.current;
 
     if (!callRef.current.hasEnded) {
       // Make sure socket is connected
-      if (Platform.OS === 'ios' && callRef.current.isInitiatingCall) {
+      if (callRef.current.isInitiatingCall) {
+        // Add message to caller chat history call has been missed
+        const newMessage: TMessage  = {
+          _id: uuid.v4(),
+          text: `Missed ${callRef.current.type} call`,
+          createDate: new Date(),
+          sender: {
+            _id: 1,
+            name: callRef.current.caller.username
+          },
+          liked: {
+            likedByUser: false,
+            likesCount: 0
+          },
+          delivered: false,
+          read: false,
+          admin: true
+        };
+        dispatch(chatsActions.addMessage(callRef.current.chat.chatId, newMessage));
+
         try {
-          const data = { calleeId: callRef.current.callee._id };
-          await api.post('/push-notifications/voip/end-call', data); 
+          // Send end call signal to callee and notify thenm they have a missed call
+          const missedCallData = { 
+            chatId: callRef.current.chat.chatId,
+            calleeId: callRef.current.callee._id,
+            message: newMessage 
+          };;
+          await api.post('/call/end', missedCallData); 
         } catch (err) {
+          console.log('call end error')
           console.error(err);
         }
       } else {
@@ -256,8 +286,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             const contactId = userRef.current._id === call.caller._id ? call.callee._id : call.caller._id;
 
             const data = { contactId };
-            console.log('end call timer data')
-            console.log(data)
             emitEndCall(JSON.stringify(data), socketStateRef.current);
           } else {
             console.log('socket not setup on end call')
@@ -340,24 +368,25 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
-      // console.log(notification) 
+      console.log(notification)
 
       // Set notifications badge. Doesn't work on all Android devices
-      const { chat: { chatId } } = notification.data.payload;
-      const { app: { badgeCount }, chats: { chats } } = store.getState();
-      const unreadMessagesCount = chats.filter((chat: TChat) => chat.chatId === chatId)[0].unreadMessagesCount;
+      if (!notification.foreground && !notification.data.type) {
+        const { chat: { chatId } } = JSON.parse(notification.data.payload);
+        const { app: { badgeCount }, chats: { chats } } = store.getState();
+        const unreadMessagesCount = chats.filter((chat: TChat) => chat.chatId === chatId)[0].unreadMessagesCount;
 
-      // Increase badge count by 1 for every chat that has unread messages
-      if (AppState.currentState === 'background' && unreadMessagesCount === 0) {
-        PushNotification.setApplicationIconBadgeNumber(badgeCount + 1);
-        dispatch(appActions.setBadgeCount(badgeCount + 1));
-      } 
+        // Increase badge count by 1 for every chat that has unread messages
+        if (AppState.currentState === 'background' && unreadMessagesCount === 0) {
+          PushNotification.setApplicationIconBadgeNumber(badgeCount + 1);
+          dispatch(appActions.setBadgeCount(badgeCount + 1));
+        } 
+      }
 
       // Update recipient app state while in background
       if (notification.data.silent) {
         // Send local notification Android background
         if (Platform.OS === 'android' && notification.data.payload !== null) {
-          console.log(notification.data.payload)
           const { newMessage } = notification.data.payload;
           if (newMessage) {
             sendLocalPushNotification("hey-chat-id-1", newMessage.sender, newMessage.message.text);
@@ -392,7 +421,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             break;
           case 'voip_notification_received':
             // Wake up device and handle incoming call
-            const { callId, chatId, caller, callee, callType } = notification.data.payload;
+            const { callId, chatId, caller, callee, callType } = JSON.parse(notification.data.payload);
             dispatch(callActions.receiveCall(callId, chatId, caller, callee, callType));
 
             const options = {};
@@ -410,17 +439,24 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             });
             break;
           case 'voip_call_ended':
-            // End call on Android devices if caller hangs up before socket reconnection can be established
             (async () => {
               try {
+                // Add missed call message if callee hasn't yet answered call
+                if (callRef.current.isReceivingCall) {
+                  callHandlers.onMissedCall(
+                    notification.data.payload, 
+                    userRef.current.username,
+                    chatHistoryRef.current,
+                    dispatch
+                  );
+                }
+
                 const jsonValue = await AsyncStorage.getItem('user')
                 const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
     
                 if (user) {
-                  console.log(user)
                   callHandlers.onCallEnded(user._id, callRef.current, navigate, dispatch);
                 }
-            
               } catch(err) {
                 console.log('Could not read user data from async storage inside voip switch: ' + err);
               }
@@ -451,7 +487,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       if (notification.userInteraction) { 
         const { chat, senderId } = notification.data.payload;
         if (chat.chatType === 'private') {
-          console.log('private chat')
+          console.log('redirecting to chat screen')
           // Send signal to sender message has been read and mark recipient's chat as read
           dispatch(chatsActions.markMessagesAsReadRecipient(chat.chatId));
           const eventData = { chatId: chat.chatId, senderId };
@@ -528,7 +564,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
           try {
             const data = { userId: userRef.current._id, voipDeviceToken };
-            await api.post('/push-notifications/voip/token/save', data); 
+            await api.post('/push-notifications/token/voip/save', data); 
           } catch (error) {
             console.log('Send voip device token to server method error');
             if (error.response) console.log(error.response.data.message);

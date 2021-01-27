@@ -19,6 +19,7 @@ import { formatDate } from 'utils/formatDate';
 type MessageProps = {
   index: number;
   content: TMessage;
+  contactName: string;
   sameSenderPrevMsg: boolean | undefined;
   sameSenderNextMsg: boolean | undefined;
   isLastMessage: boolean;
@@ -31,6 +32,7 @@ type MessageProps = {
 const Message = ({ 
   index,
   content, 
+  contactName,
   sameSenderPrevMsg, 
   sameSenderNextMsg,
   isLastMessage,
@@ -80,7 +82,8 @@ const Message = ({
             <MessageBubble 
               index={index}
               content={content} 
-              userId={sender._id}
+              senderId={sender._id}
+              contactName={contactName}
               sameSenderPrevMsg={sameSenderPrevMsg}
               sameSenderNextMsg={sameSenderNextMsg}
               onShowMessageActions={onShowMessageActions}

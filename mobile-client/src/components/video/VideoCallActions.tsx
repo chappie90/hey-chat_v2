@@ -8,12 +8,16 @@ import CustomButton from 'components/common/CustomButton';
 import { Colors } from 'variables';
 
 type VideoCallActionsProps = {
+  muted: boolean;
+  videoEnabled: boolean;
   onToggleCameraFacingMode: () => void;
   onEndCall: () => void;
   onToggleMuteMicrophone: () => void; 
 };
 
 const VideoCallActions = ({ 
+  muted,
+  videoEnabled,
   onToggleCameraFacingMode,
   onEndCall,
   onToggleMuteMicrophone
@@ -21,16 +25,18 @@ const VideoCallActions = ({
 
   return (
     <View style={styles.container}>
-      <CustomButton 
+      <CustomButton
         layout={styles.actionBtnLayout} 
         buttonStyle={[ styles.actionBtn, styles.secondaryBtn ]} 
+        activeOpacity={1}
         onPress={onToggleCameraFacingMode}
       >
-        <Ionicon name="camera-reverse" size={44} color={Colors.purpleDark} /> 
+        <Ionicon name="camera-reverse" size={38} color={Colors.purpleDark} /> 
       </CustomButton>
       <CustomButton 
         layout={styles.actionBtnLayout}
         buttonStyle={[ styles.actionBtn, styles.primaryBtn ]} 
+        activeOpacity={1}
         onPress={onEndCall}
       >
         <MaterialCommunityIcon name="phone-hangup" size={50} color={Colors.white} /> 
@@ -38,11 +44,12 @@ const VideoCallActions = ({
       <CustomButton 
         layout={styles.actionBtnLayout} 
         buttonStyle={[ styles.actionBtn, styles.secondaryBtn ]} 
+        activeOpacity={1}
         onPress={onToggleMuteMicrophone}
       >
         <FontAwesomeIcon 
-          name={true ? "microphone-slash" : "microphone"} 
-          size={40} 
+          name={muted ? "microphone-slash" : "microphone"} 
+          size={34} 
           color={Colors.purpleDark} 
         /> 
       </CustomButton>
@@ -59,7 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    zIndex: 2
+    zIndex: -1
   },
   actionBtnLayout: {},
   actionBtn: {
@@ -68,15 +75,15 @@ const styles = StyleSheet.create({
   },
   primaryBtn: {
     backgroundColor: Colors.red,
-    borderRadius: 35,
-    width: 70,
-    height: 70,
+    borderRadius: 37,
+    width: 74,
+    height: 74,
   },
   secondaryBtn: {
     backgroundColor: Colors.white,
-    borderRadius: 28,
-    width: 56,
-    height: 56
+    borderRadius: 30,
+    width: 60,
+    height: 60
   }
 });
 

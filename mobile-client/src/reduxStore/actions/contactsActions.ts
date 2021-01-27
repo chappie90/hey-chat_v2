@@ -17,7 +17,8 @@ type ContactsAction =
   | { type: 'get_online_contacts'; payload: TContact[] }
   | { type: 'mark_contacts_as_fetched' }
   | { type: 'contact_goes_online'; payload: TContact }
-  | { type: 'contact_goes_offline'; payload: TContact };
+  | { type: 'contact_goes_offline'; payload: string }
+  | { type: 'update_contact_avatar'; payload: { contactId: string, avatar: string } };
 
 const searchContacts = (username: string, search: string) => async (dispatch: ThunkDispatch<ContactsState, undefined, ContactsAction>): Promise<TContact[] | void> => {
   const params = { username, search };
@@ -50,6 +51,8 @@ const contactGoesOnline = (contact: TContact) => ({ type: 'contact_goes_online',
 
 const contactGoesOffline = (contactId: string) => ({ type: 'contact_goes_offline', payload: contactId });
 
+const updateContactAvatar = (contactId: string, avatar: string) => ({ type: 'update_contact_avatar', payload: { contactId, avatar } });
+
 export default {
   searchContacts,
   addPendingContact,
@@ -59,5 +62,6 @@ export default {
   getOnlineContacts,
   markContactsAsFetched,
   contactGoesOnline,
-  contactGoesOffline
+  contactGoesOffline,
+  updateContactAvatar
 };  
