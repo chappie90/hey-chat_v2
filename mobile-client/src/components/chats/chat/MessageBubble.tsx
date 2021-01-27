@@ -8,8 +8,7 @@ import {
   GestureResponderEvent, 
   Keyboard,
   Animated,
-  Easing,
-  EventEmitter
+  Easing
 } from 'react-native';
 import config from 'react-native-config';
 import { useSelector, useDispatch } from 'react-redux';
@@ -61,7 +60,7 @@ const MessageBubble = ({
   const [messageTextColor, setMessageTextColor] = useState('');
   const [messageTextSize, setMessageTextSize] = useState(0);
 
-  const onLongPress = (event: GestureResponderEvent, isAdmin: boolean) => {
+  const onLongPress = (event: GestureResponderEvent, isAdmin?: boolean) => {
     if (isAdmin) return;
 
     onCloseReplyBox();
@@ -114,7 +113,7 @@ const MessageBubble = ({
   useEffect(() => {
     if (admin && text === 'Missed audio call') {
       if (senderId === 1) {
-        setMessageText(`${contactName} missed an audio call from you`);
+        setMessageText(`${contactName} missed your audio call`);
         setMessageTextColor(Colors.greyDark);
       } else {
         setMessageText('You have a missed audio call');
@@ -123,7 +122,7 @@ const MessageBubble = ({
       setMessageTextSize(Headings.headingExtraSmall);
     } else if (admin && text === 'Missed video call') {
       if (senderId === 1) {
-        setMessageText(`${contactName} missed a video call from you`);
+        setMessageText(`${contactName} missed your video call`);
         setMessageTextColor(Colors.greyDark);
       } else {
         setMessageText('You have a missed video call');
@@ -147,9 +146,7 @@ const MessageBubble = ({
         hideMessageActions();
         Keyboard.dismiss();
       }} 
-      onLongPress={(e) => {
-         onLongPress(e, admin);
-      }}
+      onLongPress={(e) => onLongPress(e, admin)}
     >
       <View>
         {reply?.origMsgId &&

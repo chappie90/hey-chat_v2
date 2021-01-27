@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   View, 
   StyleSheet,
@@ -8,6 +8,8 @@ import {
 import Octicon from 'react-native-vector-icons/Octicons';
 import config from 'react-native-config';
 import { useSelector } from 'react-redux';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import { Images } from 'assets';
 import CustomText from 'components/CustomText';
@@ -21,8 +23,35 @@ type ChatsFrontItemProps = {
 };
 
 const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) => {
+  const { user: { username} } = useSelector(state => state.auth);
   const { typingContacts } = useSelector(state => state.chats);
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
+  const [messageText, setMessageText] = useState('');
+  const [messageTextColor, setMessageTextColor] = useState('');
+  const { lastMessage: { message, sender, admin }, unreadMessagesCount } = chat;
+
+  useEffect(() => {
+    if (admin && message.text === 'Missed audio call') {
+      if (sender === username) {
+        setMessageText(`${contact?.username} missed your audio call`);
+        setMessageTextColor(Colors.greyDark);
+      } else {
+        setMessageText(message.text);
+        setMessageTextColor(Colors.red);
+      }
+    } else if (admin && message.text === 'Missed video call') {
+      if (sender === username) {
+        setMessageText(`${contact?.username} missed your video call`);
+        setMessageTextColor(Colors.greyDark);
+      } else {
+        setMessageText(message.text);
+        setMessageTextColor(Colors.red);
+      }
+    } else {
+      setMessageText(message.text);
+      setMessageTextColor(Colors.greyDark);
+    }
+  }, [chat]);
 
   return (
     <TouchableWithoutFeedback onPress={() => onChatSelect(chat, contact)}>
@@ -59,31 +88,44 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
               </View>
             </View>
             <View style={styles.itemContainer}>
-              <CustomText
-                numberOfLines={2}
-                ellipsize="tail"
-                fontSize={13}
-                fontWeight={chat.unreadMessagesCount > 0 ? Fonts.bold : Fonts.regular}
-                style={styles.messageText}
-              >
-                {typingContacts.includes(contact?._id) ? 'is typing...' : chat.lastMessage.message.text}
-              </CustomText>
-               {chat.muted && (
-                  <Octicon 
-                    style={styles.muteIcon} 
-                    name="mute" 
-                    size={20} 
-                    color={Colors.purpleDark} 
-                  />
-                )}
-              {chat.unreadMessagesCount > 0 && (
+              <View style={styles.messageTextContainer}>
+                {admin && message.text === 'Missed audio call' &&
+                  <View style={styles.messageTextIcon}>
+                    <FeatherIcon name='phone-missed' size={14} color={sender === username ? Colors.greyDark : Colors.red} />
+                  </View>
+                }
+                {admin && message.text === 'Missed video call' &&
+                  <View style={styles.messageTextIcon}>
+                    <MaterialIcon name='missed-video-call' size={18} color={sender === username ? Colors.greyDark : Colors.red} />
+                  </View>
+                }
+                <CustomText
+                  numberOfLines={2}
+                  ellipsize="tail"
+                  fontSize={13}
+                  fontWeight={unreadMessagesCount > 0 ? Fonts.bold : Fonts.regular}
+                  style={styles.messageText}
+                  color={messageTextColor}
+                >
+                  {typingContacts.includes(contact?._id) ? 'is typing...' : messageText}
+                </CustomText>
+              </View>
+              {chat.muted && (
+                <Octicon 
+                  style={styles.muteIcon} 
+                  name="mute" 
+                  size={20} 
+                  color={Colors.purpleDark} 
+                />
+              )}
+              {unreadMessagesCount > 0 && (
                 <View style={styles.unreadBadge}>
                   <CustomText 
                     color={Colors.white}
                     fontWeight={Fonts.semiBold} 
                     fontSize={12}
                   >
-                    {chat.unreadMessagesCount > 99 ? '99+' : chat.unreadMessagesCount }
+                    {unreadMessagesCount > 99 ? '99+' : unreadMessagesCount }
                   </CustomText>
                 </View>
               )}
@@ -134,6 +176,14 @@ const styles = StyleSheet.create({
   messageText: {
     maxWidth: '84%',
     flex: 1
+  },
+  messageTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start'
+  },
+  messageTextIcon: {
+    marginRight: 6,
+    marginTop: 2
   },
   muteIcon: {
     marginHorizontal: 5

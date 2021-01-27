@@ -103,6 +103,7 @@ type TLastChatMessage = {
   message: { text: string };
   sender: string;
   read: boolean;
+  admin: boolean;
 };
 
 // Camera

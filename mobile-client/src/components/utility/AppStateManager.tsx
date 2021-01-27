@@ -33,22 +33,19 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
     dispatch(appActions.setSocketState(null));
   };
 
-  const handleAppStateChange = (nextAppState: string) => {
-    // When app killed and first load 
-    if (appState.current.match(/unknown/) && nextAppState === 'active') {
-      PushNotification.setApplicationIconBadgeNumber(0);
-      dispatch(appActions.setBadgeCount(0));
-    }
+  // Clear badge count
+  const resetBadgeCount = (): void => {
+    PushNotification.setApplicationIconBadgeNumber(0);
+    dispatch(appActions.setBadgeCount(0));
+  };
 
+  const handleAppStateChange = (nextAppState: string) => {
     if (
       appState.current.match(/inactive|background/) && 
       nextAppState === 'active'
     ) {
       createSocketConnection();
-
-      // Clear badge
-      PushNotification.setApplicationIconBadgeNumber(0);
-      dispatch(appActions.setBadgeCount(0));
+      resetBadgeCount();
 
       // If app becomes active on CurrentChat screen mark recipient's chat as read
       if (activeChatRef.current && currentScreenRef.current === 'CurrentChat') {
@@ -78,7 +75,10 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
 
   useEffect(() => {
     if (authToken) {
+      // When app killed and first load 
       createSocketConnection();
+      resetBadgeCount();
+
       AppState.addEventListener('change', handleAppStateChange);
     } else {
       AppState.removeEventListener('change', handleAppStateChange);
