@@ -8,7 +8,8 @@ import {
   GestureResponderEvent, 
   Keyboard,
   Animated,
-  Easing
+  Easing,
+  EventEmitter
 } from 'react-native';
 import config from 'react-native-config';
 import { useSelector, useDispatch } from 'react-redux';
@@ -60,7 +61,9 @@ const MessageBubble = ({
   const [messageTextColor, setMessageTextColor] = useState('');
   const [messageTextSize, setMessageTextSize] = useState(0);
 
-  const onLongPress = (event: GestureResponderEvent) => {
+  const onLongPress = (event: GestureResponderEvent, isAdmin: boolean) => {
+    if (isAdmin) return;
+
     onCloseReplyBox();
     const { pageY } = event.nativeEvent;
     const pageX = senderId === 1 ? windowWidth - 260 : 40;
@@ -144,7 +147,9 @@ const MessageBubble = ({
         hideMessageActions();
         Keyboard.dismiss();
       }} 
-      onLongPress={(e) => onLongPress(e)}
+      onLongPress={(e) => {
+         onLongPress(e, admin);
+      }}
     >
       <View>
         {reply?.origMsgId &&
@@ -179,6 +184,8 @@ const MessageBubble = ({
             senderId === 1 && sameSenderNextMsg && styles.rightBubbleNextMsg,
             senderId === 2 && sameSenderPrevMsg && styles.leftBubblePrevMsg,
             senderId === 2 && sameSenderNextMsg && styles.leftBubbleNextMsg,
+            admin && styles.adminBubbleLast,
+            admin && sameSenderNextMsg && styles.adminBubble,
             admin && senderId === 1 && styles.adminBubbleSender,
             admin && senderId === 2 && styles.adminBubbleRecipient
           ]}
@@ -251,17 +258,21 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     padding: 2
   },
-  adminBubbleSender: {
-    backgroundColor: Colors.greyLight,
+  adminBubble: {
     paddingVertical: 4,
     paddingHorizontal: 10,
-    marginTop: 10
+    marginVertical: 8
+  },
+  adminBubbleLast: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    marginTop: 8,
+  },
+  adminBubbleSender: {
+    backgroundColor: Colors.greyLight
   },
   adminBubbleRecipient: {
-    backgroundColor: Colors.redLight,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    marginTop: 10
+    backgroundColor: Colors.redLight
   },
   leftBubble: {
     backgroundColor: Colors.yellowLight,

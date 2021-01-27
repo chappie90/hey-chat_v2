@@ -67,7 +67,7 @@ const getMessages = (
   username: string, 
   chatId: string,
   contactProfile?: string, 
-) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
+) => async (dispatch: any) => {
   const params = { chatId };
 
   try {
@@ -81,11 +81,12 @@ const getMessages = (
       allMessagesLoaded: response.data.allMessagesLoaded
     } });
 
-    return messages;
+    dispatch({ type: 'is_fetching_messages', payload: false });
   } catch (error) {
     console.log('Get messages method error');
     if (error.response) console.log(error.response.data.message);
     if (error.message) console.log(error.message);
+    dispatch({ type: 'is_fetching_messages', payload: false });
   } 
 };
 
@@ -94,7 +95,7 @@ const getMoreMessages = (
   chatId: string,
   page: number,
   contactProfile?: string 
-  ) => async (dispatch: ThunkDispatch<ChatsState, undefined, ChatsAction>) => {
+  ) => async (dispatch: any) => {
   const params = { chatId, page };
 
   try {
@@ -108,13 +109,16 @@ const getMoreMessages = (
       allMessagesLoaded: response.data.allMessagesLoaded
     } });
 
-    return messages;
+    dispatch({ type: 'is_fetching_messages', payload: false });
   } catch (error) {
     console.log('Get messages method error');
     if (error.response) console.log(error.response.data.message);
     if (error.message) console.log(error.message);
+    dispatch({ type: 'is_fetching_messages', payload: false });
   } 
 };
+
+const setIsFetchingMessages = (isFetching: boolean) => ({ type: 'is_fetching_messages', payload: isFetching });
 
 const resetMessages = (chatId: string) => ({ type: 'reset_messages', payload: { chatId } });
 
@@ -192,6 +196,7 @@ export default {
   updateChat,
   getMessages,
   getMoreMessages,
+  setIsFetchingMessages,
   resetMessages,
   addMessage,
   likeMessage,

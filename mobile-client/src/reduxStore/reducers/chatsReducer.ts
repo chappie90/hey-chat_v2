@@ -6,6 +6,7 @@ type ChatsState = {
   chatHistory: { 
     [key: string]: { messages: TMessage[], allMessagesLoaded: boolean }
   } | {};
+  isFetchingMessages: boolean;
   typingContacts: string[] | [];
   activeChat: TChat | null;
   activeMessage: TMessage | null;
@@ -16,6 +17,7 @@ type ChatsState = {
 const INITIAL_STATE: ChatsState = {
   chats: [],
   chatHistory: {},
+  isFetchingMessages: false,
   typingContacts: [],
   activeChat: null,
   activeMessage: null,
@@ -67,6 +69,8 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
           }
         } 
       };
+    case 'is_fetching_messages':
+      return { ...state, isFetchingMessages: action.payload };
     case 'reset_messages':
       return { 
         ...state, 
@@ -79,8 +83,6 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
         } 
       };
     case 'add_message': 
-    console.log('adding message')
-    console.log(action.payload)
       // If there are previous messages in the chat
       if (state.chatHistory[action.payload.chatId]) {
         return { 

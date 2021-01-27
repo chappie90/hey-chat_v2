@@ -59,7 +59,7 @@ const Chat = ({
 }: ChatProps) => {
   const { socketState } = useSelector(state => state.app);
   const { user: { _id: userId, username } } = useSelector(state => state.auth);
-  const { chatHistory } = useSelector(state => state.chats);
+  const { chatHistory, isFetchingMessages } = useSelector(state => state.chats);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
   const [showMsgActions, setShowMsgActions] = useState(true);
@@ -177,14 +177,15 @@ const Chat = ({
 
   const onEndReached = async (): Promise<void> => {
     if (!chatHistory[chatIdRef.current].allMessagesLoaded) {
-      setIsLoading(true);
+      if (!isFetchingMessages) {
+        dispatch(chatsActions.setIsFetchingMessages(true));
 
-      const newPage = page + 1;
-      const response = await dispatch(chatsActions.getMoreMessages(username, chatIdRef.current, newPage, contactProfile?.small ));
+        const newPage = page + 1;
+        dispatch(chatsActions.getMoreMessages(username, chatIdRef.current, newPage, contactProfile?.small ));
 
-      if (response) setIsLoading(false);
-      if (!chatHistory[chatIdRef.current].allMessagesLoaded) {
-        setPage(newPage);
+        if (!chatHistory[chatIdRef.current].allMessagesLoaded) {
+          setPage(newPage);
+        }
       }
     }
   };
@@ -317,9 +318,8 @@ const Chat = ({
     (async () => {
       // Get messages if no previous chat history loaded
       if (!chatHistory[chatIdRef.current]) {
-        setIsLoading(true);
-        const response = await dispatch(chatsActions.getMessages(username, chatIdRef.current, contactProfile?.small));
-        if (response) setIsLoading(false);
+        dispatch(chatsActions.setIsFetchingMessages(true));
+        dispatch(chatsActions.getMessages(username, chatIdRef.current, contactProfile?.small));
       }
     })();
 
@@ -354,7 +354,7 @@ const Chat = ({
           Keyboard.dismiss();
       }}>
         <View style={styles.container}>
-          {isLoading &&
+          {isFetchingMessages &&
             <View style={styles.spinnerContainer}>
               <ActivityIndicator size="large" color={Colors.yellowDark} />
             </View>
