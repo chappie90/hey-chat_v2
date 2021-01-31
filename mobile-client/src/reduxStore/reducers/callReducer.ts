@@ -75,6 +75,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
               small: action.payload.callee.avatar.small
             }
           },
+          localVideoEnabled: action.payload.type === 'audio' ? false : true,
+          remoteVideoEnabled: action.payload.type === 'audio' ? false : true,
           type: action.payload.type
         }
       };
@@ -107,6 +109,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
               small: action.payload.callee.avatar.small
             }
           },
+          localVideoEnabled: action.payload.type === 'audio' ? false : true,
+          remoteVideoEnabled: action.payload.type === 'audio' ? false : true,
           type: action.payload.type
         }
       };

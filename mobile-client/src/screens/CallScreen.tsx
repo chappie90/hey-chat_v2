@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, 
   View, 
-  Image, 
-  useWindowDimensions,
+  Image,
   Platform
 } from 'react-native';
 import {
@@ -20,16 +19,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import InCallManager from 'react-native-incall-manager';
 import { StackScreenProps } from '@react-navigation/stack';
 import config from 'react-native-config';
-import Draggable from 'react-native-draggable';
 import RNCallKeep from 'react-native-callkeep';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 
 import { callActions } from 'reduxStore/actions';
-import CustomText from 'components/CustomText';
-import VideoCallActions from 'components/video/VideoCallActions';
-import CustomButton from 'components/common/CustomButton';
+import AudioCallUI from 'components/call/AudioCallUI';
+import VideoCallUI from 'components/call/VideoCallUI';
 
-type CallScreenProps = StackScreenProps<ChatsStackParams, 'VideoCall'>;
+type CallScreenProps = StackScreenProps<ChatsStackParams, 'Call'>;
 
 const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const { socketState } = useSelector(state => state.app);
@@ -44,6 +41,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     RTCConnection,
     localStream, 
     remoteStream,
+    type,
+    speaker,
     muted,
     localVideoEnabled,
     remoteVideoEnabled,
@@ -51,7 +50,6 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   } } = useSelector(state => state.call);
   const dispatch = useDispatch();
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
-  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
 
   const endCall = (): void => {
     RNCallKeep.endCall(callId);
@@ -65,7 +63,11 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     });
   };
 
-  const toggleVideoMode = (): void => {
+  const toggleSpeaker = (): void => {
+    console.log('toggle speaker')
+  };
+
+  const toggleVideo = (): void => {
     localStream.getTracks().forEach((track: any) => {
       if (track.kind === 'video')  {
         track.enabled = !localVideoEnabled;
@@ -90,46 +92,27 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
 
   return (
     <View style={styles.container}>
-      {remoteStream &&
-        <RTCView streamURL={remoteStream.toURL()} style={styles.remoteStream} objectFit="cover" />
-      }
-      <View style={styles.calleeName}>
-        <CustomText color={Colors.purpleDark} fontSize={Headings.headingExtraLarge}>
-          {callee.username}
-        </CustomText>
-      </View>
-      <CustomButton 
-        layout={styles.actionBtn}
-        activeOpacity={1}
-        onPress={toggleVideoMode}
-      >
-        <Ionicon name="camera-reverse" size={50} color={Colors.white} /> 
-      </CustomButton>
-      {localStream && localVideoEnabled &&
-        <Draggable 
-          x={windowWidth - 150} 
-          y={20} 
-          touchableOpacityProps={{ activeOpacity: 1 }}
-          minX={20}
-          minY={20}
-          maxX={windowWidth - 20}
-          maxY={windowHeight - 40}
-          onShortPressRelease={()=> console.log('touched!!')}
-        >
-          <View style={remoteStream ?
-           styles.partialLocalStreamContainer :
-           styles.fullLocalStreamContainer
-          }>
-            <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
-          </View>
-        </Draggable>
-      }
-      <VideoCallActions 
+      <AudioCallUI 
+        show={type === 'audio' ? true : false} 
+        callee={callee} 
+        speaker={speaker}
+        muted={muted}
+        toggleSpeaker={toggleSpeaker}
+        toggleVideo={toggleVideo}
+        endCall={endCall}
+        toggleMuteMicrophone={toggleMuteMicrophone}
+      />
+      <VideoCallUI 
+        localStream={localStream}
+        remoteStream={remoteStream}
+        localVideoEnabled={localVideoEnabled}
+        callee={callee}
         muted={muted}
         videoEnabled={localVideoEnabled}
-        onToggleCameraFacingMode={toggleCameraFacingMode}
-        onEndCall={endCall}
-        onToggleMuteMicrophone={toggleMuteMicrophone}
+        toggleCameraFacingMode={toggleCameraFacingMode}
+        toggleVideo={toggleVideo}
+        endCall={endCall}
+        toggleMuteMicrophone={toggleMuteMicrophone}
       />
     </View>
   );
@@ -139,35 +122,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  remoteStream: {
-    flex: 1,
-    zIndex: -2
-  }, 
-  calleeName: {
-    position:'absolute', 
-    top: 40, 
-    alignSelf: 'center', 
-    zIndex: -1
-  },
   actionBtn: {
     position: 'absolute',
     top: 60,
     right: 20,
     zIndex: -1
-  },
-  fullLocalStreamContainer: {
-    flex: 1
-  },
-  partialLocalStreamContainer: {
-    width: 140,
-    height: 190,
-    borderRadius: 25,
-    overflow: 'hidden',
-  },
-  localStream: {
-    width: '100%',
-    height: '100%'
-  },
+  }
 });
 
 export default CallScreen;

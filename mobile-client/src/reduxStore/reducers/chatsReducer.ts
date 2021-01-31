@@ -33,7 +33,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
     case 'get_chats':
       return { ...state, chats: action.payload };
     case 'add_chat':
-      return { ...state, chats: [ action.payload, ...state.chats ] };
+      return { ...state, chats: [ action.payload, ...state.chats ].slice(0, 10) };
     case 'update_chat':
       updatedChats = (state.chats as TChat[]).map((chat: TChat) => {
         return chat.chatId === action.payload.chatId ?
@@ -91,7 +91,7 @@ export const chatsReducer: Reducer = (state = INITIAL_STATE, action) => {
             ...state.chatHistory,
             [action.payload.chatId]: {
               ...state.chatHistory[action.payload.chatId],
-              messages: [ action.payload.message, ...state.chatHistory[action.payload.chatId].messages ]
+              messages: [ action.payload.message, ...state.chatHistory[action.payload.chatId].messages ].slice(0, 20)
             } 
           }
         };

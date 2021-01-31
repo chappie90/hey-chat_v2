@@ -6,7 +6,7 @@ import AuthenticationFlow from './AuthenticationFlow';
 import MainFlow from './MainFlow';
 import { authActions } from 'reduxStore/actions';
 import { navigationRef } from './NavigationRef';
-import IncomingCallNotification from 'components/video/IncomingCallNotification';
+import IncomingCallNotification from 'components/call/IncomingCallNotification';
 import SplashScreen from 'screens/SplashScreen';
 
 const Navigator = () => {
