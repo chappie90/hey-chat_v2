@@ -155,6 +155,14 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           ...INITIAL_STATE.call
         }
       };
+    case 'toggle_speaker':
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          speaker: !state.call.speaker
+        }
+      };
     case 'toggle_mute_call':
       return {
         ...state,

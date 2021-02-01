@@ -1,26 +1,20 @@
-import React, { useEffect } from 'react';
-import {
-  StyleSheet, 
-  View, 
-  Image, 
-  useWindowDimensions,
-  Platform
-} from 'react-native';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import Ionicon from 'react-native-vector-icons/Ionicons';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { Colors, Headings } from 'variables';
 import CustomText from 'components/CustomText';
-import CustomButton from 'components/common/CustomButton';
 import AudioCallActions from 'components/call/AudioCallActions';
+import AudioCallAvatar from 'components/call/AudioCallAvatar';
 
 type AudioCallUIProps = {
   show: boolean;
+  contactAvatar: string;
   callee: TContact;
+  isInitiatingCall: boolean;
   speaker: boolean;
   muted: boolean;
+  localVideoEnabled: boolean;
+  toggleVideoBtnDisabled: boolean;
   toggleSpeaker: () => void;
   toggleVideo: () => void;
   endCall: () => void;
@@ -29,9 +23,13 @@ type AudioCallUIProps = {
 
 const AudioCallUI = ({
   show, 
+  contactAvatar,
   callee,
+  isInitiatingCall,
   speaker,
   muted,
+  localVideoEnabled,
+  toggleVideoBtnDisabled,
   toggleSpeaker,
   toggleVideo,
   endCall,
@@ -43,14 +41,22 @@ const AudioCallUI = ({
       styles.container,
       { zIndex: show ? 2 : 0 }
     ]}>
+      <AudioCallAvatar contactAvatar={contactAvatar} />
       <View style={styles.calleeName}>
         <CustomText color={Colors.purpleDark} fontSize={Headings.headingExtraLarge}>
           {callee.username}
         </CustomText>
+        {isInitiatingCall &&
+          <CustomText color={Colors.purpleDark} fontSize={Headings.headingMedium}>
+            Ringing...
+          </CustomText>
+        }
       </View>
       <AudioCallActions 
         speaker={speaker}
         muted={muted}
+        localVideoEnabled={localVideoEnabled}
+        toggleVideoBtnDisabled={toggleVideoBtnDisabled}
         onToggleSpeaker={toggleSpeaker}
         onToggleVideo={toggleVideo}
         onEndCall={endCall}
@@ -67,44 +73,13 @@ const styles = StyleSheet.create({
     left: 0, 
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.purpleLight
+    backgroundColor: Colors.purpleLight,
+    alignItems: 'center'
   },
   calleeName: {
-    position:'absolute', 
-    top: 100, 
-    alignSelf: 'center', 
-    zIndex: 2
-  },
-  actions: {
-    position: 'absolute',
-    bottom: 70,
-    left: 20,
-    right: 20
-  },
-  actionsFirstRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 30
-  },
-  actionsSecondRow: {
-    alignSelf: 'center'
-  },
-  actionBtnLayout: {},
-  actionBtn: {
+    marginTop: 20,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  primaryBtn: {
-    backgroundColor: Colors.red,
-    borderRadius: 37,
-    width: 74,
-    height: 74,
-  },
-  secondaryBtn: {
-    backgroundColor: Colors.white,
-    borderRadius: 31,
-    width: 62,
-    height: 62
+    zIndex: 2
   }
 });
 

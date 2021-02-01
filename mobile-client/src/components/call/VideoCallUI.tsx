@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions, Image } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import { RTCView } from 'react-native-webrtc';
 import Draggable from 'react-native-draggable';
+import { BlurView } from "@react-native-community/blur";
 
+import { Images } from 'assets';
 import CustomButton from 'components/common/CustomButton';
 import { Colors, Headings } from 'variables';
 import CustomText from 'components/CustomText';
@@ -43,7 +45,7 @@ const VideoCallUI = ({
       {remoteStream &&
         <RTCView streamURL={remoteStream.toURL()} style={styles.remoteStream} objectFit="cover" />
       }
-      {localStream && localVideoEnabled &&
+      {localStream &&
         <Draggable 
           x={remoteStream ? windowWidth - 150 : 0} 
           y={remoteStream ? 20 : 0} 
@@ -55,10 +57,18 @@ const VideoCallUI = ({
           onShortPressRelease={()=> console.log('touched!!')}
         >
           <View style={remoteStream ?
-           styles.partialLocalStreamContainer :
-           { width: windowWidth, height: windowHeight }
-          }>
-            <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
+            styles.partialLocalStreamContainer :
+            { width: windowWidth, height: windowHeight }
+            }>
+              {!localVideoEnabled &&
+                <BlurView
+                  style={styles.disabledLocalVideo}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="white"
+                />
+              }
+              <RTCView streamURL={localStream.toURL()} style={styles.localStream} objectFit="cover" />
           </View>
         </Draggable>
       }
@@ -99,6 +109,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   localStream: {
+    width: '100%',
+    height: '100%'
+  },
+  disabledLocalVideo: {
+    position: 'absolute',
+    zIndex: 2,
     width: '100%',
     height: '100%'
   },

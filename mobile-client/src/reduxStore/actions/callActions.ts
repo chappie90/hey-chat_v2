@@ -16,6 +16,7 @@ type CallAction =
   | { type: 'set_local_stream'; payload: any }
   | { type: 'set_remote_stream'; payload: any }
   | { type: 'start_active_call'; payload: { chatId: string; contact: TContact } }
+  | { type: 'toggle_speaker' }
   | { type: 'toggle_mute_call' }
   | { type: 'toggle_video_mode' };
 
@@ -47,6 +48,8 @@ const startCall = () => ({ type: 'start_call' });
 
 const endCall = () => ({ type: 'end_call' }); 
 
+const toggleSpeaker = () => ({ type: 'toggle_speaker' }); 
+
 const toggleMuteCall = () => ({ type: 'toggle_mute_call' }); 
 
 const toggleVideoMode = () => ({ type: 'toggle_video_mode' }); 
@@ -60,6 +63,7 @@ export default {
   setLocalStream,
   setRemoteStream,
   startCall,
+  toggleSpeaker,
   toggleMuteCall,
   toggleVideoMode
 };

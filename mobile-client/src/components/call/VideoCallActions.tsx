@@ -32,7 +32,7 @@ const VideoCallActions = ({
         activeOpacity={1}
         onPress={onToggleVideo}
       >
-        <Ionicon name="camera-reverse" size={50} color={Colors.white} /> 
+        <MaterialCommunityIcon name="camera-off" size={45} color={Colors.white} /> 
       </CustomButton>
       <View style={styles.actions}>
         <CustomButton

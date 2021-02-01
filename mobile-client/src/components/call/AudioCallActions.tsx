@@ -10,6 +10,8 @@ import CustomButton from 'components/common/CustomButton';
 type AudioCallActionsProps = {
   speaker: boolean;
   muted: boolean;
+  localVideoEnabled: boolean;
+  toggleVideoBtnDisabled: boolean;
   onToggleSpeaker: () => void;
   onToggleVideo: () => void;
   onEndCall: () => void;
@@ -19,6 +21,8 @@ type AudioCallActionsProps = {
 const AudioCallActions = ({
   speaker,
   muted,
+  localVideoEnabled,
+  toggleVideoBtnDisabled,
   onToggleSpeaker,
   onToggleVideo,
   onEndCall,
@@ -48,15 +52,15 @@ const AudioCallActions = ({
           buttonStyle={[ 
             styles.actionBtn, 
             styles.secondaryBtn,
-            { backgroundColor: speaker ? Colors.purpleDark : Colors.white }
+            { backgroundColor: Colors.white }
           ]} 
-          activeOpacity={1}
+          disabled={toggleVideoBtnDisabled}
           onPress={onToggleVideo}
         >
           <FontAwesomeIcon 
             name="video-camera" 
             size={30} 
-            color={muted ? Colors.white : Colors.purpleDark}
+            color={toggleVideoBtnDisabled ? Colors.purpleLight : Colors.purpleDark}
           /> 
         </CustomButton>
         <CustomButton 
@@ -117,9 +121,9 @@ const styles = StyleSheet.create({
     height: 74,
   },
   secondaryBtn: {
-    borderRadius: 31,
-    width: 62,
-    height: 62
+    borderRadius: 32,
+    width: 64,
+    height: 64
   }
 });
 

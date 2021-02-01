@@ -8,6 +8,7 @@ type CustomButtonProps = {
   textStyle?: any;
   layout?: any;
   activeOpacity?: number;
+  disabled?: boolean;
   onPress: (event: GestureResponderEvent) => void;
   children: ReactNode;
 };
@@ -17,6 +18,7 @@ const CustomButton = ({
   textStyle,
   layout,  
   activeOpacity,
+  disabled,
   onPress, 
   children 
 }: CustomButtonProps) => {
@@ -29,7 +31,12 @@ const CustomButton = ({
   }
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity ? activeOpacity : 0.2} style={{ ...layout }} onPress={onPress}>
+    <TouchableOpacity 
+      activeOpacity={activeOpacity ? activeOpacity : 0.2} 
+      style={{ ...layout }} 
+      disabled={disabled}
+      onPress={onPress}
+    >
       <View style={buttonStyles}>
         <Text style={[ 
           { 

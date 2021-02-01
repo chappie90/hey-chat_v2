@@ -64,7 +64,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   };
 
   const toggleSpeaker = (): void => {
-    console.log('toggle speaker')
+    InCallManager.setForceSpeakerphoneOn(!speaker);
+    dispatch(callActions.toggleSpeaker());
   };
 
   const toggleVideo = (): void => {
@@ -93,10 +94,14 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   return (
     <View style={styles.container}>
       <AudioCallUI 
-        show={type === 'audio' ? true : false} 
+        show={!localVideoEnabled && !remoteVideoEnabled} 
+        contactAvatar={callee.avatar.medium}
         callee={callee} 
+        isInitiatingCall={isInitiatingCall}
         speaker={speaker}
         muted={muted}
+        localVideoEnabled={localVideoEnabled}
+        toggleVideoBtnDisabled={isInitiatingCall}
         toggleSpeaker={toggleSpeaker}
         toggleVideo={toggleVideo}
         endCall={endCall}
