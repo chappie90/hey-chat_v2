@@ -19,7 +19,7 @@ import { navigate } from 'navigation/NavigationRef';
 import { chatsActions, appActions, callActions } from 'reduxStore/actions';
 import { emitMarkAllMessagesAsRead, emitSendSdpOffer } from 'socket/eventEmitters';
 import { store } from 'reduxStore';
-import { pushNotificationsService } from 'services';
+import { pushNotificationsService, webRTCService } from 'services';
 
 type PushNotificationsManagerProps = { children: ReactNode };
 
@@ -234,17 +234,11 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     navigate('Call', {});
   };
 
-  const stopLocalStream = () => {
-    callRef.current.localStream.getTracks().forEach((t: any) => t.stop());
-    callRef.current.localStream.release();
-    dispatch(callActions.setLocalStream(null));
-  };
-
   const onEndCall = async (): Promise<void> => {
-    const call = callRef.current;
-    const contact = userRef.current._id === call.caller._id ? call.callee : call.caller;
-
     if (!callRef.current.hasEnded) {
+      const call = callRef.current;
+      const contact = userRef.current._id === call.caller._id ? call.callee : call.caller;
+
       // Make sure socket is connected
       if (callRef.current.isInitiatingCall) {
         // Add message to caller chat history call has been missed
@@ -273,40 +267,38 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
           newMessage
         );
       } else {
-        console.log('end call push')
-        console.log(callRef.current.chat.chatId)
-        console.log(contact._id)
-
         // Send end call signal to contact
         await pushNotificationsService.eventPushers.callPushers.pushEndCall(
           callRef.current.chat.chatId,
           contact._id
         );
       }
+
+      if (callRef.current.isReceivingCall) {
+        InCallManager.stopRingtone();
+      }
+
+      InCallManager.stop();  
+
+      if (callRef.current.localStream) {
+        webRTCService.stopLocalStream(callRef.current, dispatch);
+      }
+
+      // Close Peer connection and clean up event listeners
+      callRef.current.RTCPeerConnection?.close();
+
+      // Navigate back to current chat screen
+      const routeParams = { 
+        chatType: 'private', 
+        chatId: callRef.current.chat.chatId,
+        contactId: contact._id,
+        contactName: contact.username,
+        contactProfile: contact.avatar
+      };
+      navigate('CurrentChat', routeParams);
+
+      dispatch(callActions.endCall());
     }
-
-    if (callRef.current.isReceivingCall) {
-      InCallManager.stopRingtone();
-    }
-
-    InCallManager.stop();  
-
-    if (callRef.current.localStream) stopLocalStream();
-
-    // Close Peer connection and clean up event listeners
-    callRef.current.RTCPeerConnection?.close();
-    
-    // Navigate back to current chat screen
-    const routeParams = { 
-      chatType: 'private', 
-      chatId: callRef.current.chat.chatId,
-      contactId: contact._id,
-      contactName: contact.username,
-      contactProfile: contact.avatar
-    };
-    navigate('CurrentChat', routeParams);
-
-    if (!callRef.current.hasEnded) dispatch(callActions.endCall());
   };
 
    // Only iOS
@@ -432,7 +424,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
               try {
                 // Add missed call message if callee hasn't yet answered call
                 if (callRef.current.isReceivingCall) {
-                  callHandlers.onMissedCall(
+                  pushNotificationsService.eventHandlers.callHandlers.onMissedCall(
                     notification.data.payload, 
                     userRef.current.username,
                     chatHistoryRef.current,
@@ -445,8 +437,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     
                 if (user) {
                   const { call: { call } } = store.getState();
-                  console.log(call)
-                  callHandlers.onCallEnded(user._id, call, navigate, dispatch);
+                  pushNotificationsService.eventHandlers.callHandlers.onCallEnded(user._id, call, navigate, dispatch);
                 }
               } catch(err) {
                 console.log('Could not read user data from async storage inside voip switch: ' + err);
