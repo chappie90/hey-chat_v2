@@ -16,6 +16,7 @@ import { Images } from 'assets';
 import { Colors, Fonts } from 'variables';
 import uuid from 'react-native-uuid';
 import { callActions } from 'reduxStore/actions';
+import { webRTCService } from 'services';
 
 type ChatHeaderProps = {
   chatType: string;
@@ -44,13 +45,7 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/small`;
 
   const onStartCall = async (callType: string): Promise<void> => {
-
     await startCall(uuid.v4(), username, contactName, callType);
-    
-    // iOS Callkit doesn't provide a native UI outgoing call screen so we are using our own
-    if (Platform.OS === 'ios') {
-      navigation.navigate('Call');
-    }
   };
 
   const startCall = async (
@@ -114,49 +109,16 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
     };
 
     // Add local stream to peer connection
-    const stream = await startLocalStream();
+    const stream = await webRTCService.startLocalStream(dispatch);
     peerConn.addStream(stream);
 
     try {
       const data = { callId, chatId, caller, callee, callType };
-
-      console.log(data)
       await api.post('/call/start', data); 
     } catch (err) {
       console.error(err);
     }
   }; 
-
-  const startLocalStream = async (): Promise<any> => {
-    try {
-      // isFront will determine if the initial camera should face user or environment
-      const isFront = true;
-      const devices = await mediaDevices.enumerateDevices();
-
-      const facing = isFront ? 'front' : 'environment';
-      const videoSourceId = devices.find((device: any) => device.kind === 'videoinput' && device.facing === facing);
-      const facingMode = isFront ? 'user' : 'environment';
-      const constraints: any = {
-        audio: true,
-        video: {
-          mandatory: {
-            minWidth: 500, // Provide your own width, height and frame rate here
-            minHeight: 300,
-            minFrameRate: 30,
-          },
-          facingMode,
-          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
-        }
-      };
-      const newStream = await mediaDevices.getUserMedia(constraints);
-      dispatch(callActions.setLocalStream(newStream));
-
-      return newStream;
-    } catch (err) {
-      console.log('Start local stream caller method error');
-      console.log(err);
-    }
-  };
   
   return (
     <View style={styles.container}>
