@@ -34,7 +34,8 @@ AppRegistry.registerHeadlessTask('RNCallKeepBackgroundMessage', () => (info) => 
       console.log('Could not read user data from async storage inside voip switch: ' + err);
     }
   })();
-  // RNCallKeep.backToForeground();
+  
+  RNCallKeep.backToForeground();
 
   RNCallKeep.registerAndroidEvents();
 

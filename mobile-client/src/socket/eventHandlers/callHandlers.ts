@@ -85,7 +85,11 @@ const onSdpOfferReceived = async (data: string, call: TCall, socketState: any, d
     console.log('Offer Error', err);
   }
 
-  if (Platform.OS === 'android') RNCallKeep.setCurrentCallActive(call.callId);
+  if (Platform.OS === 'android') {
+    RNCallKeep.setCurrentCallActive(call.callId);
+    RNCallKeep.backToForeground();
+  } 
+  
   dispatch(callActions.startCall());
 
   // When callee answers, stop ringback
@@ -126,6 +130,9 @@ const onSdpAnswerReceived = (data: string,  callState: TCall, socketState: any, 
 
 const onCallEnded = async (userId: number, callState: TCall, navigate: any,  dispatch: Dispatch) => {
   const callId = callState.callId;
+  console.log(callState)
+  console.log('on call ended handler')
+
 
   dispatch(callActions.endCall());
 
