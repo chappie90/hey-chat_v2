@@ -64,7 +64,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
             _id: action.payload.caller._id,
             username: action.payload.caller.username,
             avatar: {
-              small: action.payload.caller.avatar.small
+              small: action.payload.caller.avatar.small,
+              medium: action.payload.caller.avatar.medium
             }
           },
           callee: {
@@ -72,7 +73,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
             _id: action.payload.callee._id,
             username: action.payload.callee.username,
             avatar: {
-              small: action.payload.callee.avatar.small
+              small: action.payload.callee.avatar.small,
+              medium: action.payload.callee.avatar.medium
             }
           },
           localVideoEnabled: action.payload.type === 'audio' ? false : true,
@@ -171,12 +173,20 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           muted: !state.call.muted
         }
       };
-    case 'toggle_video_mode':
+    case 'toggle_local_stream':
       return {
         ...state,
         call: {
           ...state.call,
           localVideoEnabled: !state.call.localVideoEnabled
+        }
+      };
+    case 'toggle_remote_stream':
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          remoteVideoEnabled: !state.call.remoteVideoEnabled
         }
       };
     default:

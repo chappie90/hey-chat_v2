@@ -84,10 +84,10 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
   useEffect(() => {
     if (uploadFinished) {
       setTimeout(() => {
-        setImage(avatar);
+        setImage(avatar.medium);
       }, 4000);
     } else {
-      setImage(avatar);
+      setImage(avatar.medium);
     }
   }, [avatar]);
  
@@ -111,7 +111,7 @@ const ProfileImage = ({ uploadProgress, uploadFinished, onToggleImageActions }: 
           ]}
         />
         <View style={styles.imageContainer}>
-          {avatar ?
+          {avatar?.medium ?
             <Animated.Image 
               key={image}
               source={{ uri: `${S3_BUCKET_PATH}/${image}` }}

@@ -13,7 +13,10 @@ const INITIAL_STATE: AuthState = {
     _id: null,
     username: '',
     authToken: '',
-    avatar: ''
+    avatar: {
+      small: '',
+      medium: ''
+    }
   }
 };
 
@@ -39,7 +42,10 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state, 
         user: {
           ...state.user,
-          avatar: action.payload 
+          avatar: {
+            small: action.payload.small,
+            medium: action.payload.medium
+          }
         }
       };
     case 'update_avatar_image':
@@ -47,7 +53,10 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state, 
         user: {
           ...state.user,
-          avatar: action.payload 
+          avatar: {
+            small: action.payload.small,
+            medium: action.payload.medium
+          }
         }
       };
     case 'delete_avatar_image':
@@ -55,7 +64,10 @@ export const authReducer: Reducer = (state = INITIAL_STATE, action) => {
         ...state, 
         user: {
           ...state.user,
-          avatar: '' 
+          avatar: {
+            small: '',
+            medium: ''
+          } 
         }
       };
     default: 

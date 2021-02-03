@@ -58,13 +58,19 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
     const caller = {
       _id: userId,
       username,
-      avatar: { small: avatar },
+      avatar: { 
+        small: avatar.small,
+        medium: avatar.medium,
+      },
       online: true
     };
     const callee = {
       _id: contactId,
       username: contactName,
-      avatar: { small: contactProfile.small },
+      avatar: { 
+        small: contactProfile.small,
+        medium: contactProfile.medium,
+      },
       online: true
     };
     dispatch(callActions.initiateCall(callId, chatId, caller, callee, callType));

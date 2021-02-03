@@ -102,7 +102,7 @@ const ProfileScreen = ({ }: ProfileScreenProps) => {
           setUploadFinished(false);
         }, 1200);
 
-        dispatch(authActions.updateAvatarImage(response.data.profileImage));
+        dispatch(authActions.updateAvatarImage(response.data.avatar));
         emitUpdateProfileImage(JSON.stringify({ userId }), socketState);
       }
     })

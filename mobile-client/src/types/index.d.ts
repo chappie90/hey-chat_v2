@@ -38,7 +38,10 @@ type TUser = {
   _id: number | null;
   username: string;
   authToken: string;
-  avatar?: string;
+  avatar?: {
+    small: string;
+    medium: string;
+  };
 };
 
 type TContact = {

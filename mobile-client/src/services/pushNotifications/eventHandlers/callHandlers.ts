@@ -30,7 +30,7 @@ const onCallEnded = async (userId: number, callState: TCall, navigate: any,  dis
     chatId: callState.chat.chatId,
     contactId: contact._id,
     contactName: contact.username,
-    contactProfile: contact.avatar?.small
+    contactProfile: contact.avatar
   };
   navigate('CurrentChat', routeParams);
 

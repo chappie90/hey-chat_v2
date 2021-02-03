@@ -118,7 +118,7 @@ const getAvatarImage = (userId: number) => async (dispatch: ThunkDispatch<AuthSt
   try {
     const response = await api.get('/image', { params });
 
-    dispatch({ type: 'get_avatar_image', payload: response.data.profileImage });
+    dispatch({ type: 'get_avatar_image', payload: response.data.avatar });
   } catch (error) {
     console.log('Get profile image method error');
     if (error.response) console.log(error.response.data.message);
@@ -126,7 +126,7 @@ const getAvatarImage = (userId: number) => async (dispatch: ThunkDispatch<AuthSt
   }
 };
 
-const updateAvatarImage = (image: string) => ({ type: 'update_avatar_image', payload: image });
+const updateAvatarImage = (avatar: string) => ({ type: 'update_avatar_image', payload: avatar });
 
 const deleteAvatarImage = (userId: number) => async (dispatch: ThunkDispatch<AuthState, undefined, AuthAction>) => {
   try {
