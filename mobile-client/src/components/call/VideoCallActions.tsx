@@ -75,7 +75,9 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    zIndex: 1,
+    elevation: 1
   },
   actionBtnLayout: {},
   actionBtn: {
@@ -85,7 +87,8 @@ const styles = StyleSheet.create({
   tertiaryBtn: {
     position: 'absolute',
     right: 20,
-    top: 50
+    top: 50,
+    elevation: 1
   },
   primaryBtn: {
     backgroundColor: Colors.red,

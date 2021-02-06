@@ -105,7 +105,7 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
   useEffect(() => {
     if (userConnected) {
       // If app becomes active on CurrentChat screen send signal to sender message has been read
-      if (activeChatRef.current && currentScreenRef.current === 'CurrentChat') {
+      if (activeChatRef.current && currentScreenRef.current === 'CurrentChat' && socketState) {
         const senderId = activeChatRef.current.participants.filter(contact => contact._id !== userId)[0]._id;
         const eventData = { chatId: activeChatRef.current.chatId, senderId };
         emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);

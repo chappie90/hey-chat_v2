@@ -16,7 +16,7 @@ type AudioCallUIProps = {
   localVideoEnabled: boolean;
   toggleVideoBtnDisabled: boolean;
   toggleSpeaker: () => void;
-  toggleVideo: () => void;
+  requestVideo: () => void;
   endCall: () => void;
   toggleMuteMicrophone: () => void; 
 };
@@ -31,7 +31,7 @@ const AudioCallUI = ({
   localVideoEnabled,
   toggleVideoBtnDisabled,
   toggleSpeaker,
-  toggleVideo,
+  requestVideo,
   endCall,
   toggleMuteMicrophone
 }: AudioCallUIProps) => {
@@ -39,9 +39,9 @@ const AudioCallUI = ({
   return (
     <View style={[
       styles.container,
-      { zIndex: show ? 2 : 0 }
+      { zIndex: show ? 2 : -2, elevation: show ? 2 : -2 }
     ]}>
-      <AudioCallAvatar contactAvatar={contactAvatar} />
+      <AudioCallAvatar contactAvatar={contactAvatar} showPulse={isInitiatingCall} />
       <View style={styles.calleeName}>
         <CustomText color={Colors.purpleDark} fontSize={Headings.headingExtraLarge}>
           {callee.username}
@@ -58,7 +58,7 @@ const AudioCallUI = ({
         localVideoEnabled={localVideoEnabled}
         toggleVideoBtnDisabled={toggleVideoBtnDisabled}
         onToggleSpeaker={toggleSpeaker}
-        onToggleVideo={toggleVideo}
+        onRequestVideo={requestVideo}
         onEndCall={endCall}
         onToggleMuteMicrophone={toggleMuteMicrophone}
       />

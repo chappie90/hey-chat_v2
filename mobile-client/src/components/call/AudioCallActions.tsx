@@ -13,7 +13,7 @@ type AudioCallActionsProps = {
   localVideoEnabled: boolean;
   toggleVideoBtnDisabled: boolean;
   onToggleSpeaker: () => void;
-  onToggleVideo: () => void;
+  onRequestVideo: () => void;
   onEndCall: () => void;
   onToggleMuteMicrophone: () => void; 
 };
@@ -24,7 +24,7 @@ const AudioCallActions = ({
   localVideoEnabled,
   toggleVideoBtnDisabled,
   onToggleSpeaker,
-  onToggleVideo,
+  onRequestVideo,
   onEndCall,
   onToggleMuteMicrophone
 }: AudioCallActionsProps) => {
@@ -55,7 +55,7 @@ const AudioCallActions = ({
             { backgroundColor: Colors.white }
           ]} 
           disabled={toggleVideoBtnDisabled}
-          onPress={onToggleVideo}
+          onPress={() => onRequestVideo()}
         >
           <FontAwesomeIcon 
             name="video-camera" 

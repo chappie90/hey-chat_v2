@@ -57,20 +57,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
    );
   };
 
-  const sendLocalPushNotification = (
-    channelId: string,
-    title: string,
-    body: string
-  ): void => {
-    PushNotification.localNotification({
-      channelId,
-      title,
-      message: body,
-      number: 10
-    });
-  };
-
-
   const initRNCallKeep = async (): Promise<void> => {
     const options = {
       ios: {
@@ -119,6 +105,9 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     //   }
     // };
 
+    // Navigate to call screen for all options except audio calls on android
+    if (Platform.OS === 'android' && callRef.current.type === 'audio') return;
+
     navigate('Call', {});
 
     // if (callRef.current && callRef.current.isInitiatingCall) {
@@ -144,8 +133,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     ]};
     const peerConn = new RTCPeerConnection(configuration);
     dispatch(callActions.setRTCPeerConnection(peerConn));
-
-    // RNCallKeep.backToForeground();
 
     // Reattempt connection if unintentionally disconnected?
     peerConn.oniceconnectionstatechange = (event) => {
@@ -192,16 +179,27 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       console.error(err);
     }
 
-    InCallManager.start({media: 'audio/video'});
-
     if (Platform.OS === 'android') {
       RNCallKeep.backToForeground();
     }
+
+    InCallManager.stopRingtone();
+    InCallManager.start({ media: callRef.current.type });
+    InCallManager.setKeepScreenOn(false);
+    // InCallManager.setSpeakerphoneOn(false);
+    // InCallManager.setForceSpeakerphoneOn(false);
+
+    // Navigate to call screen for all options except audio calls on android
+    if (Platform.OS === 'android' && callRef.current.type === 'audio') return;
 
     navigate('Call', {});
   };
 
   const onEndCall = async (): Promise<void> => {
+    console.log('triggering call end')
+    console.log(!callRef.current.hasEnded)
+
+
     if (!callRef.current.hasEnded) {
       const call = callRef.current;
       const contact = userRef.current._id === call.caller._id ? call.callee : call.caller;
@@ -312,7 +310,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
         }
 
       // Create notifications channel - Android
-      createNotificationsChannel(config.RN_APP_ID, `${config.RN_APP_ID}.notifications-channel`)
+      createNotificationsChannel(config.RN_APP_ID, `${config.RN_APP_ID}.notifications-channel`);
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
@@ -335,9 +333,13 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       if (notification.data.silent) {
         // Send local notification Android background
         if (Platform.OS === 'android' && notification.data.payload !== null) {
-          const { newMessage } = notification.data.payload;
+          const { newMessage } = JSON.parse(notification.data.payload);
           if (newMessage) {
-            sendLocalPushNotification("hey-chat-id-1", newMessage.sender, newMessage.message.text);
+            pushNotificationsService.eventPushers.mainPushers.sendLocalPushNotification(
+              config.RN_APP_ID,
+              newMessage.sender, 
+              newMessage.message.text
+            );
           }
         }
 
@@ -380,6 +382,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
               caller.username
             );
 
+            InCallManager.startRingtone('_BUNDLE_');
+
             BackgroundFetch.scheduleTask({
               taskId: "connect_socket",
               forceAlarmManager: true,
@@ -413,6 +417,15 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
             break;
           case 'voip_video_toggled':
             dispatch(callActions.toggleRemoteStream());
+          case 'voip_audio_video_requested':
+            console.log('voip audio video requested');
+            (async () => {
+              await pushNotificationsService.eventHandlers.callHandlers.onVideoRequested(
+                userRef.current._id, 
+                callRef.current, 
+                dispatch
+              );
+            })();
           default:
             return;
         }
@@ -420,7 +433,11 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
       // Send local notification Android foreground
       if (Platform.OS === 'android' && currentScreenRef.current !== 'CurrentChat') {
-        sendLocalPushNotification("hey-chat-id-1", notification.title, notification.message);
+        pushNotificationsService.eventPushers.mainPushers.sendLocalPushNotification(
+          config.RN_APP_ID,
+          notification.title, 
+          notification.message
+        );
       }
 
       // // Serve local notification
@@ -470,8 +487,27 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     onAction: function (notification) {
       // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
-      console.log("ACTION:", notification.action);
-      console.log("NOTIFICATION:", notification);
+      // console.log("ACTION:", notification.action);
+      // console.log("NOTIFICATION:", notification);
+
+      // Handle video call requests on android
+      if (Platform.OS === 'android') {
+        if (notification.message === 'Video call requested') {
+          dispatch(callActions.receiveVideoRequest(false));
+          const { call: { call } } = store.getState();
+
+          if (notification.action === 'Answer') {
+            call.localStream.getTracks().forEach((track: any) => {
+              if (track.kind === 'video')  {
+                track.enabled = !call.localVideoEnabled;
+              }
+            } );
+            dispatch(callActions.toggleLocalStream());
+            navigate('Call', {});
+          }
+          if (notification.action === 'Reject') return;
+        }
+      }
     },
 
     onRegistrationError: function (err) {
@@ -483,7 +519,7 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       badge: true,
       sound: true
     },
-    // popInitialNotification: true,
+    popInitialNotification: true,
     requestPermissions: true
   });
 };
@@ -537,6 +573,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
       dispatch(callActions.receiveCall(callId, chatId, caller, callee, callType));
 
+      InCallManager.startRingtone('_BUNDLE_');
+
       (async () => {
         try {
           const jsonValue = await AsyncStorage.getItem('user')
@@ -562,6 +600,13 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     RNCallKeep.addEventListener('didToggleHoldCallAction', onToggleHold);
     RNCallKeep.addEventListener('didPerformDTMFAction', onDTMF);
     RNCallKeep.addEventListener('didActivateAudioSession', onAudioSessionActivated);
+    // InCallManager.addEventListener('WiredHeadset', (event) => {
+    //   if (event.isPlugged) {
+    //     InCallManager.setForceSpeakerphoneOn(false);
+    //   } else {
+    //     InCallManager.setForceSpeakerphoneOn(true);
+    //   }
+    // });
 
     return () => {
       VoipPushNotification.removeEventListener('didLoadWithEvents');

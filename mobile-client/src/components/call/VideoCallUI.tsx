@@ -7,7 +7,6 @@ import { RTCView } from 'react-native-webrtc';
 import Draggable from 'react-native-draggable';
 import { BlurView } from "@react-native-community/blur";
 
-import { Images } from 'assets';
 import CustomButton from 'components/common/CustomButton';
 import { Colors, Headings } from 'variables';
 import CustomText from 'components/CustomText';
@@ -17,6 +16,8 @@ type VideoCallUIProps = {
   localStream: any;
   remoteStream: any;
   localVideoEnabled: boolean;
+  remoteVideoEnabled: boolean;
+  isRequestingVideo: boolean;
   callee: TContact;
   muted: boolean;
   videoEnabled: boolean;
@@ -30,6 +31,8 @@ const VideoCallUI = ({
   localStream,
   remoteStream,
   localVideoEnabled,
+  remoteVideoEnabled,
+  isRequestingVideo,
   callee,
   muted,
   videoEnabled,
@@ -43,7 +46,17 @@ const VideoCallUI = ({
   return (
     <View style={styles.container}>
       {remoteStream &&
-        <RTCView streamURL={remoteStream.toURL()} style={styles.remoteStream} objectFit="cover" />
+         <RTCView streamURL={remoteStream.toURL()} style={styles.remoteStream} objectFit="cover" />
+      }
+      {remoteStream && !remoteVideoEnabled && !isRequestingVideo &&
+        <View style={styles.disabledRemoteVideo}>
+          <CustomText>{callee.username} has disabled the camera</CustomText>
+        </View> 
+      }
+      {remoteStream && !remoteVideoEnabled && isRequestingVideo &&
+        <View style={styles.disabledRemoteVideo}>
+          <CustomText>Requesting video call...</CustomText>
+        </View> 
       }
       {localStream &&
         <Draggable 
@@ -95,18 +108,20 @@ const styles = StyleSheet.create({
     left: 0, 
     right: 0,
     bottom: 0,
-    zIndex: 1,
+    zIndex: -2,
+    elevation: -2,
     backgroundColor: Colors.purpleLight
   },
   remoteStream: {
-    flex: 1,
-    // zIndex: -2
+    flex: 1
   }, 
   partialLocalStreamContainer: {
     width: 140,
     height: 190,
     borderRadius: 25,
     overflow: 'hidden',
+    zIndex: 1,
+    elevation: 1
   },
   localStream: {
     width: '100%',
@@ -115,44 +130,26 @@ const styles = StyleSheet.create({
   disabledLocalVideo: {
     position: 'absolute',
     zIndex: 2,
+    elevation: 2,
     width: '100%',
     height: '100%'
+  },
+  disabledRemoteVideo: {
+    position: 'absolute',
+    zIndex: 0,
+    elevation: 0,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.purpleLight
   },
   calleeName: {
     position:'absolute', 
     top: 50, 
     alignSelf: 'center', 
-    zIndex: 1
-  },
-  actions: {
-    position: 'absolute',
-    bottom: 70,
-    left: 20,
-    right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  },
-  actionBtnLayout: {},
-  actionBtn: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  tertiaryBtn: {
-    position: 'absolute',
-    right: 20,
-    top: 50
-  },
-  primaryBtn: {
-    backgroundColor: Colors.red,
-    borderRadius: 37,
-    width: 74,
-    height: 74,
-  },
-  secondaryBtn: {
-    backgroundColor: Colors.white,
-    borderRadius: 31,
-    width: 62,
-    height: 62
+    zIndex: 1,
+    elevation: 1
   }
 });
 

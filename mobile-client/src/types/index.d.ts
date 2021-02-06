@@ -123,6 +123,8 @@ type TCall = {
   isActive: boolean;
   isInitiatingCall: boolean;
   isReceivingCall: boolean;
+  isRequestingVideo: boolean;
+  isReceivingVideoRequest: boolean;
   hasEnded: boolean;
   offer: any,
   chat: { 

@@ -10,6 +10,8 @@ const INITIAL_STATE: CallState = {
     isActive: false,
     isInitiatingCall: false,
     isReceivingCall: false,
+    isRequestingVideo: false,
+    isReceivingVideoRequest: false,
     hasEnded: true,
     offer: null,
     chat: { chatType: 'private', chatId: '' },
@@ -54,6 +56,7 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           ...state.call,
           callId: action.payload.callId,
           isInitiatingCall: true,
+          isRequestingVideo: action.payload.type === 'audio' ? false : true,
           hasEnded: false,
           chat: {
             ...state.call.chat,
@@ -89,6 +92,7 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           ...state.call,
           callId: action.payload.callId,
           isReceivingCall: true,
+          isReceivingVideoRequest: action.payload.type === 'audio' ? false : true,
           hasEnded: false,
           chat: {
             ...state.call.chat,
@@ -189,6 +193,22 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           remoteVideoEnabled: !state.call.remoteVideoEnabled
         }
       };
+    case 'request_video':
+      return {
+        ...state,
+        call: {
+          ...state.call,
+          isRequestingVideo: action.payload
+        }
+      };
+      case 'receive_video_request':
+    return {
+      ...state,
+      call: {
+        ...state.call,
+        isReceivingVideoRequest: action.payload
+      }
+    };
     default:
       return state;
   }

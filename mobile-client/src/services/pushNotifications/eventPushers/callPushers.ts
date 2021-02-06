@@ -7,7 +7,7 @@ const pushMissedCall = async (chatId: string, calleeId: string, message: TMessag
 
     await api.post('/call/missed', data); 
   } catch (err) {
-    console.log('Push missed call push notification error')
+    console.log('Push missed call notification error')
     console.error(err);
   }
 };
@@ -19,12 +19,38 @@ const pushEndCall = async (chatId: string, contactId: string): Promise<void> => 
 
     await api.post('/call/end', data); 
   } catch (err) {
-    console.log('Push end call push notification error')
+    console.log('Push end call notification error')
+    console.error(err);
+  }
+};
+
+// Notify contact of change to remote stream
+const pushToggleVideo = async (chatId: string, contactId: string): Promise<void> => {
+  try {
+    const data = { chatId, contactId };
+
+    await api.post('/call/video/camera', data); 
+  } catch (err) {
+    console.log('Push toggle video camera notification error')
+    console.error(err);
+  }
+};
+
+// Notify contact of change to remote stream
+const pushRequestVideo = async (chatId: string, contactId: string): Promise<void> => {
+  try {
+    const data = { chatId, contactId };
+    
+    await api.post('/call/audio/request-video', data); 
+  } catch (err) {
+    console.log('Push request video call notification error')
     console.error(err);
   }
 };
 
 export default {
   pushMissedCall,
-  pushEndCall
+  pushEndCall,
+  pushToggleVideo,
+  pushRequestVideo
 };

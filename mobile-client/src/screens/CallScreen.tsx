@@ -25,6 +25,9 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import { callActions } from 'reduxStore/actions';
 import AudioCallUI from 'components/call/AudioCallUI';
 import VideoCallUI from 'components/call/VideoCallUI';
+import api from 'api';
+import pushNotifications from 'services/pushNotifications';
+import { pushNotificationsService } from 'services';
 
 type CallScreenProps = StackScreenProps<ChatsStackParams, 'Call'>;
 
@@ -38,6 +41,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     callee,
     isActive,
     isInitiatingCall,
+    isRequestingVideo,
     RTCConnection,
     localStream, 
     remoteStream,
@@ -54,27 +58,51 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
   const endCall = (): void => {
     RNCallKeep.endCall(callId);
 
+    const contact = userId === caller._id ? callee : caller;
+
     navigation.navigate('CurrentChat', { 
       chatType, 
       chatId, 
-      contactId: callee._id, 
-      contactName: callee.username, 
-      contactProfile: callee.avatar.small 
+      contactId: contact._id, 
+      contactName: contact.username, 
+      contactProfile: contact.avatar.small 
     });
   };
 
   const toggleSpeaker = (): void => {
-    InCallManager.setForceSpeakerphoneOn(!speaker);
+    if (Platform.OS === 'ios') {
+      InCallManager.setForceSpeakerphoneOn(!speaker);
+    }
     dispatch(callActions.toggleSpeaker());
   };
 
-  const toggleVideo = (): void => {
+  const requestVideo = async (): Promise<void> => {
     localStream.getTracks().forEach((track: any) => {
       if (track.kind === 'video')  {
         track.enabled = !localVideoEnabled;
       }
     } );
-    dispatch(callActions.toggleVideoMode());
+    dispatch(callActions.toggleLocalStream());
+    dispatch(callActions.requestVideo(true));
+    
+    // Notify contact of change to remote stream
+    const contactId = userId === caller._id ? callee._id : caller._id;
+
+    await pushNotificationsService.eventPushers.callPushers.pushRequestVideo(chatId, contactId);
+  };
+
+  const toggleVideo = async (): Promise<void> => {
+    localStream.getTracks().forEach((track: any) => {
+      if (track.kind === 'video')  {
+        track.enabled = !localVideoEnabled;
+      }
+    } );
+    dispatch(callActions.toggleLocalStream());
+    
+    // Notify contact of change to remote stream
+    const contactId = userId === caller._id ? callee._id : caller._id;
+
+    await pushNotificationsService.eventPushers.callPushers.pushToggleVideo(chatId, contactId);
   };
 
   const toggleCameraFacingMode = (): void => {
@@ -85,6 +113,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
     // RNCallKeep.setMutedCall(uuid, true); // try it
     localStream.getTracks().forEach((track: any) => {
       if (track.kind === 'audio')  {
+        console.log(track)
         track.enabled = muted;
         dispatch(callActions.toggleMuteCall());
       }
@@ -103,7 +132,7 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
         localVideoEnabled={localVideoEnabled}
         toggleVideoBtnDisabled={isInitiatingCall}
         toggleSpeaker={toggleSpeaker}
-        toggleVideo={toggleVideo}
+        requestVideo={requestVideo}
         endCall={endCall}
         toggleMuteMicrophone={toggleMuteMicrophone}
       />
@@ -111,6 +140,8 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
         localStream={localStream}
         remoteStream={remoteStream}
         localVideoEnabled={localVideoEnabled}
+        remoteVideoEnabled={remoteVideoEnabled}
+        isRequestingVideo={isRequestingVideo}
         callee={callee}
         muted={muted}
         videoEnabled={localVideoEnabled}
@@ -126,12 +157,6 @@ const CallScreen = ({ route, navigation }: CallScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  actionBtn: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-    zIndex: -1
   }
 });
 
