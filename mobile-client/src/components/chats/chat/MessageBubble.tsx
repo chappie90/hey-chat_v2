@@ -14,6 +14,8 @@ import config from 'react-native-config';
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import FastImage from 'react-native-fast-image'
+import Lightbox from 'react-native-lightbox';
 
 import CustomText from 'components/CustomText';
 import { Images } from 'assets';
@@ -59,6 +61,7 @@ const MessageBubble = ({
   const [messageText, setMessageText] = useState('');
   const [messageTextColor, setMessageTextColor] = useState('');
   const [messageTextSize, setMessageTextSize] = useState(0);
+  const [isLightbox, setIsLightBox] = useState(false);
 
   const onLongPress = (event: GestureResponderEvent, isAdmin?: boolean) => {
     if (isAdmin) return;
@@ -140,6 +143,10 @@ const MessageBubble = ({
     }
   }, [text, senderId]);
 
+  useEffect(() => {
+    console.log(isLightbox)
+  }, [isLightbox])
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -196,15 +203,15 @@ const MessageBubble = ({
                 senderId === 2 && sameSenderPrevMsg && styles.leftImagePrevMsg,
                 senderId === 2 && sameSenderNextMsg && styles.leftImageNextMsg
               ]}>
-                <Image 
-                  key={messageId === activeMsgId && updateImage ? 'true' : 'false'}
-                  style={styles.image} 
-                  source={image.includes(activeChat.chatId) ? 
-                    { uri: `${S3_BUCKET_PATH}/${image}` } :
-                    { uri: image }
-                  } 
-                  resizeMethod="scale" 
-                />
+                <Lightbox>
+                  <FastImage
+                    style={styles.image}
+                    source={image.includes(activeChat.chatId) ? 
+                      { uri: `${S3_BUCKET_PATH}/${image}` } :
+                      { uri: image }
+                    } 
+                  />
+                </Lightbox>
                 {activeMessage && messageId === activeMessage._id &&
                   <Animated.View style={[
                     styles.progressIndicator,
