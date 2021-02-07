@@ -9,7 +9,7 @@ type ScrollBottomButtonProps = { scrollToEnd: () => void; };
 const ScrollBottomButton = ({ scrollToEnd }: ScrollBottomButtonProps) => {
 
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={() => scrollToEnd()}>
+    <TouchableOpacity style={styles.container} activeOpacity={0.8} onPress={() => scrollToEnd()}>
       <View style={styles.button}>
         <Ionicon 
           color={Colors.yellowDark} 
@@ -22,12 +22,15 @@ const ScrollBottomButton = ({ scrollToEnd }: ScrollBottomButtonProps) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
+  container: {
     position: 'absolute',
     right: 10,
-    bottom: 80,
-    zIndex: 3 ,
-    width: 42,
+    bottom: 120,
+    zIndex: 3,
+    elevation: 3,
+  },
+  button: {
+    width: 41,
     height: 41,
     paddingLeft: 1,
     justifyContent: 'center',
