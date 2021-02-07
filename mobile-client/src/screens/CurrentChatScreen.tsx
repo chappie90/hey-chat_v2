@@ -14,7 +14,7 @@ type CurrentChatScreenProps = StackScreenProps<ContactsStackParams, 'CurrentChat
 
 const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
   const { chatType, chatId, contactId, contactName, contactProfile } = route.params;
-  const { chats } = useSelector(state => state.chats);
+  const { chats, activeChat } = useSelector(state => state.chats);
   const dispatch = useDispatch();
   const [isVisibleCamera, setIsVisibleCamera] = useState(false);
   const [isVisibleLibrary, setIsVisibleLibrary] = useState(false);
@@ -46,6 +46,7 @@ const CurrentChatScreen = ({ route, navigation }: CurrentChatScreenProps) => {
   return (
     <View style={styles.container}>
       <ChatHeader 
+        activeChat={activeChat}
         chatType={chatType}
         chatId={chatId}
         contactId={contactId}

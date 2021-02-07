@@ -3,7 +3,6 @@ import {
   View, 
   StyleSheet, 
   FlatList,
-  ActivityIndicator,
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
@@ -29,6 +28,7 @@ import ReplyBox from './ReplyBox';
 import ScrollBottomButton from './ScrollBottomButton';
 import { chatsActions } from 'reduxStore/actions';
 import api from 'api';
+import Spinner from 'components/common/Spinner';
 
 type ChatProps = {
   chatType: string;
@@ -345,8 +345,8 @@ const Chat = ({
 
   return (
     <KeyboardAvoidingView 
-      behavior={Platform.OS == "ios" ? "padding" : "height"} 
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 65 : 0}
+      behavior={Platform.OS == "ios" ? "padding" : null}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
       style={styles.container}
     >
       <TouchableWithoutFeedback onPress={() => {
@@ -354,11 +354,7 @@ const Chat = ({
           Keyboard.dismiss();
       }}>
         <View style={styles.container}>
-          {isFetchingMessages &&
-            <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="large" color={Colors.yellowDark} />
-            </View>
-          }
+          {isFetchingMessages && <Spinner layout={styles.spinnerContainer} color={Colors.yellowDark} /> }
           {chatHistory[chatIdRef.current]?.messages.length > 0 ?
             (
               <FlatList

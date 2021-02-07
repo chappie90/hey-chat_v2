@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -11,6 +11,7 @@ import ChatsIcon from 'components/chats/chatsList/ChatsIcon';
 import ChatsHeader from 'components/chats/chatsList/ChatsHeader';
 import ChatsList from 'components/chats/chatsList/ChatsList';
 import { chatsActions } from 'reduxStore/actions';
+import Spinner from 'components/common/Spinner';
 
 type ChatsScreenRouteProp = RouteProp<MainStackParams, 'Chats'>;
 type ChatsScreenNavigationProp = CompositeNavigationProp<
@@ -40,11 +41,7 @@ const ChatsScreen = ({ route, navigation }: ChatsScreenProps) => {
     <View style={styles.container}>
       <ChatsHeader />
       {isLoading ? 
-        (
-          <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color={Colors.yellowDark} />
-          </View>
-        ) :
+        <Spinner layout={styles.spinnerContainer} color={Colors.yellowDark} /> :
         (
           chats.length > 0 ? 
             <ChatsList chats={chats} /> :

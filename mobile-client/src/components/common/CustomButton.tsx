@@ -41,7 +41,7 @@ const CustomButton = ({
         <Text style={[ 
           { 
             color: Colors.white,
-            fontFamily: Fonts.bold, 
+            fontFamily: Fonts.semiBold, 
             fontSize: Headings.headingMedium,
             textAlign: 'center'
           }, 

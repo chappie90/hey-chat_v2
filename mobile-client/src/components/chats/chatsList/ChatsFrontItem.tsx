@@ -133,7 +133,6 @@ const ChatsFrontItem = ({ chat, contact, onChatSelect }: ChatsFrontItemProps) =>
           </View>
           <View style={styles.divider} />
         </View>
-        {chat.online && <View style={styles.isOnlineBadge} />}
       </View>
     </TouchableWithoutFeedback>
   );

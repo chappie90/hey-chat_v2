@@ -1,9 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  ActivityIndicator
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -18,6 +14,7 @@ import ToggleListTabs from 'components/contacts/contactsList/toggleListTabs';
 import AllContacts from 'components/contacts/contactsList/AllContacts';
 import ActiveContacts from 'components/contacts/contactsList/ActiveContacts';
 import ContactsIcon from 'components/contacts/contactsList/ContactsIcon';
+import Spinner from 'components/common/Spinner';
 
 type ContactsScreenRouteProp = RouteProp<MainStackParams, 'Contacts'>;
 type ContactsScreenNavigationProp = CompositeNavigationProp<
@@ -75,11 +72,7 @@ const ContactsScreen = ({ route, navigation }: ContactsScreenProps) => {
       <AddContactScreen visible={showAddContact} />
       <ContactsHeader toggleModal={toggleModal} />
       {isLoading ? 
-        (
-          <View style={styles.spinnerContainer}>
-            <ActivityIndicator size="large" color={Colors.yellowDark} />
-          </View>
-        ) :
+        <Spinner layout={styles.spinnerContainer} color={Colors.yellowDark} /> :
         (
           contacts.length > 0 ? 
             (

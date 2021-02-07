@@ -3,8 +3,7 @@ import {
   View, 
   StyleSheet,
   TouchableWithoutFeedback,
-  Keyboard,
-  ActivityIndicator
+  Keyboard
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,6 +15,7 @@ import CustomText from 'components/CustomText';
 import CustomModal from 'components/CustomModal';
 import { Colors, Fonts, Headings } from 'variables';
 import { contactsActions } from 'reduxStore/actions';
+import Spinner from 'components/common/Spinner';
 
 type AddContactScreenProps = { visible: boolean };
 
@@ -75,11 +75,7 @@ const AddContactScreen = ({ visible }: AddContactScreenProps) => {
       <TouchableWithoutFeedback onPress={dismissKeyboard}>
         <View style={styles.container}>
           <View style={styles.triangle} />
-          {isLoading &&
-            <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="large" color={Colors.yellowDark} />
-            </View> 
-          }
+          {isLoading && <Spinner layout={styles.spinnerContainer} color={Colors.purpleDark} />}
           <CustomText 
             style={styles.subHeading}
             color={Colors.purpleDark}

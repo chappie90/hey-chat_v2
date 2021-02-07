@@ -8,7 +8,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import config from 'react-native-config';
 
 import { Images } from 'assets';
-import CustomButton from 'components/CustomButton';
+import CustomButton from 'components/common/CustomButton';
 import CustomText from 'components/CustomText';
 import { Colors, Fonts, Headings } from 'variables';
 
@@ -24,7 +24,7 @@ const SearchItem = ({ item, onSendMessage }: SearchItemProps) => {
     <View style={styles.item}>
       <View style={styles.userDetails}>
         <View style={styles.imageContainer}>
-          {item.avatar ?
+          {item.avatar?.small ?
             <Image 
               style={styles.image} 
               source={{ uri: `${S3_BUCKET_PATH}/${item.avatar.small}` }}
@@ -35,9 +35,8 @@ const SearchItem = ({ item, onSendMessage }: SearchItemProps) => {
         <CustomText fontWeight={Fonts.semiBold}>{item.username}</CustomText>  
       </View> 
       <CustomButton
-        color={Colors.purpleDark}
-        buttonSize="small"
-        textFontSize={Headings.headingExtraSmall}
+        buttonStyle={styles.buttonStyle}
+        textStyle={styles.textStyle}
         onPress={() => onSendMessage(item)}
       >
         Send
@@ -71,6 +70,15 @@ const styles = StyleSheet.create({
   image: {
     width: '100%', 
     height: '100%'
+  },
+  buttonStyle: {
+    backgroundColor: Colors.purpleDark,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 25
+  },
+  textStyle: {
+    fontSize: Headings.headingExtraSmall
   }
 });
 

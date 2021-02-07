@@ -1,16 +1,16 @@
 import React from 'react';
-import { View } from 'react-native';
-import { BallIndicator } from 'react-native-indicators';
+import { View, ActivityIndicator } from 'react-native';
 
 import { Colors } from 'variables';
 
 type SpinnerProps = {
   layout: any;
+  color?: string;
 };
 
-const Spinner = ({ layout }: SpinnerProps) => (
+const Spinner = ({ layout, color }: SpinnerProps) => (
   <View style={{ ...layout }}>
-    <BallIndicator size={32} color={Colors.purpleDark} />
+    <ActivityIndicator size="large" color={color ? color : Colors.yellowDark} />
   </View>
 );
 
