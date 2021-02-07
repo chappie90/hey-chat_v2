@@ -106,9 +106,9 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     // };
 
     // Navigate to call screen for all options except audio calls on android
-    if (Platform.OS === 'android' && callRef.current.type === 'audio') return;
+    // if (Platform.OS === 'android' && callRef.current.type === 'audio') return;
 
-    navigate('Call', {});
+    // navigate('Call', {});
 
     // if (callRef.current && callRef.current.isInitiatingCall) {
     //   RNCallKeep.updateDisplay(
@@ -165,40 +165,47 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
       const data = { callerId: callRef.current.caller._id, offer };
       // Make sure socket is connected
-      const sendOffer = () => {
-        if (socketStateRef.current) {
-          clearInterval(timer);
-          console.log('socket is setup on answer')
-          emitSendSdpOffer(JSON.stringify(data), socketStateRef.current);
+      const socket = connectToSocket(callRef.current.callee._id);
+      dispatch(appActions.setSocketState(socket));
+
+      const wait = (delay: number) => new Promise((resolve) => setTimeout(resolve, delay));
+      async function awaitSocket() {
+        while (!socket.connected) {
+          await wait(100);
         }
-        console.log('socket not setup on answer')
       };
 
-      const timer = setInterval(sendOffer, 500);
-    } catch (err) {
-      console.error(err);
-    }
+      await awaitSocket();
+      console.log(socket.connected)
+      emitSendSdpOffer(JSON.stringify(data), socket);
 
-    if (Platform.OS === 'android') {
-      RNCallKeep.backToForeground();
-    }
+       // If phone in background show video request local notification
+      if (callRef.current.type === 'video' && AppState.currentState === 'background') {
+        await pushNotificationsService.eventHandlers.callHandlers.onVideoRequested(
+          userRef.current._id, 
+          callRef.current, 
+          dispatch
+        );
+      }
 
-    InCallManager.stopRingtone();
-    InCallManager.start({ media: callRef.current.type });
-    InCallManager.setKeepScreenOn(false);
-    // InCallManager.setSpeakerphoneOn(false);
-    // InCallManager.setForceSpeakerphoneOn(false);
+      InCallManager.stopRingtone();
+      InCallManager.start({ media: callRef.current.type });
+      if (Platform.OS === 'ios' && callRef.current.type === 'video') {
+        InCallManager.setForceSpeakerphoneOn(true);
+      }
 
-    // Navigate to call screen for all options except audio calls on android
-    if (Platform.OS === 'android' && callRef.current.type === 'audio') return;
+      // Navigate to call screen for all options except audio calls on android
+      if (Platform.OS === 'android' && callRef.current.type === 'audio') return;
 
-    navigate('Call', {});
-  };
+      navigate('Call', {});
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
   const onEndCall = async (): Promise<void> => {
     console.log('triggering call end')
     console.log(!callRef.current.hasEnded)
-
 
     if (!callRef.current.hasEnded) {
       const call = callRef.current;
@@ -283,6 +290,8 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
   const onAudioSessionActivated = () => {
      // InCallManager.start({media: 'audio', ringback: '_DEFAULT_'});
+     console.log('detecting change on audo session activated')
+     console.log(userRef.current);
   };
 
   const onDTMF = () => {
@@ -314,10 +323,10 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     },
     // Notification received / opened in-app event
     onNotification: function (notification) {
-      console.log(notification)
+      // console.log(notification)
 
       // Set notifications badge. Doesn't work on all Android devices
-      if (!notification.foreground && !notification.data.type) {
+      if (!notification.foreground && !notification.data.type && notification.data.payload) {
         const { chat: { chatId } } = JSON.parse(notification.data.payload);
         const { app: { badgeCount }, chats: { chats } } = store.getState();
         const unreadMessagesCount = chats.filter((chat: TChat) => chat.chatId === chatId)[0].unreadMessagesCount;
@@ -384,11 +393,11 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
             InCallManager.startRingtone('_BUNDLE_');
 
-            BackgroundFetch.scheduleTask({
-              taskId: "connect_socket",
-              forceAlarmManager: true,
-              delay: 0  // <-- milliseconds
-            });
+            // BackgroundFetch.scheduleTask({
+            //   taskId: "connect_socket",
+            //   forceAlarmManager: true,
+            //   delay: 0  // <-- milliseconds
+            // });
             break;
           case 'voip_call_ended':
             (async () => {
@@ -418,7 +427,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
           case 'voip_video_toggled':
             dispatch(callActions.toggleRemoteStream());
           case 'voip_audio_video_requested':
-            console.log('voip audio video requested');
             (async () => {
               await pushNotificationsService.eventHandlers.callHandlers.onVideoRequested(
                 userRef.current._id, 
@@ -452,26 +460,26 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       // }
 
       // Handle user tap on notification
-      if (notification.userInteraction) { 
-        const { chat, senderId } = notification.data.payload;
-        if (chat.chatType === 'private') {
-          console.log('redirecting to chat screen')
-          // Send signal to sender message has been read and mark recipient's chat as read
-          dispatch(chatsActions.markMessagesAsReadRecipient(chat.chatId));
-          const eventData = { chatId: chat.chatId, senderId };
-          emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
+      // if (notification.userInteraction) { 
+      //   const { chat, senderId } = notification.data.payload;
+      //   if (chat.chatType === 'private') {
+      //     console.log('redirecting to chat screen')
+      //     // Send signal to sender message has been read and mark recipient's chat as read
+      //     dispatch(chatsActions.markMessagesAsReadRecipient(chat.chatId));
+      //     const eventData = { chatId: chat.chatId, senderId };
+      //     emitMarkAllMessagesAsRead(JSON.stringify(eventData), socketState);
     
-          // Navigate to current chat screen
-          const contactName: string = chat.participants.filter((p: any) => p !== senderId)[0].username;
-          const routeParams = {
-            chatType: chat.type,
-            chatId: chat.chatId,
-            contactName,
-            contactId: senderId
-          };
-          navigate('CurrentChat', routeParams);
-        }
-      }
+      //     // Navigate to current chat screen
+      //     const contactName: string = chat.participants.filter((p: any) => p !== senderId)[0].username;
+      //     const routeParams = {
+      //       chatType: chat.type,
+      //       chatId: chat.chatId,
+      //       contactName,
+      //       contactId: senderId
+      //     };
+      //     navigate('CurrentChat', routeParams);
+      //   }
+      // }
 
       // const isClicked = notification.getData().userInteraction === 1;
 
@@ -481,8 +489,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
       //   // Do something else with push notification
       // }
 
-     
-      
       notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
     onAction: function (notification) {
@@ -538,8 +544,6 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
     initRNCallKeep();
 
     VoipPushNotification.addEventListener('didLoadWithEvents', async (events: any) => {
-
-      console.log('did load with events native')
       // This will fire when there are events occured before js bridge initialized
       if (!events || !Array.isArray(events) || events.length < 1) {
           return;
@@ -575,20 +579,20 @@ const PushNotificationsManager = ({ children }: PushNotificationsManagerProps) =
 
       InCallManager.startRingtone('_BUNDLE_');
 
-      (async () => {
-        try {
-          const jsonValue = await AsyncStorage.getItem('user')
-          const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
+      // (async () => {
+      //   try {
+      //     const jsonValue = await AsyncStorage.getItem('user')
+      //     const user = jsonValue !== null ? JSON.parse(jsonValue) : null;
         
-          if (user) {
-            const socket = connectToSocket(user._id);
-            dispatch(appActions.setSocketState(socket));
-          }
+      //     if (user) {
+      //       const socket = connectToSocket(user._id);
+      //       dispatch(appActions.setSocketState(socket));
+      //     }
       
-        } catch(err) {
-          console.log('Could not read user data from async storage inside voip switch: ' + err);
-        }
-      })();
+      //   } catch(err) {
+      //     console.log('Could not read user data from async storage inside voip switch: ' + err);
+      //   }
+      // })();
     });
 
     RNCallKeep.addEventListener('didLoadWithEvents', onDidLoadWithEvents);

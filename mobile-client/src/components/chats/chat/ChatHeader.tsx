@@ -16,7 +16,8 @@ import { Images } from 'assets';
 import { Colors, Fonts } from 'variables';
 import uuid from 'react-native-uuid';
 import { callActions } from 'reduxStore/actions';
-import { webRTCService } from 'services';
+import { pushNotificationsService, webRTCService } from 'services';
+import { navigate } from 'navigation/NavigationRef';
 
 type ChatHeaderProps = {
   chatType: string;
@@ -82,6 +83,9 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
       RNCallKeep.startCall(callId, callerName, calleeName);
     }
 
+    InCallManager.start({media: callType, auto: false, ringback: 'DTMF'});
+    // InCallManager.setForceSpeakerphoneOn(false);
+
     // Establish RTC Peer Connection
     const configuration = {iceServers: [
       {
@@ -118,12 +122,9 @@ const ChatHeader = ({ chatType, chatId, contactId, contactName, contactProfile }
     const stream = await webRTCService.startLocalStream(dispatch);
     peerConn.addStream(stream);
 
-    try {
-      const data = { callId, chatId, caller, callee, callType };
-      await api.post('/call/start', data); 
-    } catch (err) {
-      console.error(err);
-    }
+    await pushNotificationsService.eventPushers.callPushers.pushStartCall(callId, chatId, caller, callee, callType);
+
+    navigate('Call', {});
   }; 
   
   return (

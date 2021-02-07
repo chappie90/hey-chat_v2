@@ -57,7 +57,9 @@ import { emitSendICECandidate, emitSendSdpAnswer } from 'socket/eventEmitters';
 const onSdpOfferReceived = async (data: string, call: TCall, socketState: any, dispatch: Dispatch): Promise<void> => {
   const { offer } = JSON.parse(data);
 
-  const { callee, RTCConnection } = call;
+  console.log('on sdp offer received')
+
+  const { callee, RTCConnection, type } = call;
 
   callActions.setCallOffer(offer);
 
@@ -76,7 +78,6 @@ const onSdpOfferReceived = async (data: string, call: TCall, socketState: any, d
       if (event.candidate) {
         const data = { contactId: callee._id, candidate: event.candidate };
         console.log('sending ice candidate')
-        console.log(data)
         emitSendICECandidate(JSON.stringify(data), socketState);
       }
     };
@@ -87,12 +88,14 @@ const onSdpOfferReceived = async (data: string, call: TCall, socketState: any, d
 
   if (Platform.OS === 'android') {
     RNCallKeep.setCurrentCallActive(call.callId);
-    RNCallKeep.backToForeground();
+    // if (type === )
+    // RNCallKeep.backToForeground();
   } 
   
   dispatch(callActions.startCall());
 
   // When callee answers, stop ringback
+  // InCallManager.setForceSpeakerphoneOn(true);
   InCallManager.stopRingback();
 };
 
@@ -122,10 +125,13 @@ const onSdpAnswerReceived = (data: string,  callState: TCall, socketState: any, 
 
   if (Platform.OS === 'android') {
      RNCallKeep.setCurrentCallActive(callState.callId);
-     RNCallKeep.backToForeground();
+     if (callState.type === 'video') {
+      RNCallKeep.backToForeground();
+    }
   }
   
   dispatch(callActions.startCall());
+  // InCallManager.setForceSpeakerphoneOn(true);
 };
 
 export default {

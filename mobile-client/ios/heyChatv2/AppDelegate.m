@@ -144,18 +144,19 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   NSString *uuid = payload.dictionaryPayload[@"uuid"];
   NSString *callerName = [NSString stringWithFormat:@"%@ (Connecting...)", payload.dictionaryPayload[@"callerName"]];
   NSString *handle = payload.dictionaryPayload[@"handle"];
+  // BOOL hasVideo = payload.dictionaryPayload[@"hasVideo"];
 
   // --- this is optional, only required if you want to call `completion()` on the js side
 //  [RNVoipPushNotificationManager addCompletionHandler:uuid completionHandler:completion];
 
-  // --- Process the received push
+  // --- Process the reeived push
   [RNVoipPushNotificationManager didReceiveIncomingPushWithPayload:payload forType:(NSString *)type];
 
   // --- You should make sure to report to callkit BEFORE execute `completion()`
   [RNCallKeep reportNewIncomingCall: uuid
                                handle: handle
                            handleType: @"generic"
-                             hasVideo: NO
+                             hasVideo: YES
                   localizedCallerName: callerName
                       supportsHolding: YES
                          supportsDTMF: YES

@@ -14,8 +14,6 @@ import RNCallKeep from 'react-native-callkeep';
 AppRegistry.registerComponent(appName, () => App);
 // AppRegistry.registerHeadlessTask("RNFirebaseBackgroundMessage", () => MyBackgroundService);
 AppRegistry.registerHeadlessTask('RNCallKeepBackgroundMessage', () => (info) => {
-  console.log(info)
-
   // Make your call here
   console.log('background service running');
   // console.log(name + ', ' + callUUID + ', ' + handle)
@@ -29,13 +27,18 @@ AppRegistry.registerHeadlessTask('RNCallKeepBackgroundMessage', () => (info) => 
       if (user) {
         const socket = connectToSocket(user._id);
         store.dispatch(appActions.setSocketState(socket));
+        // console.log(socket)
       }
     } catch(err) {
       console.log('Could not read user data from async storage inside voip switch: ' + err);
     }
   })();
-  
-  RNCallKeep.backToForeground();
+
+  const { call: { call: { type } } } = store.getState();
+    
+  if (type === 'video') {
+    RNCallKeep.backToForeground();
+  }
 
   RNCallKeep.registerAndroidEvents();
 

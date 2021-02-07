@@ -8,9 +8,10 @@ import { Colors } from 'variables';
 
 type AudioCallAvatarProps = {
   contactAvatar?: string;
+  showPulse: boolean;
 };
 
-const AudioCallAvatar = ({ contactAvatar }: AudioCallAvatarProps) => {
+const AudioCallAvatar = ({ contactAvatar, showPulse }: AudioCallAvatarProps) => {
   const S3_BUCKET_PATH = `${config.RN_S3_DATA_URL}/public/uploads/profile/medium`;
 
   return (
@@ -23,17 +24,19 @@ const AudioCallAvatar = ({ contactAvatar }: AudioCallAvatarProps) => {
             /> : 
           <Image style={styles.image} source={ Images.avatarBig } />
         }
-      </View>     
-      <View style={styles.wave}>
-        <Pulse 
-          color={Colors.purpleDark} 
-          numPulses={3} 
-          diameter={300} 
-          initialDiameter={0} 
-          speed={14} 
-          duration={400} 
-        />
-      </View>
+      </View> 
+      {showPulse &&   
+        <View style={styles.pulse}>
+          <Pulse 
+            color={Colors.purpleDark} 
+            numPulses={3} 
+            diameter={300} 
+            initialDiameter={0} 
+            speed={14} 
+            duration={400} 
+          />
+        </View>
+      }
     </View>
   );
 };
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     width: '105%', 
     height: '105%'
   },
-  wave: {
+  pulse: {
     position: 'absolute',
     width: 220,
     height: 220,

@@ -82,7 +82,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           },
           localVideoEnabled: action.payload.type === 'audio' ? false : true,
           remoteVideoEnabled: action.payload.type === 'audio' ? false : true,
-          type: action.payload.type
+          type: action.payload.type,
+          speaker: action.payload.type === 'audio' ? false : true
         }
       };
     case 'receive_call':
@@ -117,7 +118,8 @@ export const callReducer: Reducer = (state = INITIAL_STATE, action) => {
           },
           localVideoEnabled: action.payload.type === 'audio' ? false : true,
           remoteVideoEnabled: action.payload.type === 'audio' ? false : true,
-          type: action.payload.type
+          type: action.payload.type,
+          speaker: action.payload.type === 'audio' ? false : true
         }
       };
     case 'set_offer':

@@ -2,11 +2,13 @@ import React, { useEffect, useRef, ReactNode } from 'react';
 import { AppState, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import PushNotification from "react-native-push-notification";
+import InCallManager from 'react-native-incall-manager';
 
 import { connectToSocket } from 'socket/connection';
-import { appActions, chatsActions, contactsActions } from 'reduxStore/actions';
+import { appActions, chatsActions, callActions } from 'reduxStore/actions';
 import { emitStopTyping, emitMarkAllMessagesAsRead } from 'socket/eventEmitters';
 import { store } from 'reduxStore';
+import { navigate } from 'navigation/NavigationRef';
 
 type AppStateManagerProps = { children: ReactNode };
 
@@ -50,6 +52,13 @@ const AppStateManager = ({ children }: AppStateManagerProps) => {
       // If app becomes active on CurrentChat screen mark recipient's chat as read
       if (activeChatRef.current && currentScreenRef.current === 'CurrentChat') {
         dispatch(chatsActions.markMessagesAsReadRecipient(activeChatRef.current.chatId));
+      }
+
+      // Navigate to video screen on tap video request incoming call iOS while device locked
+      if (Platform.OS === 'ios' && store.getState().call.call.isActive) {
+        dispatch(callActions.receiveVideoRequest(false));
+
+        navigate('Call', {});
       }
     }
 
